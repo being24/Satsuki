@@ -7,25 +7,26 @@ import re
 import pandas as pd
 import requests
 
-target_url = {"jp1": "http://ja.scp-wiki.net/scp-series-jp",
-              "jp2": "http://ja.scp-wiki.net/scp-series-jp-2",
-              "en1": "http://ja.scp-wiki.net/scp-series",
-              "en2": "http://ja.scp-wiki.net/scp-series-2",
-              "en3": "http://ja.scp-wiki.net/scp-series-3",
-              "en4": "http://ja.scp-wiki.net/scp-series-4",
-              "en5": "http://ja.scp-wiki.net/scp-series-5",
+target_url = {"jp0": "http://ja.scp-wiki.net/scp-series-jp",
+              "jp1": "http://ja.scp-wiki.net/scp-series-jp-2",
+              "en0": "http://ja.scp-wiki.net/scp-series",
+              "en1": "http://ja.scp-wiki.net/scp-series-2",
+              "en2": "http://ja.scp-wiki.net/scp-series-3",
+              "en3": "http://ja.scp-wiki.net/scp-series-4",
+              "en4": "http://ja.scp-wiki.net/scp-series-5",
               "ru1": "http://ja.scp-wiki.net/scp-series-ru",
-              "ko1": "http://ja.scp-wiki.net/scp-series-ko",
-              "es1": "http://ja.scp-wiki.net/scp-series-es",
-              "cn1": "http://ja.scp-wiki.net/scp-series-cn",
-              "fr1": "http://ja.scp-wiki.net/scp-series-fr",
-              "pl1": "http://ja.scp-wiki.net/scp-series-pl",
-              "th1": "http://ja.scp-wiki.net/scp-series-th",
-              "de1": "http://ja.scp-wiki.net/scp-series-de",
-              "it1": "http://ja.scp-wiki.net/scp-series-it",
-              "ua1": "http://ja.scp-wiki.net/scp-series-ua",
-              "pt1": "http://ja.scp-wiki.net/scp-series-pt",
-              "ex1": "http://ja.scp-wiki.net/scp-ex",
+              "ko0": "http://ja.scp-wiki.net/scp-series-ko",
+              "es0": "http://ja.scp-wiki.net/scp-series-es",
+              "cn0": "http://ja.scp-wiki.net/scp-series-cn",
+              "cn1": "http://ja.scp-wiki.net/scp-series-cn-2",
+              "fr0": "http://ja.scp-wiki.net/scp-series-fr",
+              "pl0": "http://ja.scp-wiki.net/scp-series-pl",
+              "th0": "http://ja.scp-wiki.net/scp-series-th",
+              "de0": "http://ja.scp-wiki.net/scp-series-de",
+              "it0": "http://ja.scp-wiki.net/scp-series-it",
+              "ua0": "http://ja.scp-wiki.net/scp-series-ua",
+              "pt0": "http://ja.scp-wiki.net/scp-series-pt",
+              "ex0": "http://ja.scp-wiki.net/scp-ex",
               }
 
 start_word = {"jp": '<h1 id="toc1"><span>SCP-JP一覧 <a name="list"></a></span></h1>',
@@ -61,9 +62,9 @@ end_word = {"jp": '<li><a href="/joke-scps-jp">Joke SCP-JP</a>',
             }
 
 
-keys = ["jp1", "jp2", "en1", "en2", "en3", "en4", "en5", "ru1",
-        "ko1", "cn1", "fr1", "pl1", "th1", "de1", "it1", "ua1",
-        "pt1", "es1", "ex1"]
+keys = ["jp0", "jp1", "en0", "en1", "en2", "en3", "en4", "ru1",
+        "ko0", "cn0", "cn1", "fr0", "pl0", "th0", "de0", "it0", "ua0",
+        "pt0", "es0", "ex0"]
 
 
 def scips():
@@ -157,4 +158,4 @@ if __name__ == "__main__":
     masterpath = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     scips()
 
-    print("報告書データベースの更新、完了しました。")
+    print("菖蒲:報告書データベースの更新、完了しました。")

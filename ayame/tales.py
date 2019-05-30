@@ -131,4 +131,4 @@ if __name__ == "__main__":
     masterpath = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     tales()
 
-    print("taleデータベースの更新、完了しました。")
+    print("菖蒲:taleデータベースの更新、完了しました。")

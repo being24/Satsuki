@@ -115,4 +115,4 @@ if __name__ == "__main__":
     masterpath = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     joke()
 
-    print("jokeデータベースの更新、完了しました。")
+    print("菖蒲:jokeデータベースの更新、完了しました。")
