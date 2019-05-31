@@ -107,7 +107,8 @@ def joke():
 
         print("page:" + key + "のデータ取得が完了しました。")
 
-    df = pd.DataFrame(titles, nums)
+    df = pd.DataFrame(columns=['number', 'title'])
+    df = pd.DataFrame(nums, titles)
     df.to_csv(masterpath + "/data/joke.csv", header=False, encoding="utf-8")
 
 

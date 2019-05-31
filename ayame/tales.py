@@ -121,8 +121,9 @@ def tales():
 
         print("page:" + key + "のデータ取得が完了しました。")
 
+    df = pd.DataFrame(columns=['url', 'title'])
     df = pd.DataFrame(urls, titles)
-    df[''] = authers
+    df['auther'] = authers
 
     df.to_csv(masterpath + "/data/tale.csv", header=False, encoding="utf-8")
 

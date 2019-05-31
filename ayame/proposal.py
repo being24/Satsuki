@@ -54,8 +54,9 @@ def proposal():
                 titles.append(title)
             brts.append(brt)
 
+    df = pd.DataFrame(columns=['url', 'title'])
     df = pd.DataFrame(urls, titles)
-    df[""] = brts
+    df['branch'] = brts
 
     df.to_csv(masterpath + "/data/proposal.csv",
               header=False, encoding="utf-8")
