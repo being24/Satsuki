@@ -51,8 +51,6 @@ def scips():
                     try:
                         number = re.split('("/.*?")', number.group())
                     except:
-                        logging.warn("line = " + line)
-                        logging.warn("Type conversion err", exc_info=True)
                         print("warn")
                         return
 
