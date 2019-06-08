@@ -54,12 +54,14 @@ def proposal():
                 titles.append(title)
             brts.append(brt)
 
-    df = pd.DataFrame(columns=['url', 'title'])
-    df = pd.DataFrame(urls, titles)
-    df['branch'] = brts
+    df = pd.DataFrame(columns=['url', 'title', 'branches'])
+
+    df['url'] = urls
+    df['title'] = titles
+    df['branches'] = brts
 
     df.to_csv(masterpath + "/data/proposal.csv",
-              header=False, encoding="utf-8")
+              header=True, encoding="utf-8")
 
 
 if __name__ == "__main__":

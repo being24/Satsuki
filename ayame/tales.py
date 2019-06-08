@@ -7,25 +7,27 @@ import re
 import pandas as pd
 import requests
 
-target_url = {"tales-jp": "http://ja.scp-wiki.net/foundation-tales-jp",
-              "tales-en": "http://ja.scp-wiki.net/foundation-tales",
+target_url = {"jp": "http://ja.scp-wiki.net/foundation-tales-jp",
+              "en": "http://ja.scp-wiki.net/foundation-tales",
               }
 
-start_word = {"tales-jp": '<p>アルファベット順著者</p>',
-              "tales-en": '<p>アルファベット順著者</p>',
+start_word = {"jp": '<p>アルファベット順著者</p>',
+              "en": '<p>アルファベット順著者</p>',
               }
 
-end_word = {"tales-jp": '<td>その他<a name="misc"></a></td>',
-            "tales-en": '<td>その他<a name="misc"></a></td>',
+end_word = {"jp": '<td>その他<a name="misc"></a></td>',
+            "en": '<td>その他<a name="misc"></a></td>',
             }
 
-keys = ["tales-jp", "tales-en"]
+keys = ["jp", "en"]
 
 
 def tales():
     urls = []
     titles = []
     authers = []
+    brts = []
+
     auther = ""
     title = ""
     url = ""
@@ -109,6 +111,8 @@ def tales():
                 urls.append(url)
                 titles.append(title)
                 authers.append(auther)
+                brts.append(key)
+
 
             elif '<td><a target="_blank" href="' in line:
                 sp_line = re.split('[<>]', line)
@@ -118,14 +122,18 @@ def tales():
                 urls.append(url)
                 titles.append(title)
                 authers.append(auther)
+                brts.append(key)
+
 
         print("page:" + key + "のデータ取得が完了しました。")
 
-    df = pd.DataFrame(columns=['url', 'title'])
-    df = pd.DataFrame(urls, titles)
+    df = pd.DataFrame(columns=['url', 'title', 'auther'])
+
+    df['url'] = urls
+    df['title'] = titles
     df['auther'] = authers
 
-    df.to_csv(masterpath + "/data/tale.csv", header=False, encoding="utf-8")
+    df.to_csv(masterpath + "/data/tale.csv", header=True, encoding="utf-8")
 
 
 if __name__ == "__main__":

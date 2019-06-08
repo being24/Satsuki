@@ -7,28 +7,26 @@ import re
 import pandas as pd
 import requests
 
-
-target_url = {"en": "http://ja.scp-wiki.net/joke-scps",
-              "jp": "http://ja.scp-wiki.net/joke-scps-jp",
+target_url = {"en": "http://ja.scp-wiki.net/scp-ex",
+              "jp": "http://ja.scp-wiki.net/scp-jp-ex",
               }
 
-start_word = {"en": '<div class="content-panel standalone series">',
-              "jp": '<div class="content-panel standalone series">',
+start_word = {"en": '<h1 id="toc0"><span>SCP-EXシリーズ</span></h1>',
+              "jp": '<h1 id="toc0"><span>SCP-JP-EXシリーズ</span></h1>'
               }
 
-end_word = {"en": '</div>',
-            "jp": '</div>',
+end_word = {"en": '</ul>',
+            "jp": '</ul>'
             }
 
-keys = ["jp", "en"]
+
+keys = ["en", "jp"]
 
 
-def joke():
-
+def scips():
     nums = []
     titles = []
     brts = []
-
 
     for key in keys:
         response = requests.get(target_url[key])
@@ -101,6 +99,7 @@ def joke():
                     metatitle = metatitle.replace("''", '"')
 
                     titles.append(metatitle)
+
                     brts.append(key)
 
         print("page:" + key + "のデータ取得が完了しました。")
@@ -110,12 +109,11 @@ def joke():
     df['number'] = nums
     df['title'] = titles
     df['branches'] = brts
-
-    df.to_csv(masterpath + "/data/joke.csv", header=True, encoding="utf-8")
+    df.to_csv(masterpath + "/data/exs.csv", header=True, encoding="utf-8")
 
 
 if __name__ == "__main__":
     masterpath = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    joke()
+    scips()
 
-    print("菖蒲:jokeデータベースの更新、完了しました。")
+    print("菖蒲:解明済み事象のデータベースの更新、完了しました。")

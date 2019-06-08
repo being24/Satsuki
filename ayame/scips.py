@@ -26,7 +26,6 @@ target_url = {"jp0": "http://ja.scp-wiki.net/scp-series-jp",
               "it0": "http://ja.scp-wiki.net/scp-series-it",
               "ua0": "http://ja.scp-wiki.net/scp-series-ua",
               "pt0": "http://ja.scp-wiki.net/scp-series-pt",
-              "ex0": "http://ja.scp-wiki.net/scp-ex",
               }
 
 start_word = {"jp": '<h1 id="toc1"><span>SCP-JP一覧 <a name="list"></a></span></h1>',
@@ -42,7 +41,6 @@ start_word = {"jp": '<h1 id="toc1"><span>SCP-JP一覧 <a name="list"></a></span>
               "it": '<h1 id="toc1"><span>SCP-IT一覧 <a name="list"></a></span></h1>',
               "ua": '<h1 id="toc1"><span>SCP-UA一覧 <a name="list"></a></span></h1>',
               "pt": '<h1 id="toc1"><span>SCP-PT一覧 <a name="list"></a></span></h1>',
-              "ex": '<h1 id="toc0"><span>SCP-EXシリーズ</span></h1>',
               }
 
 end_word = {"jp": '<li><a href="/joke-scps-jp">Joke SCP-JP</a>',
@@ -58,18 +56,18 @@ end_word = {"jp": '<li><a href="/joke-scps-jp">Joke SCP-JP</a>',
             "it": '<li><a href="/joke-scps-it">Joke SCP-IT</a>',
             "ua": '<li><a class="newpage" href="/joke-scps-ua">Joke SCP-UA</a>',
             "pt": '<li><a href="/joke-scps-pt">Joke SCP-PT</a>',
-            "ex": '</ul>',
             }
 
 
 keys = ["jp0", "jp1", "en0", "en1", "en2", "en3", "en4", "ru1",
         "ko0", "cn0", "cn1", "fr0", "pl0", "th0", "de0", "it0", "ua0",
-        "pt0", "es0", "ex0"]
+        "pt0", "es0"]
 
 
 def scips():
     nums = []
     titles = []
+    brts = []
 
     for key in keys:
         response = requests.get(target_url[key])
@@ -148,11 +146,16 @@ def scips():
                         metatitle = "SCP-1355-JP - /\*Kingdom\*/"
                     titles.append(metatitle)
 
+                    brts.append(res_key)
+
         print("page:" + key + "のデータ取得が完了しました。")
 
-    df = pd.DataFrame(columns=['number', 'title'])
-    df = pd.DataFrame(nums, titles)
-    df.to_csv(masterpath + "/data/scps.csv", header=False, encoding="utf-8")
+    df = pd.DataFrame(columns=['number', 'title', 'branches'])
+
+    df['number'] = nums
+    df['title'] = titles
+    df['branches'] = brts
+    df.to_csv(masterpath + "/data/scps.csv", header=True, encoding="utf-8")
 
 
 if __name__ == "__main__":
