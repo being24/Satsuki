@@ -123,6 +123,7 @@ def tales():
                 titles.append(title)
                 authers.append(auther)
                 brts.append(key)
+            
 
 
         print("page:" + key + "のデータ取得が完了しました。")
@@ -132,6 +133,7 @@ def tales():
     df['url'] = urls
     df['title'] = titles
     df['auther'] = authers
+    df['branches'] = brts
 
     df.to_csv(masterpath + "/data/tale.csv", header=True, encoding="utf-8")
 
