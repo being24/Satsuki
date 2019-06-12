@@ -27,7 +27,7 @@
 提供元：http://scp-jp-archive.wdfiles.com/local--resized-images/foundation-universe/Internal%20department2.png/small.jpg  
 作者：Nanimono Demonai さん  
 
-Tachibana ©︎︎ being@h-sc 2019 CC BY-SA 3.0
+Tachibana ©︎︎ being241 2019 CC BY-SA 3.0
 
 
 ## 参考文献
