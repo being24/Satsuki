@@ -1,10 +1,15 @@
 # !/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+
 import typing
 
 import discord
 from discord.ext import commands  # Bot Commands Frameworkのインポート
+
+import libs as lib
+
+SCP_JP = "http://ja.scp-wiki.net"
 
 
 class Tachibana_Cog(commands.Cog):  # コグとして用いるクラスを定義。
@@ -17,19 +22,24 @@ class Tachibana_Cog(commands.Cog):  # コグとして用いるクラスを定義
         await ctx.send('pong!')
 
     @commands.command()
-    async def what(self, ctx, what: str):
-        await ctx.send(f'{what}とはなんですか？')
+    async def scp(self, ctx, *, num_brt):
+        num_brt = num_brt.replace(" ", "")
+        reply = lib.scp_number(self, num_brt)
+        if reply is not None:
+            if isinstance(reply, str):
+                await ctx.send(reply)
+            else:
+                await ctx.send(reply[1] + "\n" + SCP_JP + reply[0])
+
+    @scp.error
+    async def scp_error(self, ctx, error):
+        await ctx.send(f'to <@277825292536512513> an error occurred\n{error}')
 
     # serchコマンド
     @commands.group()
     async def serch(self, ctx):
         if ctx.invoked_subcommand is None:
             await ctx.send('検索対象を指定してください？')
-
-    # scp
-    @serch.command()
-    async def what(self, ctx, amount: typing.Optional[int] = 99):
-        await ctx.send(f'{amount}とはなんですか？')
 
     # tale
     @serch.command()

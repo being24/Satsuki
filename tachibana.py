@@ -9,13 +9,13 @@ import traceback  # エラー表示のためにインポート
 import discord
 from discord.ext import commands
 
+
 INITIAL_COGS = [
     'cogs.tachibana_cog'
 ]
 
 
 class MyBot(commands.Bot):
-
     def __init__(self, command_prefix):  # コンストラクタ
 
         super().__init__(command_prefix)  # スーパークラスのコンストラクタに値を渡して実行。
