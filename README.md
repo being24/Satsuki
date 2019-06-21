@@ -3,7 +3,7 @@
 ここは、製作者の不手際と知識不足で肥大化してしまったsatsukiを再構成するための開発版Bot、Tachibanaの開発のための場です。
 
 ## 何を目的とするか？
-そもそも専門が情報系でないSatsukiの製作者は公式リファレンスを読み落とし前述の通り、非効率的なソースコードを書いてしまっています。このため、これを再構成し効率の良いシステムを構築し、開発効率を高め、効率を冗長性を確保するためにgithubを利用するものです。  
+そもそも専門が情報系でないSatsukiの製作者は公式リファレンスを読み落とし前述の通り、非効率的なソースコードを書いてしまっています。このため、これを再構成し効率の良いシステムを構築し、開発効率を高め、効率性と冗長性を確保するためにgithubを利用するものです。  
 完成し次第、Satsukiにソースコードを移設します。
 
 ### いいわけ
@@ -27,7 +27,7 @@
 提供元：http://scp-jp-archive.wdfiles.com/local--resized-images/foundation-universe/Internal%20department2.png/small.jpg  
 作者：Nanimono Demonai さん  
 
-Tachibana ©︎︎ being@h-sc 2019 CC BY-SA 3.0
+Tachibana ©︎︎ being241 2019 CC BY-SA 3.0
 
 
 ## 参考文献
