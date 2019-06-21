@@ -12,7 +12,28 @@ BRANCHS = ['jp', 'en', 'ru', 'ko', 'es', 'cn',
 currentpath = os.path.dirname(os.path.abspath(__file__))
 
 
-def scp_number(self, msg):
+def get_country_from_code(brt):
+    if brt.isalpha():
+        brt = brt.upper()
+        try:
+            dictionary = pd.read_csv(
+                currentpath + "/data/ISO3166-1.CSV"
+            )
+        except FileNotFoundError:
+            pass
+        country = dictionary.query('二字 in @brt')
+        if country.empty:
+            return "該当する国コードは存在しません"
+        else:
+            country = country.values.tolist()
+            country = itertools.chain(*country)
+            country = list(country)
+            return country[0] + "支部まだは存在しませんよ？"
+    else:
+        return "国コードが正しくありません."
+
+
+def scp_number(msg):
     msg = zenhan.z2h(msg.casefold()).replace("-", "").replace("scp", "")
     number = re.sub("\\D", "", msg)
 
@@ -25,7 +46,7 @@ def scp_number(self, msg):
         brt = "en"
 
     if brt not in BRANCHS:  # 要改良
-        reply = brt + "支部は存在しませんよ？"
+        reply = get_country_from_code(brt)
         return reply
 
     try:

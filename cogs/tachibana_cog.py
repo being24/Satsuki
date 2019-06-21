@@ -24,7 +24,7 @@ class Tachibana_Cog(commands.Cog):  # コグとして用いるクラスを定義
     @commands.command()
     async def scp(self, ctx, *, num_brt):
         num_brt = num_brt.replace(" ", "")
-        reply = lib.scp_number(self, num_brt)
+        reply = lib.scp_number(num_brt)
         if reply is not None:
             if isinstance(reply, str):
                 await ctx.send(reply)
