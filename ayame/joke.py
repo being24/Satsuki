@@ -7,20 +7,69 @@ import re
 import pandas as pd
 import requests
 
-
 target_url = {"en": "http://ja.scp-wiki.net/joke-scps",
               "jp": "http://ja.scp-wiki.net/joke-scps-jp",
+              "ru": "http://ja.scp-wiki.net/joke-scps-ru",
+              "ko": "http://ja.scp-wiki.net/joke-scps-ko",
+              "cn": "http://ja.scp-wiki.net/joke-scps-cn",
+              "fr": "http://ja.scp-wiki.net/joke-scps-fr",
+              "pl": "http://ja.scp-wiki.net/joke-scps-pl",
+              "es": "http://ja.scp-wiki.net/joke-scps-es",
+              "th": "http://ja.scp-wiki.net/joke-scps-th",
+              "de": "http://ja.scp-wiki.net/joke-scps-de",
+              "it": "http://ja.scp-wiki.net/joke-scps-it",
+              "ua": "http://ja.scp-wiki.net/joke-scps-ua",
+              "pt": "http://ja.scp-wiki.net/joke-scps-pt",
+              "uo": "http://ja.scp-wiki.net/joke-scp-series-unofficial"
               }
 
 start_word = {"en": '<div class="content-panel standalone series">',
               "jp": '<div class="content-panel standalone series">',
+              "ru": '<div class="content-panel standalone series">',
+              "ko": '<div class="content-panel standalone series">',
+              "cn": '<div class="content-panel standalone series">',
+              "fr": '<div class="content-panel standalone series">',
+              "pl": '<div class="content-panel standalone series">',
+              "es": '<div class="content-panel standalone series">',
+              "th": '<div class="content-panel standalone series">',
+              "de": '<div class="content-panel standalone series">',
+              "it": '<div class="content-panel standalone series">',
+              "ua": '<div class="content-panel standalone series">',
+              "pt": '<div class="content-panel standalone series">',
+              "uo": '<div class="content-panel standalone series">',
               }
 
 end_word = {"en": '</div>',
             "jp": '</div>',
+            "ru": '</div>',
+            "ko": '</div>',
+            "cn": '</div>',
+            "fr": '</div>',
+            "pl": '</div>',
+            "es": '</div>',
+            "th": '</div>',
+            "de": '</div>',
+            "it": '</div>',
+            "ua": '</div>',
+            "pt": '</div>',
+            "uo": '</div>',
             }
 
-keys = ["jp", "en"]
+keys = [
+    "jp",
+    "en",
+    "ru",
+    "ko",
+    "cn",
+    "fr",
+    "pl",
+    "es",
+    "th",
+    "de",
+    "it",
+    "ua",
+    "pt",
+    "uo"]
 
 
 def joke():
@@ -29,12 +78,11 @@ def joke():
     titles = []
     brts = []
 
-
     for key in keys:
         response = requests.get(target_url[key])
         if response.status_code is not requests.codes.ok:
-            print("request err")
-            return 1
+            print(f"{key} request err")
+            continue
 
         number = ""
 
@@ -52,14 +100,13 @@ def joke():
                 # print(number.group())  # debug
                     try:
                         number = re.split('("/.*?")', number.group())
-                    except:
+                    except BaseException:
                         print("warn")
                         return
 
                     number = number[1].replace('"', "")
                     nums.append(number)
                     metatitle = ""
-                    # http://ja.scp-wiki.net/scp-3349 あかん！あかん！
                     # この辺、バグ呼ぶだろうなあ・・・
                     if '<span style="font-size:0%;">' in line:  # siz0%
                         siz0_0 = line.find('<span style="font-size:0%;">')
@@ -94,8 +141,17 @@ def joke():
 
                     for sptitle in re.split("<.*?>", line)[2:]:
                         metatitle = metatitle + sptitle
-                    metatitle = metatitle.replace("&quot;", '"').replace(
-                        "&#8230;", "…").replace("&amp;", "&").replace("&#160;", " ").replace("&#8212;", "-")
+                    metatitle = metatitle.replace(
+                        "&quot;",
+                        '"').replace(
+                        "&#8230;",
+                        "…").replace(
+                        "&amp;",
+                        "&").replace(
+                        "&#160;",
+                        " ").replace(
+                        "&#8212;",
+                        "-")
                     metatitle = metatitle.replace("''", '"')
 
                     titles.append(metatitle)

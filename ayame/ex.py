@@ -9,18 +9,65 @@ import requests
 
 target_url = {"en": "http://ja.scp-wiki.net/scp-ex",
               "jp": "http://ja.scp-wiki.net/scp-jp-ex",
+              "ru": "http://ja.scp-wiki.net/scp-ru-ex",
+              "ko": "http://ja.scp-wiki.net/scp-ko-ex",
+              "cn": "http://ja.scp-wiki.net/scp-cn-ex",
+              "fr": "http://ja.scp-wiki.net/scp-fr-ex",
+              "pl": "http://ja.scp-wiki.net/scp-pl-ex",
+              "es": "http://ja.scp-wiki.net/scp-es-ex",
+              "th": "http://ja.scp-wiki.net/scp-th-ex",
+              "de": "http://ja.scp-wiki.net/scp-de-ex",
+              "it": "http://ja.scp-wiki.net/scp-it-ex",
+              "ua": "http://ja.scp-wiki.net/scp-ua-ex",
+              "pt": "http://ja.scp-wiki.net/scp-pt-ex",
+              # "uo": "http://ja.scp-wiki.net/explained-scp-series-unofficial"
               }
 
 start_word = {"en": '<h1 id="toc0"><span>SCP-EXシリーズ</span></h1>',
-              "jp": '<h1 id="toc0"><span>SCP-JP-EXシリーズ</span></h1>'
+              "jp": '<h1 id="toc0"><span>SCP-JP-EXシリーズ</span></h1>',
+              "ru": '<h1 id="toc0"><span>SCP-RU-EXシリーズ</span></h1>',
+              "ko": '<h1 id="toc0"><span>SCP-KO-EXシリーズ</span></h1>',
+              "cn": '<h1 id="toc0"><span>SCP-CN-EXシリーズ</span></h1>',
+              "fr": '<h1 id="toc0"><span>SCP-FR-EXシリーズ</span></h1>',
+              "pl": '<h1 id="toc0"><span>SCP-PL-EXシリーズ</span></h1>',
+              "es": '<h1 id="toc0"><span>SCP-ES-EXシリーズ</span></h1>',
+              "th": '<h1 id="toc0"><span>SCP-TH-EXシリーズ</span></h1>',
+              "de": '<h1 id="toc0"><span>SCP-DE-EXシリーズ</span></h1>',
+              "it": '<h1 id="toc0"><span>SCP-IT-EXシリーズ</span></h1>',
+              "ua": '<h1 id="toc0"><span>SCP-UA-EXシリーズ</span></h1>',
+              "pt": '<h1 id="toc0"><span>SCP-PT-EXシリーズ</span></h1>',
               }
 
 end_word = {"en": '</ul>',
-            "jp": '</ul>'
+            "jp": '</ul>',
+            "ru": '</ul>',
+            "ko": '</ul>',
+            "cn": '</ul>',
+            "fr": '</ul>',
+            "pl": '</ul>',
+            "es": '</ul>',
+            "th": '</ul>',
+            "de": '</ul>',
+            "it": '</ul>',
+            "ua": '</ul>',
+            "pt": '</ul>',
             }
 
 
-keys = ["en", "jp"]
+keys = [
+    "en",
+    "jp",
+    "ru",
+    "ko",
+    "cn",
+    "fr",
+    "pl",
+    "es",
+    "th",
+    "de",
+    "it",
+    "ua",
+    "pt"]
 
 
 def scips():
@@ -31,8 +78,8 @@ def scips():
     for key in keys:
         response = requests.get(target_url[key])
         if response.status_code is not requests.codes.ok:
-            print("request err")
-            return 1
+            print(f"{key} request err")
+            continue
 
         number = ""
 
@@ -50,7 +97,7 @@ def scips():
                 # print(number.group())  # debug
                     try:
                         number = re.split('("/.*?")', number.group())
-                    except:
+                    except BaseException:
                         print("warn")
                         return
 
@@ -92,8 +139,17 @@ def scips():
 
                     for sptitle in re.split("<.*?>", line)[2:]:
                         metatitle = metatitle + sptitle
-                    metatitle = metatitle.replace("&quot;", '"').replace(
-                        "&#8230;", "…").replace("&amp;", "&").replace("&#160;", " ").replace("&#8212;", "-")
+                    metatitle = metatitle.replace(
+                        "&quot;",
+                        '"').replace(
+                        "&#8230;",
+                        "…").replace(
+                        "&amp;",
+                        "&").replace(
+                        "&#160;",
+                        " ").replace(
+                        "&#8212;",
+                        "-")
                     metatitle = metatitle.replace("''", '"')
 
                     titles.append(metatitle)

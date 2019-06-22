@@ -21,7 +21,7 @@ def get_country_from_code(brt):
             )
         except FileNotFoundError:
             pass
-        country = dictionary.query('二字 in @brt')
+        country = dictionary.query('二字 == @brt')
         if country.empty:
             return "該当する国コードは存在しません"
         else:
