@@ -34,7 +34,7 @@ def proposal():
 
         scp_start = scp_lines.index(
             '<p><em>ようこそ、担当職員様。ご希望のファイルを選択してください。</em></p>')
-        for line in scp_lines[scp_start+5:]:
+        for line in scp_lines[scp_start + 5:]:
             if line == "</div>":
                 break
             if "http://ja.scp-wiki.net" in line:
@@ -48,13 +48,16 @@ def proposal():
                 title = ""
                 for sptitle in re.split("<.*?>", line)[2:]:
                     title = title + sptitle
-                title = title.replace("&quot;", '"').replace(
-                    "&#8230;", "…").replace("&amp;", "&").replace("&#160;", " ").replace("&#8212;", "-")
+                title = title.replace("&quot;", '"')
+                title = title.replace("&#8230;", "…")
+                title = title.replace("&amp;", "&")
+                title = title.replace("&#160;", " ")
+                title = title.replace("&#8212;", "-")
                 title = title.replace("''", '"')
                 titles.append(title)
             brts.append(brt)
 
-    df = pd.DataFrame(columns=['url', 'title', 'branches'])
+    df = pd.DataFrame(columns=['url', 'title', 'auther', 'branches'])
 
     df['url'] = urls
     df['title'] = titles

@@ -81,7 +81,7 @@ def joke():
     for key in keys:
         response = requests.get(target_url[key])
         if response.status_code is not requests.codes.ok:
-            print(f"{key} request err")
+            print(f"{key} request err : {response.status_code}")
             continue
 
         number = ""
@@ -141,17 +141,11 @@ def joke():
 
                     for sptitle in re.split("<.*?>", line)[2:]:
                         metatitle = metatitle + sptitle
-                    metatitle = metatitle.replace(
-                        "&quot;",
-                        '"').replace(
-                        "&#8230;",
-                        "…").replace(
-                        "&amp;",
-                        "&").replace(
-                        "&#160;",
-                        " ").replace(
-                        "&#8212;",
-                        "-")
+                    metatitle = metatitle.replace("&quot;", '"')
+                    metatitle = metatitle.replace("&#8230;", "…")
+                    metatitle = metatitle.replace("&amp;", "&")
+                    metatitle = metatitle.replace("&#160;", " ")
+                    metatitle = metatitle.replace("&#8212;", "-")
                     metatitle = metatitle.replace("''", '"')
 
                     titles.append(metatitle)
@@ -159,9 +153,9 @@ def joke():
 
         print("page:" + key + "のデータ取得が完了しました。")
 
-    df = pd.DataFrame(columns=['number', 'title', 'branches'])
+    df = pd.DataFrame(columns=['url', 'title', 'auther', 'branches'])
 
-    df['number'] = nums
+    df['url'] = nums
     df['title'] = titles
     df['branches'] = brts
 

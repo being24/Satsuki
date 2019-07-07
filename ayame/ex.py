@@ -78,7 +78,7 @@ def scips():
     for key in keys:
         response = requests.get(target_url[key])
         if response.status_code is not requests.codes.ok:
-            print(f"{key} request err")
+            print(f"{key} request err : {response.status_code}")
             continue
 
         number = ""
@@ -158,9 +158,9 @@ def scips():
 
         print("page:" + key + "のデータ取得が完了しました。")
 
-    df = pd.DataFrame(columns=['number', 'title', 'branches'])
+    df = pd.DataFrame(columns=['url', 'title', 'auther', 'branches'])
 
-    df['number'] = nums
+    df['url'] = nums
     df['title'] = titles
     df['branches'] = brts
     df.to_csv(masterpath + "/data/exs.csv", header=True, encoding="utf-8")

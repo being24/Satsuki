@@ -29,37 +29,37 @@ target_url = {"jp0": "http://ja.scp-wiki.net/scp-series-jp",
               "uo0": "http://ja.scp-wiki.net/scp-series-unofficial"
               }
 
-start_word = {"jp": '<h1 id="toc1"><span>SCP-JP一覧 <a name="list"></a></span></h1>',
-              "en": '<h1 id="toc1"><span>SCP一覧 <a name="list"></a></span></h1>',
-              "ru": '<h1 id="toc1"><span>SCP-RU一覧 <a name="list"></a></span></h1>',
-              "ko": '<h1 id="toc1"><span>SCP-KO一覧 <a name="list"></a></span></h1>',
-              "es": '<h1 id="toc1"><span>SCP-ES一覧 <a name="list"></a></span></h1>',
-              "cn": '<h1 id="toc1"><span>SCP-CN一覧 <a name="list"></a></span></h1>',
-              "fr": '<h1 id="toc1"><span>SCP-FR一覧 <a name="list"></a></span></h1>',
-              "pl": '<h1 id="toc1"><span>SCP-PL一覧 <a name="list"></a></span></h1>',
-              "th": '<h1 id="toc1"><span>SCP-TH一覧 <a name="list"></a></span></h1>',
-              "de": '<h1 id="toc1"><span>SCP-DE一覧 <a name="list"></a></span></h1>',
-              "it": '<h1 id="toc1"><span>SCP-IT一覧 <a name="list"></a></span></h1>',
-              "ua": '<h1 id="toc1"><span>SCP-UA一覧 <a name="list"></a></span></h1>',
-              "pt": '<h1 id="toc1"><span>SCP-PT一覧 <a name="list"></a></span></h1>',
-              "uo": '<h1 id="toc1"><span>SCP一覧 <a name="list"></a></span></h1>'
-              }
+start_word = {
+    "jp": '<h1 id="toc1"><span>SCP-JP一覧 <a name="list"></a></span></h1>',
+    "en": '<h1 id="toc1"><span>SCP一覧 <a name="list"></a></span></h1>',
+    "ru": '<h1 id="toc1"><span>SCP-RU一覧 <a name="list"></a></span></h1>',
+    "ko": '<h1 id="toc1"><span>SCP-KO一覧 <a name="list"></a></span></h1>',
+    "es": '<h1 id="toc1"><span>SCP-ES一覧 <a name="list"></a></span></h1>',
+    "cn": '<h1 id="toc1"><span>SCP-CN一覧 <a name="list"></a></span></h1>',
+    "fr": '<h1 id="toc1"><span>SCP-FR一覧 <a name="list"></a></span></h1>',
+    "pl": '<h1 id="toc1"><span>SCP-PL一覧 <a name="list"></a></span></h1>',
+    "th": '<h1 id="toc1"><span>SCP-TH一覧 <a name="list"></a></span></h1>',
+    "de": '<h1 id="toc1"><span>SCP-DE一覧 <a name="list"></a></span></h1>',
+    "it": '<h1 id="toc1"><span>SCP-IT一覧 <a name="list"></a></span></h1>',
+    "ua": '<h1 id="toc1"><span>SCP-UA一覧 <a name="list"></a></span></h1>',
+    "pt": '<h1 id="toc1"><span>SCP-PT一覧 <a name="list"></a></span></h1>',
+    "uo": '<h1 id="toc1"><span>SCP一覧 <a name="list"></a></span></h1>'}
 
-end_word = {"jp": '<li><a href="/joke-scps-jp">Joke SCP-JP</a>',
-            "en": '<li><a href="/joke-scps">Joke SCPs</a>',
-            "ru": '<li><a href="/joke-scps-ru">Joke SCP-RU</a>',
-            "ko": '<li><a href="/joke-scps-ko">Joke SCP-KO</a>',
-            "es": '<li><a href="/joke-scps-es">Joke SCP-ES</a>',
-            "cn": '<li><a href="/joke-scps-cn">Joke SCP-CN</a>',
-            "fr": '<li><a href="/joke-scps-fr">Joke SCP-FR</a>',
-            "pl": '<li><a href="/joke-scps-pl">Joke SCP-PL</a>',
-            "th": '<li><a href="/joke-scps-th">Joke SCP-TH</a>',
-            "de": '<li><a href="/joke-scps-de">Joke SCP-DE</a>',
-            "it": '<li><a class="newpage" href="/joke-scps-it">Joke SCP-IT</a>',
-            "ua": '<li><a class="newpage" href="/joke-scps-ua">Joke SCP-UA</a>',
-            "pt": '<li><a href="/joke-scps-pt">Joke SCP-PT</a>',
-            "uo": '<li><a href="/joke-scp-series-unofficial">Joke SCP</a>'
-            }
+end_word = {
+    "jp": '<li><a href="/joke-scps-jp">Joke SCP-JP</a>',
+    "en": '<li><a href="/joke-scps">Joke SCPs</a>',
+    "ru": '<li><a href="/joke-scps-ru">Joke SCP-RU</a>',
+    "ko": '<li><a href="/joke-scps-ko">Joke SCP-KO</a>',
+    "es": '<li><a href="/joke-scps-es">Joke SCP-ES</a>',
+    "cn": '<li><a href="/joke-scps-cn">Joke SCP-CN</a>',
+    "fr": '<li><a href="/joke-scps-fr">Joke SCP-FR</a>',
+    "pl": '<li><a href="/joke-scps-pl">Joke SCP-PL</a>',
+    "th": '<li><a href="/joke-scps-th">Joke SCP-TH</a>',
+    "de": '<li><a href="/joke-scps-de">Joke SCP-DE</a>',
+    "it": '<li><a class="newpage" href="/joke-scps-it">Joke SCP-IT</a>',
+    "ua": '<li><a class="newpage" href="/joke-scps-ua">Joke SCP-UA</a>',
+    "pt": '<li><a href="/joke-scps-pt">Joke SCP-PT</a>',
+    "uo": '<li><a href="/joke-scp-series-unofficial">Joke SCP</a>'}
 
 
 keys = ["jp0", "jp1", "en0", "en1", "en2", "en3", "en4", "ru1",
@@ -75,8 +75,8 @@ def scips():
     for key in keys:
         response = requests.get(target_url[key])
         if response.status_code is not requests.codes.ok:
-            print("request err")
-            return 1
+            print(f"{key} request err : {response.status_code}")
+            continue
 
         number = ""
 
@@ -95,7 +95,7 @@ def scips():
                 # print(number.group())  # debug
                     try:
                         number = re.split('("/.*?")', number.group())
-                    except:
+                    except BaseException:
                         print("warn")
                         return
 
@@ -137,23 +137,26 @@ def scips():
 
                     for sptitle in re.split("<.*?>", line)[2:]:
                         metatitle = metatitle + sptitle
-                    metatitle = metatitle.replace("&quot;", '"').replace(
-                        "&#8230;", "…").replace("&amp;", "&").replace("&#160;", " ").replace("&#8212;", "-")
+                    metatitle = metatitle.replace("&quot;", '"')
+                    metatitle = metatitle.replace("&#8230;", "…")
+                    metatitle = metatitle.replace("&amp;", "&")
+                    metatitle = metatitle.replace("&#160;", " ")
+                    metatitle = metatitle.replace("&#8212;", "-")
                     metatitle = metatitle.replace("''", '"')
 
                     if number == "/scp-4494":
                         metatitle = "The Specter、正義の戦士！"  # 敗北感
                     elif number == "/scp-1355-jp":  # 一文字づつ精査→*を\*にするのもありっちゃあり
-                        metatitle = "SCP-1355-JP - /\*Kingdom\*/"
+                        metatitle = r"SCP-1355-JP - /\*Kingdom\*/"
                     titles.append(metatitle)
 
                     brts.append(res_key)
 
         print("page:" + key + "のデータ取得が完了しました。")
 
-    df = pd.DataFrame(columns=['number', 'title', 'branches'])
+    df = pd.DataFrame(columns=['url', 'title', 'auther', 'branches'])
 
-    df['number'] = nums
+    df['url'] = nums
     df['title'] = titles
     df['branches'] = brts
     df.to_csv(masterpath + "/data/scps.csv", header=True, encoding="utf-8")
