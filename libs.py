@@ -57,7 +57,7 @@ def scp_number(msg):
         pass
 
     result = dictionary.query('branches in @brt')
-    result = result.query('number.str.contains(@number)', engine='python')
+    result = result.query('url.str.contains(@number)', engine='python')
     result = result[0:1].values.tolist()
     result = itertools.chain(*result)
     result = list(result)

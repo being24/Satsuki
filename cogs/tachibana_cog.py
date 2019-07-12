@@ -49,6 +49,8 @@ class Tachibana_Cog(commands.Cog):  # コグとして用いるクラスを定義
         else:
             await ctx.send('tale!')
 
+    # async def rand(self, ctx, num1: int, num2: typing.Optional[int] = 0):
+
 
 def setup(bot):  # Bot本体側からコグを読み込む際に呼び出される関数。
     bot.add_cog(Tachibana_Cog(bot))  # TestCogにBotを渡してインスタンス化し、Botにコグとして登録する。
