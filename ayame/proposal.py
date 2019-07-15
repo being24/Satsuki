@@ -68,6 +68,8 @@ def proposal():
 
 
 if __name__ == "__main__":
+    print("菖蒲:提言データベースの更新を開始します。")
+
     masterpath = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     proposal()
 

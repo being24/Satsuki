@@ -36,8 +36,8 @@ class MyBot(commands.Bot):
         logging.info('rebooted')
 
 
-def read_token():  # トークンを 'root/token.ini' から取得する
-    file = currentpath + "/token.ini"
+def read_token():  # トークンを 'root/token' から取得する
+    file = currentpath + "/token"
     try:
         for line in open(file, 'r'):
             temp = line.replace(" ", "").strip().split("=")

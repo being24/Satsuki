@@ -28,7 +28,7 @@ def get_country_from_code(brt):
             country = country.values.tolist()
             country = itertools.chain(*country)
             country = list(country)
-            return country[0] + "支部まだは存在しませんよ？"
+            return country[0] + "支部はまだは存在しませんよ？"
     else:
         return "国コードが正しくありません."
 

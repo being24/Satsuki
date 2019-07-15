@@ -200,6 +200,7 @@ def tales():
 
 
 if __name__ == "__main__":
+    print("菖蒲:taleデータベースの更新を更新します。")
     masterpath = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     tales()
 

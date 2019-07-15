@@ -20,7 +20,7 @@ target_url = {"en": "http://ja.scp-wiki.net/scp-ex",
               "it": "http://ja.scp-wiki.net/scp-it-ex",
               "ua": "http://ja.scp-wiki.net/scp-ua-ex",
               "pt": "http://ja.scp-wiki.net/scp-pt-ex",
-              # "uo": "http://ja.scp-wiki.net/explained-scp-series-unofficial"
+              "uo": "http://ja.scp-wiki.net/explained-scp-series-unofficial"
               }
 
 start_word = {"en": '<h1 id="toc0"><span>SCP-EXシリーズ</span></h1>',
@@ -167,6 +167,8 @@ def scips():
 
 
 if __name__ == "__main__":
+    print("菖蒲:解明済み事象のデータベースの更新を開始します。")
+
     masterpath = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     scips()
 
