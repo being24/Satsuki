@@ -37,5 +37,5 @@ https://discordpy.readthedocs.io/ja/latest/index.html#
 https://qiita.com/Lazialize/items/81f1430d9cd57fbd82fb
 https://cog-creators.github.io/discord-embed-sandbox/
 
-##スペシャルサンクス
+## スペシャルサンクス
 デバッグに協力してくれたサーバー犬小屋の皆
