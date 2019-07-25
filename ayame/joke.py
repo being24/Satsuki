@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+import html
 import os
 import re
 
@@ -94,6 +95,8 @@ def joke():
             if end_word[key] in line:
                 break
             if "<li>" in line:
+                line = html.unescape(line)
+
                 if "a href=" in line:
                     line = line.replace("http://ja.scp-wiki.net", "")
                     number = re.search("<a.*?href=.*?>", line)
@@ -141,11 +144,7 @@ def joke():
 
                     for sptitle in re.split("<.*?>", line)[2:]:
                         metatitle = metatitle + sptitle
-                    metatitle = metatitle.replace("&quot;", '"')
-                    metatitle = metatitle.replace("&#8230;", "…")
-                    metatitle = metatitle.replace("&amp;", "&")
-                    metatitle = metatitle.replace("&#160;", " ")
-                    metatitle = metatitle.replace("&#8212;", "-")
+
                     metatitle = metatitle.replace("''", '"')
 
                     titles.append(metatitle)

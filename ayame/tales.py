@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+import html
 import os
 import re
 
@@ -81,15 +82,6 @@ exclusion_list = ['#top',
                   ]
 
 
-def decode_html(line):
-    line = line.replace("&quot;", '"')
-    line = line.replace("&#8230;", "…")
-    line = line.replace("&amp;", "&")
-    line = line.replace("''", '"')
-
-    return line
-
-
 def tales():
     urls = []
     titles = []
@@ -118,6 +110,8 @@ def tales():
                 scp_lines.remove(line)
 
         for line in scp_lines[tales_start:]:
+            line = html.unescape(line)
+
             if end_word[key] in line:
                 break
 
@@ -158,23 +152,17 @@ def tales():
 
             else:
                 if "<td><a href=" in line:
-                    line = decode_html(line)
-
                     sp_line = re.split('[<>]', line)
                     url = sp_line[3].replace('"', "").replace("a href=", "")
                     title = sp_line[4]
 
                 elif '<td><a target="_blank" href="' in line:
-                    line = decode_html(line)
-
                     sp_line = re.split('[<>]', line)
                     url = sp_line[3].replace('"', "").replace(
                         'a target=_blank href=http://ja.scp-wiki.net', "")
                     title = sp_line[4]
 
                 elif '<li><a href="' in line:
-                    line = decode_html(line)
-
                     sp_line = re.split('[<>]', line)
                     url = sp_line[3].replace('"', "").replace("a href=", "")
                     title = sp_line[4]

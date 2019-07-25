@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+import html
 import os
 import re
 
@@ -63,8 +64,8 @@ end_word = {
 
 
 keys = ["jp0", "jp1", "en0", "en1", "en2", "en3", "en4", "ru1",
-        "ko0", "cn0", "cn1", "fr0", "pl0", "th0", "de0", "it0", "ua0",
-        "pt0", "es0", "uo0"]
+        "ko0", "cn0", "cn1", "fr0", "pl0", "th0", "de0", "it0",
+        "ua0", "pt0", "es0", "uo0"]
 
 
 def scips():
@@ -89,6 +90,7 @@ def scips():
             if end_word[res_key] in line:
                 break
             if "<li>" in line:
+                line = html.unescape(line)
                 if "a href=" in line:
                     line = line.replace("http://ja.scp-wiki.net", "")
                     number = re.search("<a.*?href=.*?>", line)
@@ -137,12 +139,6 @@ def scips():
 
                     for sptitle in re.split("<.*?>", line)[2:]:
                         metatitle = metatitle + sptitle
-                    metatitle = metatitle.replace("&quot;", '"')
-                    metatitle = metatitle.replace("&#8230;", "…")
-                    metatitle = metatitle.replace("&amp;", "&")
-                    metatitle = metatitle.replace("&#160;", " ")
-                    metatitle = metatitle.replace("&#8212;", "-")
-                    metatitle = metatitle.replace("''", '"')
 
                     if number == "/scp-4494":
                         metatitle = "The Specter、正義の戦士！"  # 敗北感

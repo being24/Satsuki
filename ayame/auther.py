@@ -4,6 +4,7 @@
 
 import os
 import re
+import html
 
 import pandas as pd
 import requests
@@ -43,6 +44,8 @@ def auther():
         title = ""
         url = ""
         image = ""
+
+        line = html.unescape(line)
 
         if end_word in line:
             break

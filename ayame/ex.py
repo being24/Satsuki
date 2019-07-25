@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+import html
 import os
 import re
 
@@ -91,6 +92,8 @@ def scips():
             if end_word[key] in line:
                 break
             if "<li>" in line:
+                line = html.unescape(line)
+
                 if "a href=" in line:
                     line = line.replace("http://ja.scp-wiki.net", "")
                     number = re.search("<a.*?href=.*?>", line)
@@ -139,17 +142,7 @@ def scips():
 
                     for sptitle in re.split("<.*?>", line)[2:]:
                         metatitle = metatitle + sptitle
-                    metatitle = metatitle.replace(
-                        "&quot;",
-                        '"').replace(
-                        "&#8230;",
-                        "…").replace(
-                        "&amp;",
-                        "&").replace(
-                        "&#160;",
-                        " ").replace(
-                        "&#8212;",
-                        "-")
+
                     metatitle = metatitle.replace("''", '"')
 
                     titles.append(metatitle)
