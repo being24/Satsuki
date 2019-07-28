@@ -91,6 +91,8 @@ def auther():
 
         elif '<td><a href="' in line:
             line = decode_html(line)
+            if 'http://ja.scp-wiki.net' in line:
+                line = line.replace('http://ja.scp-wiki.net', "")
             sp_line = re.split('[<>]', line)
             url = sp_line[3].replace("a href=", "").replace('"', "")
             title = sp_line[4].replace('"', "")
