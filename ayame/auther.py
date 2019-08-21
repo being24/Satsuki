@@ -24,7 +24,6 @@ def auther():
     start = lines.index(start_word)
     masterpath = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
     urls = []
     titles = []
     authers = []
