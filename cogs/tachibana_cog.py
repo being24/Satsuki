@@ -21,6 +21,7 @@ class Tachibana_Cog(commands.Cog):  # コグとして用いるクラスを定義
     async def ping(self, ctx):
         await ctx.send('pong!')
 
+    # サブコマンドがなかったらnumber検索、そうじゃなかったら検索にするか
     @commands.command()
     async def scp(self, ctx, *, num_brt):
         num_brt = num_brt.replace(" ", "")
@@ -33,23 +34,27 @@ class Tachibana_Cog(commands.Cog):  # コグとして用いるクラスを定義
 
     @scp.error
     async def scp_error(self, ctx, error):
-        await ctx.send(f'to <@277825292536512513> an error occurred\n{error}')
+        await ctx.send(f'to <@277825292536512513> at scp command\n{error}')
 
     # serchコマンド
-    @commands.group()
-    async def serch(self, ctx):
+    @commands.group(aliases=['src'])
+    async def search(self, ctx):
+        # これ弄ったら多分サブコマンドない時―で分岐できるからscpのほうがハカドル
         if ctx.invoked_subcommand is None:
-            await ctx.send('検索対象を指定してください？')
+            await ctx.send('検索対象を指定してください？')  # SCP,TALE,AUTHER,HUB???
 
-    # tale
-    @serch.command()
+    @search.command()
     async def tale(self, ctx, word: str):
-        if ctx.invoked_subcommand is None:
-            print("err")
-        else:
-            await ctx.send('tale!')
+        print(word)
+        await ctx.send('tale!')
+
+    @tale.error
+    async def tale_error(self, ctx, error):
+        await ctx.send(f'to <@277825292536512513> at src tale command\n{error}')
 
     # async def rand(self, ctx, num1: int, num2: typing.Optional[int] = 0):
+
+    # エラーキャッチ
 
 
 def setup(bot):  # Bot本体側からコグを読み込む際に呼び出される関数。
