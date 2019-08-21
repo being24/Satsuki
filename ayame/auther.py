@@ -22,6 +22,8 @@ def auther():
 
     lines = response.text.split("\n")
     start = lines.index(start_word)
+    masterpath = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 
     urls = []
     titles = []
@@ -113,7 +115,6 @@ def auther():
 
 
 if __name__ == "__main__":
-    masterpath = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     print("菖蒲:著者ページデータベースの更新を開始します。")
     auther()
 

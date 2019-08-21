@@ -74,6 +74,8 @@ def scips():
     titles = []
     brts = []
 
+    masterpath = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
     for key in keys:
         response = requests.get(target_url[key])
         if response.status_code is not requests.codes.ok:
@@ -161,7 +163,6 @@ def scips():
 
 if __name__ == "__main__":
     print("菖蒲:報告書データベースの更新を開始します。")
-    masterpath = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     scips()
 
     print("菖蒲:報告書データベースの更新、完了しました。")

@@ -92,6 +92,8 @@ def tales():
     title = ""
     url = ""
 
+    masterpath = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
     for key in keys:
         response = requests.get(target_url[key])
         if response.status_code is not requests.codes.ok:
@@ -189,7 +191,6 @@ def tales():
 
 if __name__ == "__main__":
     print("菖蒲:taleデータベースの更新を更新します。")
-    masterpath = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     tales()
 
     print("菖蒲:taleデータベースの更新、完了しました。")

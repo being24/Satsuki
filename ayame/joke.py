@@ -79,6 +79,8 @@ def joke():
     titles = []
     brts = []
 
+    masterpath = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
     for key in keys:
         response = requests.get(target_url[key])
         if response.status_code is not requests.codes.ok:
@@ -164,7 +166,6 @@ def joke():
 if __name__ == "__main__":
     print("菖蒲:jokeデータベースの更新を開始します。")
 
-    masterpath = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     joke()
 
     print("菖蒲:jokeデータベースの更新、完了しました。")

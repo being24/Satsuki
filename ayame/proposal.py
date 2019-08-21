@@ -20,6 +20,8 @@ def proposal():
     titles = []
     brts = []
 
+    masterpath = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
     for url in target_url:
         if "jp" in url:
             brt = "jp"
@@ -69,7 +71,6 @@ def proposal():
 if __name__ == "__main__":
     print("菖蒲:提言データベースの更新を開始します。")
 
-    masterpath = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     proposal()
 
     print("菖蒲:提言データベースの更新、完了しました。")
