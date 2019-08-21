@@ -2,27 +2,17 @@
 # coding: utf-8
 
 
+import html
 import os
 import re
-import html
 
 import pandas as pd
 import requests
 from prettyprinter import cpprint
 
-
 target_url = "http://ja.scp-wiki.net/members-pages-jp"
 start_word = '<h2 id="toc0"><span>管理者</span></h2>'
 end_word = '<h2><span>著者ページへの参加条件</span></h2>'
-
-
-def decode_html(line):
-    line = line.replace("&quot;", '"')
-    line = line.replace("&#8230;", "…")
-    line = line.replace("&amp;", "&")
-    line = line.replace("''", '"')
-
-    return line
 
 
 def auther():
@@ -50,7 +40,7 @@ def auther():
         if end_word in line:
             break
         elif '<td><span class="printuser avatarhover">' in line:
-            line = decode_html(line)
+
             sp_line = re.split('[<>]', line)
             sp_line[7] = sp_line[7].replace(
                 'img class="small" src="', "").split()[0]
@@ -60,14 +50,14 @@ def auther():
             images.append(image)
 
         elif '<td><span class="error-inline"><em>' in line:
-            line = decode_html(line)
+
             sp_line = re.split('[<>]', line)
             auther = sp_line[6]
             authers.append(auther)
             images.append(image)
 
         elif '<td><span' in line:
-            line = decode_html(line)
+
             sp_line = re.split('[<>]', line)
             url = sp_line[7].replace("a href=", "").replace('"', "")
             title = "~~" + sp_line[4] + "~~" + sp_line[8]
@@ -76,7 +66,7 @@ def auther():
             brts.append("jp")
 
         elif '<td><a style' in line:
-            line = decode_html(line)
+
             sp_line = re.split('[<>]', line)
             url = sp_line[3][sp_line[3].find("/author"):].replace('"', '')
 
@@ -90,7 +80,7 @@ def auther():
             brts.append("jp")
 
         elif '<td><a href="' in line:
-            line = decode_html(line)
+
             if 'http://ja.scp-wiki.net' in line:
                 line = line.replace('http://ja.scp-wiki.net', "")
             sp_line = re.split('[<>]', line)
@@ -101,7 +91,7 @@ def auther():
             brts.append("jp")
 
         elif 'No memberPage' in line:
-            line = decode_html(line)
+
             sp_line = re.split('[<>]', line)
             title = sp_line[2]
             urls.append("")
