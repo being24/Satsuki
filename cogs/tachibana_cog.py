@@ -10,6 +10,8 @@ from discord.ext import commands  # Bot Commands Frameworkのインポート
 import libs as lib
 
 SCP_JP = "http://ja.scp-wiki.net"
+BRANCHS = ['jp', 'en', 'ru', 'ko', 'es', 'cn',
+           'fr', 'pl', 'th', 'de', 'it', 'ua', 'pt', 'uo']
 
 
 class Tachibana_Cog(commands.Cog):  # コグとして用いるクラスを定義。
@@ -44,9 +46,11 @@ class Tachibana_Cog(commands.Cog):  # コグとして用いるクラスを定義
             await ctx.send('検索対象を指定してください？')  # SCP,TALE,AUTHER,HUB???
 
     @search.command()
-    async def tale(self, ctx, word: str):
-        print(word)
-        await ctx.send('tale!')
+    async def tale(self, ctx, brt: str, word: str):
+        if brt not in BRANCHS:
+            brt = "*"
+        reply = lib.src("tale", brt, word)
+        await ctx.send(reply)
 
     @tale.error
     async def tale_error(self, ctx, error):

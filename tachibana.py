@@ -66,5 +66,5 @@ if __name__ == '__main__':
     root_logger.addHandler(handler)
 
     # コマンドの最初の文字として'/'をcommand_prefixとする。
-    bot = MyBot(command_prefix='/')
+    bot = MyBot(command_prefix='.')
     bot.run(token)  # Botのトークン
