@@ -69,3 +69,18 @@ def scp_number(msg):
             return("scp-" + str(number) + "-" + str(brt) + "はまだ存在しません")
 
     return(result)
+
+
+def src(category, brt, msg):
+    try:
+        dictionary = pd.read_csv(
+            currentpath + f"/data/{category}.csv", index_col=0
+        )
+    except FileNotFoundError:
+        print(e)
+
+    result = dictionary.query('branches in @brt')
+    result = result.query('url.str.contains(@msg)', engine='python')
+
+    print(result)
+    return result
