@@ -71,7 +71,7 @@ keys = [
 
 exclusion_list = ['#top',
                   'http://ja.scp-wiki.net/forum/t-6047066/',
-                  '<td><a href="/scp',
+                  #'<td><a href="/scp',
                   '<td><a href="/1600con17"',
                   '<td><a href="/warucontest">',
                   '<td><a href="/author:',
@@ -149,7 +149,34 @@ def tales():
                               len('<p><span class="error-inline"><em>'): -
                               len('</em> does not match any existing user name</span></p>')]
 
-            elif any([s for s in exclusion_list if line in s]):
+            elif '<td><a href="#top">' in line:  # ここダメ
+                pass
+
+            elif 'http://ja.scp-wiki.net/forum/t-6047066/' in line:
+                pass
+
+            elif '<td><a href="/scp' in line:
+                pass
+
+            elif '<td><a href="/1600con17"' in line:
+                pass
+
+            elif '<td><a href="/warucontest">' in line:
+                pass
+
+            elif '<td><a href="/author:' in line:
+                pass
+
+            elif '<td><a href="/venture-contest-2018' in line:
+                pass
+
+            elif '<td><a href="/lily-s-proposal">' in line:
+                pass
+
+            elif '<td><a href="/newface-contest-hub' in line:
+                pass
+
+            elif '<td><a href="/personnel-the-origin-hub' in line:
                 pass
 
             else:
@@ -171,6 +198,9 @@ def tales():
 
                 else:
                     continue
+
+                if 'http://ja.scp-wiki.net/' in url:
+                    url = url.replace("http://ja.scp-wiki.net", '')
 
                 urls.append(url)
                 titles.append(title)
