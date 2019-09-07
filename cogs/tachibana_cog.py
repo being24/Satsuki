@@ -60,6 +60,10 @@ class Tachibana_Cog(commands.Cog):  # コグとして用いるクラスを定義
 
     # エラーキャッチ
 
+    @commands.Cog.listener()
+    async def on_message(self, message):
+        print(message.content)
+
 
 def setup(bot):  # Bot本体側からコグを読み込む際に呼び出される関数。
     bot.add_cog(Tachibana_Cog(bot))  # TestCogにBotを渡してインスタンス化し、Botにコグとして登録する。
