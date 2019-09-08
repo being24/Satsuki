@@ -72,15 +72,28 @@ def scp_number(msg):
 
 
 def src(category, brt, msg):
+    result = pd.DataFrame(columns=['url', 'title', 'auther', 'branches'])
+
     try:
-        result = pd.read_csv(
+        dictionary = pd.read_csv(
             currentpath + f"/data/{category}.csv", index_col=0
         )
     except FileNotFoundError:
         print(e)
     if brt is not "*":
-        result = result.query('branches in @brt')
-    result = result.query('url.str.contains(@msg)', engine='python')
+        dictionary = dictionary.query('branches in @brt')
 
-    print(result, brt)
+    dictionary_url = dictionary.query(
+        'url.str.contains(@msg)', engine='python')
+
+    dictionary_title = dictionary.query(
+        'title.str.contains(@msg)', engine='python')
+
+    dictionary_auther = dictionary.query(
+        'auther.str.contains(@msg)', engine='python')
+
+    result = pd.concat([dictionary_url, dictionary_title, dictionary_auther])
+
+    print(result)
+
     return result
