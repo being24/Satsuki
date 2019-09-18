@@ -19,8 +19,8 @@ def get_country_from_code(brt):
             dictionary = pd.read_csv(
                 currentpath + "/data/ISO3166-1.CSV"
             )
-        except FileNotFoundError:
-            pass
+        except FileNotFoundError as e:
+            print(e)
         country = dictionary.query('二字 == @brt')
         if country.empty:
             return "該当する国コードは存在しません"
@@ -53,8 +53,8 @@ def scp_number(msg):
         dictionary = pd.read_csv(
             currentpath + "/data/scps.csv", index_col=0
         )
-    except FileNotFoundError:
-        pass
+    except FileNotFoundError as e:
+        print(e)
 
     result = dictionary.query('branches in @brt')
     result = result.query('url.str.contains(@number)', engine='python')
@@ -78,7 +78,7 @@ def src(category, brt, msg):
         dictionary = pd.read_csv(
             currentpath + f"/data/{category}.csv", index_col=0
         )
-    except FileNotFoundError:
+    except FileNotFoundError as e:
         print(e)
     if brt is not "*":
         dictionary = dictionary.query('branches in @brt')
