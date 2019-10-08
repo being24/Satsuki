@@ -11,7 +11,7 @@ from discord.ext import commands
 
 
 INITIAL_COGS = [
-    'cogs.tachibana_cog'
+    'cogs.scp_cog', 'cogs.common_cog', 'cogs.tale_cog'
 ]
 
 
@@ -34,6 +34,7 @@ class MyBot(commands.Bot):
         print(self.user.id)
         print('------')
         logging.info('rebooted')
+        await bot.change_presence(activity=discord.Game(name='debuging'))
 
 
 def read_token():  # トークンを 'root/token' から取得する
@@ -66,5 +67,5 @@ if __name__ == '__main__':
     root_logger.addHandler(handler)
 
     # コマンドの最初の文字として'/'をcommand_prefixとする。
-    bot = MyBot(command_prefix='.')
+    bot = MyBot(command_prefix='!')
     bot.run(token)  # Botのトークン
