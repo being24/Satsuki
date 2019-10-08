@@ -18,20 +18,35 @@ class Tachibana_Tale(commands.Cog):  # コグとして用いるクラスを定�
 
     def __init__(self, bot):  # TestCogクラスのコンストラクタ。Botを受取り、インスタンス変数として保持。
         self.bot = bot
+        self.URL = "http://ja.scp-wiki.net"
 
     # serchコマンド
     @commands.group(aliases=['src'])
     async def search(self, ctx):
         # これ弄ったら多分サブコマンドない時―で分岐できるからscpのほうがハカドル
         if ctx.invoked_subcommand is None:
-            await ctx.send('検索対象を指定してください？')  # SCP,TALE,AUTHER,HUB???
+            await ctx.send('検索対象を指定してください')  # SCP,TALE,AUTHER,HUB???
 
     @search.command()
     async def tale(self, ctx, brt: str, word: str):
         if brt not in BRANCHS:
             brt = "*"
         reply = lib.src("tale", brt, word)
-        await ctx.send(reply)
+
+        embed = discord.Embed(
+            title="TALE検索結果",
+            description=f"検索ワード'{word}'にヒットしたTaleは{len(reply)}件です。",
+            color=0xff8000)
+
+        for line in reply.itertuples():
+            print(line)
+            embed.add_field(
+                name=line[2],
+                value= self.URL + line[1] + "\nAuthor : " + line[3],
+                inline=False)
+
+        embed.set_footer(text="タイトル、URL、著者名から検索しています。")
+        await ctx.send(embed=embed)
 
     @tale.error
     async def tale_error(self, ctx, error):
