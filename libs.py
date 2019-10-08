@@ -79,6 +79,7 @@ def src(category, brt, msg):
             index_col=0)
     except FileNotFoundError as e:
         print(e)
+
     if brt is not "*":
         dictionary = dictionary.query('branches in @brt')
 
@@ -93,7 +94,5 @@ def src(category, brt, msg):
 
     result = pd.concat([dictionary_url, dictionary_title, dictionary_auther])
     result = result.drop_duplicates()
-
-    print(result)
 
     return result
