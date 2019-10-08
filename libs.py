@@ -50,9 +50,7 @@ def scp_number(msg):
         return reply
 
     try:
-        dictionary = pd.read_csv(
-            currentpath + "/data/scps.csv", index_col=0
-        )
+        dictionary = pd.read_csv(currentpath + "/data/scps.csv", index_col=0)
     except FileNotFoundError as e:
         print(e)
 
@@ -76,8 +74,9 @@ def src(category, brt, msg):
 
     try:
         dictionary = pd.read_csv(
-            currentpath + f"/data/{category}.csv", index_col=0
-        )
+            currentpath +
+            f"/data/{category}.csv",
+            index_col=0)
     except FileNotFoundError as e:
         print(e)
     if brt is not "*":
@@ -93,6 +92,7 @@ def src(category, brt, msg):
         'auther.str.contains(@msg)', engine='python')
 
     result = pd.concat([dictionary_url, dictionary_title, dictionary_auther])
+    result = result.drop_duplicates()
 
     print(result)
 
