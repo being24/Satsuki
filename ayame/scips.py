@@ -28,6 +28,7 @@ target_url = {"jp0": "http://ja.scp-wiki.net/scp-series-jp",
               "it0": "http://ja.scp-wiki.net/scp-series-it",
               "ua0": "http://ja.scp-wiki.net/scp-series-ua",
               "pt0": "http://ja.scp-wiki.net/scp-series-pt",
+              "cs0": "http://ja.scp-wiki.net/scp-series-cs",
               "uo0": "http://ja.scp-wiki.net/scp-series-unofficial"
               }
 
@@ -45,10 +46,11 @@ start_word = {
     "it": '<h1 id="toc1"><span>SCP-IT一覧 <a name="list"></a></span></h1>',
     "ua": '<h1 id="toc1"><span>SCP-UA一覧 <a name="list"></a></span></h1>',
     "pt": '<h1 id="toc1"><span>SCP-PT一覧 <a name="list"></a></span></h1>',
+    "cs": '<h1 id="toc1"><span>SCP-CS一覧 <a name="list"></a></span></h1>',
     "uo": '<h1 id="toc1"><span>SCP一覧 <a name="list"></a></span></h1>'}
 
 end_word = {
-    "jp": '<li><a href="/joke-scps-jp">Joke SCP-JP</a>',
+    "jp": '</div>',
     "en": '<li><a href="/joke-scps">Joke SCPs</a>',
     "ru": '<li><a href="/joke-scps-ru">Joke SCP-RU</a>',
     "ko": '<li><a href="/joke-scps-ko">Joke SCP-KO</a>',
@@ -61,12 +63,13 @@ end_word = {
     "it": '<li><a class="newpage" href="/joke-scps-it">Joke SCP-IT</a>',
     "ua": '<li><a class="newpage" href="/joke-scps-ua">Joke SCP-UA</a>',
     "pt": '<li><a href="/joke-scps-pt">Joke SCP-PT</a>',
+    "cs": '</div>',
     "uo": '<li><a href="/joke-scp-series-unofficial">Joke SCP</a>'}
 
 
 keys = ["jp0", "jp1", "en0", "en1", "en2", "en3", "en4", "ru1",
         "ko0", "cn0", "cn1", "fr0", "pl0", "th0", "de0", "it0",
-        "ua0", "pt0", "es0", "uo0"]
+        "ua0", "pt0", "es0", "cs0", "uo0"]
 
 
 def scips():
@@ -94,7 +97,7 @@ def scips():
                 break
             if "<li>" in line:
                 line = html.unescape(line)
-                if "a href=" in line:
+                if "href=" in line:
                     line = line.replace("http://ja.scp-wiki.net", "")
                     number = re.search("<a.*?href=.*?>", line)
                 # print(number.group())  # debug
