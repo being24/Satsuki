@@ -69,19 +69,19 @@ def scp_number(msg):
     return(result)
 
 
-def src(category, brt, msg):
+def src_tale(msg):
     result = pd.DataFrame(columns=['url', 'title', 'auther', 'branches'])
 
     try:
         dictionary = pd.read_csv(
             currentpath +
-            f"/data/{category}.csv",
+            f"/data/tale.csv",
             index_col=0)
     except FileNotFoundError as e:
         print(e)
 
-    if brt is not "*":
-        dictionary = dictionary.query('branches in @brt')
+    '''if brt is not "*":
+        dictionary = dictionary.query('branches in @brt')'''
 
     dictionary_url = dictionary.query(
         'url.str.contains(@msg)', engine='python')
@@ -93,6 +93,52 @@ def src(category, brt, msg):
         'auther.str.contains(@msg)', engine='python')
 
     result = pd.concat([dictionary_url, dictionary_title, dictionary_auther])
+    result = result.drop_duplicates()
+
+    return result
+
+
+def src_proposal(msg):
+    result = pd.DataFrame(columns=['url', 'title', 'auther', 'branches'])
+
+    try:
+        dictionary = pd.read_csv(
+            currentpath +
+            f"/data/proposal.csv",
+            index_col=0)
+    except FileNotFoundError as e:
+        print(e)
+
+    dictionary_url = dictionary.query(
+        'url.str.contains(@msg)', engine='python')
+
+    dictionary_title = dictionary.query(
+        'title.str.contains(@msg)', engine='python')
+
+    result = pd.concat([dictionary_url, dictionary_title])
+    result = result.drop_duplicates()
+
+    return result
+
+
+def src_joke(msg):
+    result = pd.DataFrame(columns=['url', 'title', 'auther', 'branches'])
+
+    try:
+        dictionary = pd.read_csv(
+            currentpath +
+            f"/data/joke.csv",
+            index_col=0)
+    except FileNotFoundError as e:
+        print(e)
+
+    dictionary_url = dictionary.query(
+        'url.str.contains(@msg)', engine='python')
+
+    dictionary_title = dictionary.query(
+        'title.str.contains(@msg)', engine='python')
+
+    result = pd.concat([dictionary_url, dictionary_title])
     result = result.drop_duplicates()
 
     return result
