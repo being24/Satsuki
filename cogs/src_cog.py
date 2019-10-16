@@ -111,8 +111,6 @@ class Tachibana_Tale(commands.Cog):  # コグとして用いるクラスを定�
     async def joke_error(self, ctx, error):
         await ctx.send(f'to <@277825292536512513> at joke command\n{error}')
 
-    # async def rand(self, ctx, num1: int, num2: typing.Optional[int] = 0):
-
 
 def setup(bot):  # Bot本体側からコグを読み込む際に呼び出される関数。
     bot.add_cog(Tachibana_Tale(bot))  # TestCogにBotを渡してインスタンス化し、Botにコグとして登録する。
