@@ -2,19 +2,23 @@
 # -*- coding: utf-8 -*-
 
 
+import itertools
+import os
 import random
 import typing
 from datetime import datetime, timedelta
 
 import discord
+import pandas as pd
 import requests
 from bs4 import BeautifulSoup
 from discord.ext import commands  # Bot Commands Frameworkのインポート
+from pytz import timezone
 
 import libs as lib
 
 SCP_JP = "http://ja.scp-wiki.net"
-BRANCHS = ['jp', 'en', 'ru', 'ko', 'es', 'cn',
+BRANCHS = ['jp', 'en', 'ru', 'ko', 'es', 'cn', 'cs',
            'fr', 'pl', 'th', 'de', 'it', 'ua', 'pt', 'uo']
 
 
@@ -23,6 +27,9 @@ class Tachibana_Com(commands.Cog):  # コグとして用いるクラスを定義
     def __init__(self, bot):  # TestCogクラスのコンストラクタ。Botを受取り、インスタンス変数として保持。
         self.bot = bot
         self.SCP_JP = "http://ja.scp-wiki.net"
+        self.master_path = os.path.dirname(
+            os.path.dirname(os.path.abspath(__file__)))
+
 
     @commands.command()  # コマンドの作成。コマンドはcommandデコレータで必ず修飾する。
     async def ping(self, ctx):
@@ -127,7 +134,42 @@ class Tachibana_Com(commands.Cog):  # コグとして用いるクラスを定義
             print(type(error))
             await ctx.send(f'to <@277825292536512513> at dice command\n{error}')
 
-    # エラーキャッチ
+    @commands.command(aliases=['lu'])
+    async def last_updated(self, ctx):
+        last_update_utime = os.path.getmtime(
+            self.master_path + "/data/scps.csv")
+        last_update_UTC_nv = datetime.fromtimestamp(int(last_update_utime))
+        last_update_JST = timezone('Asia/Tokyo').localize(last_update_UTC_nv)
+        await ctx.send("データベースの最終更新日時は" + str(last_update_JST) + "です")
+
+    @last_updated.error
+    async def last_updated_error(self, ctx, error):
+        await ctx.send(f'to <@277825292536512513> at last_updated command\n{error}')
+
+    @commands.command()
+    async def rand(self, ctx, brt: typing.Optional[str] = 'all'):
+        try:
+            result = pd.read_csv(self.master_path + "/data/scps.csv", index_col=0)
+        except FileNotFoundError as e:
+            print(e)
+
+        if brt in BRANCHS:
+            result = result.query('branches in @brt')
+
+        result = result.sample()
+
+        result = result[0:1].values.tolist()
+        result = itertools.chain(*result)
+        result = list(result)
+
+        await ctx.send(result[1] + "\n" + SCP_JP + result[0])
+
+
+    @rand.error
+    async def rand_error(self, ctx, error):
+        await ctx.send(f'to <@277825292536512513> at rand command\n{error}')
+
+        # エラーキャッチ
     @commands.Cog.listener()
     async def on_command_error(self, ctx, message):
         print(message)
