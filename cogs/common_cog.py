@@ -30,7 +30,6 @@ class Tachibana_Com(commands.Cog):  # コグとして用いるクラスを定義
         self.master_path = os.path.dirname(
             os.path.dirname(os.path.abspath(__file__)))
 
-
     @commands.command()  # コマンドの作成。コマンドはcommandデコレータで必ず修飾する。
     async def ping(self, ctx):
         await ctx.send('pong!')
@@ -40,7 +39,7 @@ class Tachibana_Com(commands.Cog):  # コグとして用いるクラスを定義
         target_url = 'http://njr-sys.net/irc/draftReserve/'
 
         d_today = (datetime.now() + timedelta(hours=-3)).date()
-        # d_today = '2019-10-12'
+        d_today = '2019-10-12'
         response = requests.get(target_url + str(d_today))
 
         soup = BeautifulSoup(response.text, 'lxml')
@@ -59,19 +58,18 @@ class Tachibana_Com(commands.Cog):  # コグとして用いるクラスを定義
                     f'{d_today}-{detail.string.replace(" ", "")}',
                     '%Y-%m-%d-%H:%M:%S')
                 if time_object < limen_object:
-                    flag = 1
-                else:
                     flag = 0
+                else:
+                    flag = 1
                     time.append(detail.string.replace(" ", ""))
-            elif i % 4 == 1:
-                if flag == 0:
-                    author.append(detail.string.replace(" ", ""))
-            elif i % 4 == 2:
-                if flag == 0:
-                    title.append(detail.string.replace(" ", ""))
+            elif i % 4 * flag == 1:
+                author.append(detail.string.replace(" ", ""))
+            elif i % 4 * flag == 2:
+                title.append(detail.string.replace(" ", ""))
+            elif i % 4 * flag == 3:
+                url.append(detail.a.get("href"))
             else:
-                if flag == 0:
-                    url.append(detail.a.get("href"))
+                pass
 
         if len(url) == 0:
             await ctx.send("本日の予約はありません")
@@ -85,10 +83,10 @@ class Tachibana_Com(commands.Cog):  # コグとして用いるクラスを定義
         for i in range(len(author)):
             embed.add_field(
                 name=author[i],
-                value=f"予約時間:{time[i]}\n{title[i]}\n{url[i]}",
+                value=f'[{title[i]}]({url[i]})\tat: {time[i]}',
                 inline=False)
 
-        embed.set_footer(text=f"受付開始時間外の予約は無効です")
+        embed.set_footer(text=f"受付時間外の予約は無効です")
         await ctx.send(embed=embed)
 
     @draft.error
@@ -114,9 +112,7 @@ class Tachibana_Com(commands.Cog):  # コグとして用いるクラスを定義
 
     @commands.command()
     async def dice(self, ctx, num1: int, num2: typing.Optional[int] = 0):
-        nums = [num1, num2]
-
-        nums.sort()
+        nums = sorted([num1, num2])
 
         if int(nums[1]) > 10000:
             await ctx.send("入力値が大きすぎです")
@@ -149,7 +145,10 @@ class Tachibana_Com(commands.Cog):  # コグとして用いるクラスを定義
     @commands.command()
     async def rand(self, ctx, brt: typing.Optional[str] = 'all'):
         try:
-            result = pd.read_csv(self.master_path + "/data/scps.csv", index_col=0)
+            result = pd.read_csv(
+                self.master_path +
+                "/data/scps.csv",
+                index_col=0)
         except FileNotFoundError as e:
             print(e)
 
@@ -163,7 +162,6 @@ class Tachibana_Com(commands.Cog):  # コグとして用いるクラスを定義
         result = list(result)
 
         await ctx.send(result[1] + "\n" + SCP_JP + result[0])
-
 
     @rand.error
     async def rand_error(self, ctx, error):
