@@ -70,7 +70,7 @@ def scp_number(msg):
 
 
 def src_tale(msg):
-    result = pd.DataFrame(columns=['url', 'title', 'auther', 'branches'])
+    result = pd.DataFrame(columns=['url', 'title', 'author', 'branches'])
 
     try:
         dictionary = pd.read_csv(
@@ -89,17 +89,17 @@ def src_tale(msg):
     dictionary_title = dictionary.query(
         'title.str.contains(@msg)', engine='python')
 
-    dictionary_auther = dictionary.query(
-        'auther.str.contains(@msg)', engine='python')
+    dictionary_author = dictionary.query(
+        'author.str.contains(@msg)', engine='python')
 
-    result = pd.concat([dictionary_url, dictionary_title, dictionary_auther])
+    result = pd.concat([dictionary_url, dictionary_title, dictionary_author])
     result = result.drop_duplicates()
 
     return result
 
 
 def src_proposal(msg):
-    result = pd.DataFrame(columns=['url', 'title', 'auther', 'branches'])
+    result = pd.DataFrame(columns=['url', 'title', 'author', 'branches'])
 
     try:
         dictionary = pd.read_csv(
@@ -122,12 +122,87 @@ def src_proposal(msg):
 
 
 def src_joke(msg):
-    result = pd.DataFrame(columns=['url', 'title', 'auther', 'branches'])
+    result = pd.DataFrame(columns=['url', 'title', 'author', 'branches'])
 
     try:
         dictionary = pd.read_csv(
             currentpath +
             f"/data/joke.csv",
+            index_col=0)
+    except FileNotFoundError as e:
+        print(e)
+
+    dictionary_url = dictionary.query(
+        'url.str.contains(@msg)', engine='python')
+
+    dictionary_title = dictionary.query(
+        'title.str.contains(@msg)', engine='python')
+
+    result = pd.concat([dictionary_url, dictionary_title])
+    result = result.drop_duplicates()
+
+    return result
+
+
+def src_guide(msg):
+    result = pd.DataFrame(columns=['url', 'title', 'description'])
+
+    try:
+        dictionary = pd.read_csv(
+            currentpath +
+            f"/data/guide_hub.csv",
+            index_col=0)
+    except FileNotFoundError as e:
+        print(e)
+
+    dictionary_url = dictionary.query(
+        'url.str.contains(@msg)', engine='python')
+
+    dictionary_title = dictionary.query(
+        'title.str.contains(@msg)', engine='python')
+
+    result = pd.concat([dictionary_url, dictionary_title])
+    result = result.drop_duplicates()
+
+    return result
+
+
+def src_author(msg):
+    result = pd.DataFrame(
+        columns=[
+            'url',
+            'title',
+            'author',
+            'branches',
+            'image'])
+
+    try:
+        dictionary = pd.read_csv(
+            currentpath +
+            f"/data/author.csv",
+            index_col=0)
+    except FileNotFoundError as e:
+        print(e)
+
+    dictionary_author = dictionary.query(
+        'author.str.contains(@msg)', engine='python')
+
+    dictionary_title = dictionary.query(
+        'title.str.contains(@msg)', engine='python')
+
+    result = pd.concat([dictionary_author, dictionary_title])
+    result = result.drop_duplicates()
+
+    return result
+
+
+def src_explained(msg):
+    result = pd.DataFrame(columns=['url', 'title', 'author', 'branches'])
+
+    try:
+        dictionary = pd.read_csv(
+            currentpath +
+            f"/data/exs.csv",
             index_col=0)
     except FileNotFoundError as e:
         print(e)
