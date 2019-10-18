@@ -108,7 +108,10 @@ class Tachibana_Com(commands.Cog):  # コグとして用いるクラスを定義
 
     @url.error
     async def url_error(self, ctx, error):
-        await ctx.send(f'to <@277825292536512513> at url command\n{error}')
+        if discord.ext.commands.errors.BadArgument:
+            await ctx.send('入力値が不正です')
+        else:
+            await ctx.send(f'to <@277825292536512513> at url command\n{error}')
 
     @commands.command()
     async def dice(self, ctx, num1: int, num2: typing.Optional[int] = 0):

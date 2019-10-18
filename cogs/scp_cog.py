@@ -32,7 +32,10 @@ class Tachibana_SCP(commands.Cog):  # コグとして用いるクラスを定義
 
     @scp.error
     async def scp_error(self, ctx, error):
-        await ctx.send(f'to <@277825292536512513> at scp command\n{error}')
+        if discord.ext.commands.errors.BadArgument:
+            await ctx.send('入力値が不正です')
+        else:
+            await ctx.send(f'to <@277825292536512513> at scp command\n{error}')
 
 
 def setup(bot):  # Bot本体側からコグを読み込む際に呼び出される関数。

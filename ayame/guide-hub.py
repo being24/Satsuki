@@ -61,6 +61,7 @@ def guide_hub():
 
     df.to_csv(masterpath + "/data/guide_hub.csv", header=True, encoding="utf-8")
 
+
 if __name__ == "__main__":
     print("菖蒲:ガイドハブデータベースの更新を開始します。")
 
