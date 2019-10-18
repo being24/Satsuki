@@ -154,7 +154,7 @@ def joke():
 
         print("page:" + key + "のデータ取得が完了しました。")
 
-    df = pd.DataFrame(columns=['url', 'title', 'auther', 'branches'])
+    df = pd.DataFrame(columns=['url', 'title', 'author', 'branches'])
 
     df['url'] = nums
     df['title'] = titles

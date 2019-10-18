@@ -31,7 +31,7 @@ def auther():
     images = []
 
     for line in lines[start:]:
-        auther = ""
+        author = ""
         title = ""
         url = ""
         image = ""
@@ -102,15 +102,15 @@ def auther():
         else:
             continue
 
-    df = pd.DataFrame(columns=['url', 'title', 'auther', 'branches', 'images'])
+    df = pd.DataFrame(columns=['url', 'title', 'author', 'branches', 'image'])
 
     df['url'] = urls
     df['title'] = titles
-    df['auther'] = authers
+    df['author'] = authers
     df['branches'] = brts
-    df['images'] = images
+    df['image'] = images
 
-    df.to_csv(masterpath + "/data/auther.csv", header=True, encoding="utf-8")
+    df.to_csv(masterpath + "/data/author.csv", header=True, encoding="utf-8")
 
 
 if __name__ == "__main__":

@@ -85,10 +85,10 @@ exclusion_list = ['#top',
 def tales():
     urls = []
     titles = []
-    authers = []
+    authors = []
     brts = []
 
-    auther = ""
+    author = ""
     title = ""
     url = ""
 
@@ -117,39 +117,39 @@ def tales():
             if end_word[key] in line:
                 break
 
-            # auther start
+            # author start
             elif '<th style="font-size:125%"' in line:
-                auther = re.search('alt=".*?"', line)
-                if auther is not None:
-                    auther = auther.group()[5:-1]
+                author = re.search('alt=".*?"', line)
+                if author is not None:
+                    author = author.group()[5:-1]
 
-                if auther is None:
-                    auther = re.search("<strong>.*?</strong>", line)
-                    if auther is not None:
-                        auther = auther.group()[8:-9]
+                if author is None:
+                    author = re.search("<strong>.*?</strong>", line)
+                    if author is not None:
+                        author = author.group()[8:-9]
 
-                if auther is None:
-                    auther = re.search("<em>.*?</em>", line)
-                    if auther is not None:
-                        auther = auther.group()[4:-5]
+                if author is None:
+                    author = re.search("<em>.*?</em>", line)
+                    if author is not None:
+                        author = author.group()[4:-5]
 
-                if auther is None:
-                    auther = "Unknown pattern of auther"
+                if author is None:
+                    author = "Unknown pattern of author"
 
             elif '<p><strong>' in line:
-                auther = line.replace("<p><strong>", "")
-                auther = auther.replace("</strong></p>", "")
+                author = line.replace("<p><strong>", "")
+                author = author.replace("</strong></p>", "")
 
             elif '<p><span class="printuser">' in line:
-                auther = line[line.find(
+                author = line[line.find(
                     'return false;">') + len('return false;">'):]
-                auther = auther.replace("</a></span></p>", "")
+                author = author.replace("</a></span></p>", "")
 
             elif '<p><span class="error-inline">' in line:
-                auther = line[line.find('<p><span class="error-inline"><em>') +
+                author = line[line.find('<p><span class="error-inline"><em>') +
                               len('<p><span class="error-inline"><em>'): -
                               len('</em> does not match any existing user name</span></p>')]
-            # auther end
+            # author end
 
             # url,title start
             elif any([s for s in exclusion_list if s in line]):
@@ -183,16 +183,16 @@ def tales():
 
                 urls.append(url)
                 titles.append(title)
-                authers.append(auther)
+                authors.append(author)
                 brts.append(key)
 
         print("page:" + key + "のデータ取得が完了しました。")
 
-    df = pd.DataFrame(columns=['url', 'title', 'auther', 'branches'])
+    df = pd.DataFrame(columns=['url', 'title', 'author', 'branches'])
 
     df['url'] = urls
     df['title'] = titles
-    df['auther'] = authers
+    df['author'] = authors
     df['branches'] = brts
 
     df.to_csv(masterpath + "/data/tale.csv", header=True, encoding="utf-8")

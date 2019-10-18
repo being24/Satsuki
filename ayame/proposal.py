@@ -58,7 +58,7 @@ def proposal():
                 titles.append(title)
             brts.append(brt)
 
-    df = pd.DataFrame(columns=['url', 'title', 'auther', 'branches'])
+    df = pd.DataFrame(columns=['url', 'title', 'author', 'branches'])
 
     df['url'] = urls
     df['title'] = titles
