@@ -175,6 +175,16 @@ class Tachibana_Com(commands.Cog):  # コグとして用いるクラスを定義
     async def on_command_error(self, ctx, message):
         print(message)
 
+    @commands.Cog.listener()
+    async def on_message(self, ctx):
+        if ctx.author.bot:
+            return
+
+        if all(s in ctx.content for s in [str(self.bot.user.id), '更新']):
+            if ctx.author.id == 277825292536512513:
+                # 送信内容をjsonにする仕組みがいる、というか設定ファイル（token以外は）jsonにしよう…
+                await ctx.channel.send("送信内容…")
+
 
 def setup(bot):  # Bot本体側からコグを読み込む際に呼び出される関数。
     bot.add_cog(Tachibana_Com(bot))  # TestCogにBotを渡してインスタンス化し、Botにコグとして登録する。
