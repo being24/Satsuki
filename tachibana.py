@@ -23,9 +23,10 @@ class MyBot(commands.Bot):
         for cog in INITIAL_COGS:  # INITIAL_COGSに格納されている名前から、コグを読み込む。
             try:
                 self.load_extension(cog)
-
             except Exception:  # エラーが発生した場合は、エラー内容を表示。
                 traceback.print_exc()
+
+        self.token = read_token()
 
     async def on_ready(self):  # 起動時実行されるコマンド
         print('-----')
@@ -51,7 +52,6 @@ def read_token():  # トークンを 'root/token' から取得する
 
 
 if __name__ == '__main__':
-
     currentpath = os.path.dirname(os.path.abspath(__file__))
 
     token = read_token()
@@ -68,4 +68,4 @@ if __name__ == '__main__':
 
     # コマンドの最初の文字として'/'をcommand_prefixとする。
     bot = MyBot(command_prefix='!')
-    bot.run(token)  # Botのトークン
+    bot.run(self.token)  # Botのトークン
