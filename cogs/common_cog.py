@@ -180,10 +180,11 @@ class Tachibana_Com(commands.Cog):  # コグとして用いるクラスを定義
         if ctx.author.bot:
             return
 
-        if all(s in ctx.content for s in [str(self.bot.user.id), '更新']):
+        if all(s in ctx.content for s in [
+               str(self.bot.user.id), '更新']):  # 要書き直し
             if ctx.author.id == 277825292536512513:
                 # 送信内容をjsonにする仕組みがいる、というか設定ファイル（token以外は）jsonにしよう…
-                await ctx.channel.send("送信内容…")
+                await ctx.channel.send(self.bot.json_data['announce'])
 
 
 def setup(bot):  # Bot本体側からコグを読み込む際に呼び出される関数。

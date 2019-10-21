@@ -1,6 +1,8 @@
 # !/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import codecs
+import json
 import logging.config
 import os
 import sys
@@ -8,7 +10,6 @@ import traceback  # エラー表示のためにインポート
 
 import discord
 from discord.ext import commands
-
 
 INITIAL_COGS = [
     'cogs.scp_cog', 'cogs.common_cog', 'cogs.src_cog'
@@ -26,7 +27,8 @@ class MyBot(commands.Bot):
             except Exception:  # エラーが発生した場合は、エラー内容を表示。
                 traceback.print_exc()
 
-        self.token = read_token()
+        with open(currentpath + "/setting.json", encoding='utf-8') as f:
+            self.json_data = json.load(f)
 
     async def on_ready(self):  # 起動時実行されるコマンド
         print('-----')
@@ -68,4 +70,4 @@ if __name__ == '__main__':
 
     # コマンドの最初の文字として'/'をcommand_prefixとする。
     bot = MyBot(command_prefix='!')
-    bot.run(self.token)  # Botのトークン
+    bot.run(token)  # Botのトークン
