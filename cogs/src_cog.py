@@ -20,6 +20,7 @@ class Tachibana_Tale(commands.Cog):  # コグとして用いるクラスを定�
         self.bot = bot
         self.URL = "http://ja.scp-wiki.net"
 
+
     @commands.command()
     async def tale(self, ctx, word: str):
         '''if brt not in BRANCHS:
@@ -27,7 +28,7 @@ class Tachibana_Tale(commands.Cog):  # コグとして用いるクラスを定�
         '''
         reply = lib.src_tale(word)
 
-        if len(reply) > 10:
+        if len(reply) > self.bot.send_max:
             await ctx.send(f"ヒット{len(reply)}件、多すぎます")
             return
 
@@ -50,15 +51,14 @@ class Tachibana_Tale(commands.Cog):  # コグとして用いるクラスを定�
         if discord.ext.commands.errors.BadArgument:
             await ctx.send('入力値が不正です')
         else:
-            admin_id = self.bot.json_data['admin']['id']  # なんで？？？？？
-            await ctx.send(f'to <@{admin_id}> at {ctx.command.name} command\n{error}')
+            await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
 
     @commands.command(aliases=['prop'])
     async def proposal(self, ctx, word: str):
 
         reply = lib.src_proposal(word)
 
-        if len(reply) > 10:
+        if len(reply) > self.bot.send_max:
             await ctx.send(f"ヒット{len(reply)}件、多すぎます")
             return
 
@@ -81,14 +81,13 @@ class Tachibana_Tale(commands.Cog):  # コグとして用いるクラスを定�
         if discord.ext.commands.errors.BadArgument:
             await ctx.send('入力値が不正です')
         else:
-            admin_id = self.bot.json_data['admin']['id']  # なんで？？？？？
-            await ctx.send(f'to <@{admin_id}> at {ctx.command.name} command\n{error}')
+            await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
 
     @commands.command()
     async def joke(self, ctx, word: str):
         reply = lib.src_joke(word)
 
-        if len(reply) > 10:
+        if len(reply) > self.bot.send_max:
             await ctx.send(f"ヒット{len(reply)}件、多すぎます")
             return
 
@@ -111,14 +110,13 @@ class Tachibana_Tale(commands.Cog):  # コグとして用いるクラスを定�
         if discord.ext.commands.errors.BadArgument:
             await ctx.send('入力値が不正です')
         else:
-            admin_id = self.bot.json_data['admin']['id']  # なんで？？？？？
-            await ctx.send(f'to <@{admin_id}> at {ctx.command.name} command\n{error}')
+            await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
 
     @commands.command(aliases=['gd'])
     async def guide(self, ctx, word: str):
         reply = lib.src_guide(word)
 
-        if len(reply) > 10:
+        if len(reply) > self.bot.send_max:
             await ctx.send(f"ヒット{len(reply)}件、多すぎます")
             return
 
@@ -141,14 +139,13 @@ class Tachibana_Tale(commands.Cog):  # コグとして用いるクラスを定�
         if discord.ext.commands.errors.BadArgument:
             await ctx.send('入力値が不正です')
         else:
-            admin_id = self.bot.json_data['admin']['id']  # なんで？？？？？
-            await ctx.send(f'to <@{admin_id}> at {ctx.command.name} command\n{error}')
+            await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
 
     @commands.command(aliases=['auth'])
     async def author(self, ctx, word: str):
         reply = lib.src_author(word)
 
-        if len(reply) > 10:
+        if len(reply) > self.bot.send_max:
             await ctx.send(f"ヒット{len(reply)}件、多すぎます")
             return
 
@@ -171,14 +168,13 @@ class Tachibana_Tale(commands.Cog):  # コグとして用いるクラスを定�
         if discord.ext.commands.errors.BadArgument:
             await ctx.send('入力値が不正です')
         else:
-            admin_id = self.bot.json_data['admin']['id']  # なんで？？？？？
-            await ctx.send(f'to <@{admin_id}> at {ctx.command.name} command\n{error}')
+            await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
 
     @commands.command(aliases=['ex'])
     async def explained(self, ctx, word: str):
         reply = lib.src_explained(word)
 
-        if len(reply) > 10:
+        if len(reply) > self.bot.send_max:
             await ctx.send(f"ヒット{len(reply)}件、多すぎます")
             return
 
@@ -201,8 +197,36 @@ class Tachibana_Tale(commands.Cog):  # コグとして用いるクラスを定�
         if discord.ext.commands.errors.BadArgument:
             await ctx.send('入力値が不正です')
         else:
-            admin_id = self.bot.json_data['admin']['id']  # なんで？？？？？
-            await ctx.send(f'to <@{admin_id}> at {ctx.command.name} command\n{error}')
+            await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
+
+    @commands.command(aliases=['src'])
+    async def search(self, ctx, word: str):
+        reply = lib.src_scp(word)
+
+        if len(reply) > self.bot.send_max:
+            await ctx.send(f"ヒット{len(reply)}件、多すぎます")
+            return
+
+        embed = discord.Embed(
+            title="メタタイトル検索結果",
+            description=f"検索ワード'{word}'にヒットしたSCPは{len(reply)}件です",
+            color=0x00ff00)
+
+        for line in reply.itertuples():
+            embed.add_field(
+                name=line[2],
+                value=self.URL + line[1],
+                inline=False)
+
+        embed.set_footer(text="タイトルから検索しています")
+        await ctx.send(embed=embed)
+
+    @tale.error
+    async def tale_error(self, ctx, error):
+        if discord.ext.commands.errors.BadArgument:
+            await ctx.send('入力値が不正です')
+        else:
+            await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
 
 
 def setup(bot):  # Bot本体側からコグを読み込む際に呼び出される関数
