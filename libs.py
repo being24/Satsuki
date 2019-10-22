@@ -217,3 +217,23 @@ def src_explained(msg):
     result = result.drop_duplicates()
 
     return result
+
+
+def src_scp(msg):
+    result = pd.DataFrame(columns=['url', 'title', 'author', 'branches'])
+
+    try:
+        dictionary = pd.read_csv(
+            currentpath +
+            f"/data/scps.csv",
+            index_col=0)
+    except FileNotFoundError as e:
+        print(e)
+
+    dictionary_title = dictionary.query(
+        'title.str.contains(@msg)', engine='python')
+
+    result = pd.concat([dictionary_title])
+    result = result.drop_duplicates()
+
+    return result
