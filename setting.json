@@ -5,5 +5,6 @@
     "limit": {
         "max_sending": 10
     },
-    "announce": "アナウンス"
+    "announce": "アナウンス",
+    "command_prefix": "!"
 }
