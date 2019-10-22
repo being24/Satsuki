@@ -2,9 +2,8 @@
     "admin": {
         "id": 277825292536512513
     },
-    "limit": {
-        "max_sending": 10
-    },
+    "limit": 10,
     "announce": "アナウンス",
-    "command_prefix": "!"
+    "command_prefix": "!",
+    "status": "debuging"
 }

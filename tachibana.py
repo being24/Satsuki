@@ -30,6 +30,10 @@ class MyBot(commands.Bot):
         with open(currentpath + "/setting.json", encoding='utf-8') as f:
             self.json_data = json.load(f)
 
+        self.send_max = self.json_data['limit']
+        self.admin_id = self.json_data['admin']["id"]
+        self.status = self.json_data['status']
+
     async def on_ready(self):  # 起動時実行されるコマンド
         print('-----')
         print('Logged in as')
@@ -37,7 +41,7 @@ class MyBot(commands.Bot):
         print(self.user.id)
         print('------')
         logging.info('rebooted')
-        await bot.change_presence(activity=discord.Game(name='debuging'))
+        await bot.change_presence(activity=discord.Game(name=self.status))
 
 
 def read_token():  # トークンを 'root/token' から取得する
