@@ -30,7 +30,7 @@ class Tachibana_Com(commands.Cog):  # コグとして用いるクラスを定義
         self.master_path = os.path.dirname(
             os.path.dirname(os.path.abspath(__file__)))
 
-    @commands.command()  # コマンドの作成。コマンドはcommandデコレータで必ず修飾する。
+    @commands.command(aliases=['p'])  # コマンドの作成。コマンドはcommandデコレータで必ず修飾する。
     async def ping(self, ctx):
         await ctx.send('pong!')
 
@@ -90,8 +90,9 @@ class Tachibana_Com(commands.Cog):  # コグとして用いるクラスを定義
         await ctx.send(embed=embed)
 
     @draft.error
-    async def draft_error(self, ctx, error):
-        await ctx.send(f'to <@277825292536512513> at draft command\n{error}')
+    async def unknown_error_handler(self, ctx, error):
+        admin_id = self.bot.json_data['admin']['id']  # なんで？？？？？
+        await ctx.send(f'to <@{admin_id}> at {ctx.command.name} command\n{error}')
 
     @commands.command()
     async def url(self, ctx, call):
@@ -111,7 +112,8 @@ class Tachibana_Com(commands.Cog):  # コグとして用いるクラスを定義
         if discord.ext.commands.errors.BadArgument:
             await ctx.send('入力値が不正です')
         else:
-            await ctx.send(f'to <@277825292536512513> at url command\n{error}')
+            admin_id = self.bot.json_data['admin']['id']  # なんで？？？？？
+            await ctx.send(f'to <@{admin_id}> at {ctx.command.name} command\n{error}')
 
     @commands.command()
     async def dice(self, ctx, num1: int, num2: typing.Optional[int] = 0):
@@ -130,8 +132,8 @@ class Tachibana_Com(commands.Cog):  # コグとして用いるクラスを定義
         if discord.ext.commands.errors.BadArgument:
             await ctx.send('入力値が不正です')
         else:
-            print(type(error))
-            await ctx.send(f'to <@277825292536512513> at dice command\n{error}')
+            admin_id = self.bot.json_data['admin']['id']  # なんで？？？？？
+            await ctx.send(f'to <@{admin_id}> at {ctx.command.name} command\n{error}')
 
     @commands.command(aliases=['lu'])
     async def last_updated(self, ctx):
@@ -142,8 +144,10 @@ class Tachibana_Com(commands.Cog):  # コグとして用いるクラスを定義
         await ctx.send("データベースの最終更新日時は" + str(last_update_JST) + "です")
 
     @last_updated.error
-    async def last_updated_error(self, ctx, error):
-        await ctx.send(f'to <@277825292536512513> at last_updated command\n{error}')
+    async def unknown_error_handler(self, ctx, error):
+        admin_id = self.bot.json_data['admin']['id']  # なんで？？？？？
+        await ctx.send(f'to <@{admin_id}> at {ctx.command.name} command\n{error}')
+
 
     @commands.command()
     async def rand(self, ctx, brt: typing.Optional[str] = 'all'):
@@ -167,8 +171,9 @@ class Tachibana_Com(commands.Cog):  # コグとして用いるクラスを定義
         await ctx.send(result[1] + "\n" + SCP_JP + result[0])
 
     @rand.error
-    async def rand_error(self, ctx, error):
-        await ctx.send(f'to <@277825292536512513> at rand command\n{error}')
+    async def unknown_error_handler(self, ctx, error):
+        admin_id = self.bot.json_data['admin']['id']  # なんで？？？？？
+        await ctx.send(f'to <@{admin_id}> at {ctx.command.name} command\n{error}')
 
         # エラーキャッチ
     @commands.Cog.listener()
@@ -183,7 +188,6 @@ class Tachibana_Com(commands.Cog):  # コグとして用いるクラスを定義
         if all(s in ctx.content for s in [
                str(self.bot.user.id), '更新']):  # 要書き直し
             if ctx.author.id == 277825292536512513:
-                # 送信内容をjsonにする仕組みがいる、というか設定ファイル（token以外は）jsonにしよう…
                 await ctx.channel.send(self.bot.json_data['announce'])
 
 

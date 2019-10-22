@@ -50,7 +50,8 @@ class Tachibana_Tale(commands.Cog):  # コグとして用いるクラスを定�
         if discord.ext.commands.errors.BadArgument:
             await ctx.send('入力値が不正です')
         else:
-            await ctx.send(f'to <@277825292536512513> at tale command\n{error}')
+            admin_id = self.bot.json_data['admin']['id']  # なんで？？？？？
+            await ctx.send(f'to <@{admin_id}> at {ctx.command.name} command\n{error}')
 
     @commands.command(aliases=['prop'])
     async def proposal(self, ctx, word: str):
@@ -80,7 +81,8 @@ class Tachibana_Tale(commands.Cog):  # コグとして用いるクラスを定�
         if discord.ext.commands.errors.BadArgument:
             await ctx.send('入力値が不正です')
         else:
-            await ctx.send(f'to <@277825292536512513> at proposal command\n{error}')
+            admin_id = self.bot.json_data['admin']['id']  # なんで？？？？？
+            await ctx.send(f'to <@{admin_id}> at {ctx.command.name} command\n{error}')
 
     @commands.command()
     async def joke(self, ctx, word: str):
@@ -109,7 +111,8 @@ class Tachibana_Tale(commands.Cog):  # コグとして用いるクラスを定�
         if discord.ext.commands.errors.BadArgument:
             await ctx.send('入力値が不正です')
         else:
-            await ctx.send(f'to <@277825292536512513> at joke command\n{error}')
+            admin_id = self.bot.json_data['admin']['id']  # なんで？？？？？
+            await ctx.send(f'to <@{admin_id}> at {ctx.command.name} command\n{error}')
 
     @commands.command(aliases=['gd'])
     async def guide(self, ctx, word: str):
@@ -138,7 +141,8 @@ class Tachibana_Tale(commands.Cog):  # コグとして用いるクラスを定�
         if discord.ext.commands.errors.BadArgument:
             await ctx.send('入力値が不正です')
         else:
-            await ctx.send(f'to <@277825292536512513> at guide command\n{error}')
+            admin_id = self.bot.json_data['admin']['id']  # なんで？？？？？
+            await ctx.send(f'to <@{admin_id}> at {ctx.command.name} command\n{error}')
 
     @commands.command(aliases=['auth'])
     async def author(self, ctx, word: str):
@@ -167,7 +171,8 @@ class Tachibana_Tale(commands.Cog):  # コグとして用いるクラスを定�
         if discord.ext.commands.errors.BadArgument:
             await ctx.send('入力値が不正です')
         else:
-            await ctx.send(f'to <@277825292536512513> at author command\n{error}')
+            admin_id = self.bot.json_data['admin']['id']  # なんで？？？？？
+            await ctx.send(f'to <@{admin_id}> at {ctx.command.name} command\n{error}')
 
     @commands.command(aliases=['ex'])
     async def explained(self, ctx, word: str):
@@ -196,7 +201,8 @@ class Tachibana_Tale(commands.Cog):  # コグとして用いるクラスを定�
         if discord.ext.commands.errors.BadArgument:
             await ctx.send('入力値が不正です')
         else:
-            await ctx.send(f'to <@277825292536512513> at explained command\n{error}')
+            admin_id = self.bot.json_data['admin']['id']  # なんで？？？？？
+            await ctx.send(f'to <@{admin_id}> at {ctx.command.name} command\n{error}')
 
 
 def setup(bot):  # Bot本体側からコグを読み込む際に呼び出される関数
