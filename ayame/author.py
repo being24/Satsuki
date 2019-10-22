@@ -15,10 +15,11 @@ start_word = '<h2 id="toc0"><span>管理者</span></h2>'
 end_word = '<h2><span>著者ページへの参加条件</span></h2>'
 
 
-def auther():
+def author():
     response = requests.get(target_url)
     if response.status_code is not requests.codes.ok:
-        print(f"{key} request err : {response.status_code}")
+        # print(f"{key} request err : {response.status_code}")
+        return
 
     lines = response.text.split("\n")
     start = lines.index(start_word)
@@ -115,6 +116,5 @@ def auther():
 
 if __name__ == "__main__":
     print("菖蒲:著者ページデータベースの更新を開始します。")
-    auther()
-
+    author()
     print("菖蒲:著者ページデータベースの更新、完了しました。")

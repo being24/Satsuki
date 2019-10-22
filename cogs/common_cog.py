@@ -5,6 +5,7 @@
 import itertools
 import os
 import random
+import sys
 import typing
 from datetime import datetime, timedelta
 
@@ -29,6 +30,8 @@ class Tachibana_Com(commands.Cog):  # コグとして用いるクラスを定義
         self.SCP_JP = "http://ja.scp-wiki.net"
         self.master_path = os.path.dirname(
             os.path.dirname(os.path.abspath(__file__)))
+
+
 
     @commands.command(aliases=['p'])  # コマンドの作成。コマンドはcommandデコレータで必ず修飾する。
     async def ping(self, ctx):
@@ -91,8 +94,7 @@ class Tachibana_Com(commands.Cog):  # コグとして用いるクラスを定義
 
     @draft.error
     async def unknown_error_handler(self, ctx, error):
-        admin_id = self.bot.json_data['admin']['id']  # なんで？？？？？
-        await ctx.send(f'to <@{admin_id}> at {ctx.command.name} command\n{error}')
+        await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
 
     @commands.command()
     async def url(self, ctx, call):
@@ -112,8 +114,7 @@ class Tachibana_Com(commands.Cog):  # コグとして用いるクラスを定義
         if discord.ext.commands.errors.BadArgument:
             await ctx.send('入力値が不正です')
         else:
-            admin_id = self.bot.json_data['admin']['id']  # なんで？？？？？
-            await ctx.send(f'to <@{admin_id}> at {ctx.command.name} command\n{error}')
+            await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
 
     @commands.command()
     async def dice(self, ctx, num1: int, num2: typing.Optional[int] = 0):
@@ -132,8 +133,7 @@ class Tachibana_Com(commands.Cog):  # コグとして用いるクラスを定義
         if discord.ext.commands.errors.BadArgument:
             await ctx.send('入力値が不正です')
         else:
-            admin_id = self.bot.json_data['admin']['id']  # なんで？？？？？
-            await ctx.send(f'to <@{admin_id}> at {ctx.command.name} command\n{error}')
+            await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
 
     @commands.command(aliases=['lu'])
     async def last_updated(self, ctx):
@@ -145,9 +145,7 @@ class Tachibana_Com(commands.Cog):  # コグとして用いるクラスを定義
 
     @last_updated.error
     async def unknown_error_handler(self, ctx, error):
-        admin_id = self.bot.json_data['admin']['id']  # なんで？？？？？
-        await ctx.send(f'to <@{admin_id}> at {ctx.command.name} command\n{error}')
-
+        await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
 
     @commands.command()
     async def rand(self, ctx, brt: typing.Optional[str] = 'all'):
@@ -172,8 +170,7 @@ class Tachibana_Com(commands.Cog):  # コグとして用いるクラスを定義
 
     @rand.error
     async def unknown_error_handler(self, ctx, error):
-        admin_id = self.bot.json_data['admin']['id']  # なんで？？？？？
-        await ctx.send(f'to <@{admin_id}> at {ctx.command.name} command\n{error}')
+        await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
 
         # エラーキャッチ
     @commands.Cog.listener()
@@ -189,6 +186,25 @@ class Tachibana_Com(commands.Cog):  # コグとして用いるクラスを定義
                str(self.bot.user.id), '更新']):  # 要書き直し
             if ctx.author.id == 277825292536512513:
                 await ctx.channel.send(self.bot.json_data['announce'])
+
+    @commands.command()
+    async def update(self, ctx):
+        await self.bot.change_presence(activity=discord.Game(name="更新中"))
+        await ctx.send("更新を開始します")
+        sys.path.append('../ayame')
+        from ayame import tales, scips, proposal, guidehub, ex, author
+        scips.scips()
+        tales.tale()
+        proposal.proposal()
+        guidehub.guide_hub()
+        ex.ex()
+        author.author()
+        await ctx.send('done')
+        await self.bot.change_presence(activity=discord.Game(name=self.bot.status))
+
+    @update.error
+    async def update_error(self, ctx, error):
+        await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
 
 
 def setup(bot):  # Bot本体側からコグを読み込む際に呼び出される関数。

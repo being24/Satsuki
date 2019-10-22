@@ -30,8 +30,8 @@ def proposal():
 
         response = requests.get(url)
         if response.status_code is not requests.codes.ok:
-            print("request err")
-            return 1
+            # print("request err")
+            pass
 
         scp_lines = response.text.split("\n")
 

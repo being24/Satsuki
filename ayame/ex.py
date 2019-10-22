@@ -71,7 +71,7 @@ keys = [
     "pt"]
 
 
-def scips():
+def ex():
     nums = []
     titles = []
     brts = []
@@ -81,8 +81,8 @@ def scips():
     for key in keys:
         response = requests.get(target_url[key])
         if response.status_code is not requests.codes.ok:
-            print(f"{key} request err : {response.status_code}")
-            continue
+            # print(f"{key} request err : {response.status_code}")
+            return
 
         number = ""
 
@@ -151,7 +151,7 @@ def scips():
 
                     brts.append(key)
 
-        print("page:" + key + "のデータ取得が完了しました。")
+        #print("page:" + key + "のデータ取得が完了しました。")
 
     df = pd.DataFrame(columns=['url', 'title', 'author', 'branches'])
 
@@ -164,6 +164,6 @@ def scips():
 if __name__ == "__main__":
     print("菖蒲:解明済み事象のデータベースの更新を開始します。")
 
-    scips()
+    ex()
 
     print("菖蒲:解明済み事象のデータベースの更新、完了しました。")

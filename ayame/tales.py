@@ -82,7 +82,7 @@ exclusion_list = ['#top',
                   ]
 
 
-def tales():
+def tale():
     urls = []
     titles = []
     authors = []
@@ -97,8 +97,8 @@ def tales():
     for key in keys:
         response = requests.get(target_url[key])
         if response.status_code is not requests.codes.ok:
-            print(f"{key} request err : {response.status_code}")
-            continue
+            # print(f"{key} request err : {response.status_code}")
+            return
 
         scp_lines = response.text.split("\n")
         tales_start = scp_lines.index(start_word[key])
@@ -178,7 +178,6 @@ def tales():
                 if 'http://ja.scp-wiki.net/' in url:
                     url = url.replace("http://ja.scp-wiki.net", '')
 
-                
             # url,title end
 
                 urls.append(url)
@@ -186,7 +185,7 @@ def tales():
                 authors.append(author)
                 brts.append(key)
 
-        print("page:" + key + "のデータ取得が完了しました。")
+        # print("page:" + key + "のデータ取得が完了しました。")
 
     df = pd.DataFrame(columns=['url', 'title', 'author', 'branches'])
 
@@ -200,6 +199,5 @@ def tales():
 
 if __name__ == "__main__":
     print("菖蒲:taleデータベースの更新を更新します。")
-    tales()
-
+    tale()
     print("菖蒲:taleデータベースの更新、完了しました。")

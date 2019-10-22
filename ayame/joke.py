@@ -84,8 +84,8 @@ def joke():
     for key in keys:
         response = requests.get(target_url[key])
         if response.status_code is not requests.codes.ok:
-            print(f"{key} request err : {response.status_code}")
-            continue
+            # print(f"{key} request err : {response.status_code}")
+            return
 
         number = ""
 
@@ -152,7 +152,7 @@ def joke():
                     titles.append(metatitle)
                     brts.append(key)
 
-        print("page:" + key + "のデータ取得が完了しました。")
+        #print("page:" + key + "のデータ取得が完了しました。")
 
     df = pd.DataFrame(columns=['url', 'title', 'author', 'branches'])
 
