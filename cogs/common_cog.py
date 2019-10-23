@@ -3,6 +3,7 @@
 
 
 import asyncio
+import html
 import itertools
 import os
 import random
@@ -34,8 +35,6 @@ class Tachibana_Com(commands.Cog):  # コグとして用いるクラスを定義
         self.master_path = os.path.dirname(
             os.path.dirname(os.path.abspath(__file__)))
 
-
-
     @commands.command(aliases=['p'])  # コマンドの作成。コマンドはcommandデコレータで必ず修飾する。
     async def ping(self, ctx):
         await ctx.send('pong!')
@@ -48,7 +47,7 @@ class Tachibana_Com(commands.Cog):  # コグとして用いるクラスを定義
         # d_today = '2019-10-12'
         response = requests.get(target_url + str(d_today))
 
-        soup = BeautifulSoup(response.text, 'lxml')
+        soup = BeautifulSoup(response.text, "html.parser")
 
         limen_object = datetime.strptime(
             f'{d_today}-20:45:00', '%Y-%m-%d-%H:%M:%S')
@@ -191,6 +190,7 @@ class Tachibana_Com(commands.Cog):  # コグとして用いるクラスを定義
                 await ctx.channel.send(self.bot.json_data['announce'])
 
     @commands.command()
+    @commands.has_permissions(manage_guild=True)  # 権限変える
     async def update(self, ctx):
         await self.bot.change_presence(activity=discord.Game(name="更新中"))
 
