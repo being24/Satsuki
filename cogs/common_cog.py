@@ -2,13 +2,16 @@
 # -*- coding: utf-8 -*-
 
 
+import asyncio
 import itertools
 import os
 import random
+import subprocess
 import sys
 import typing
 from datetime import datetime, timedelta
 
+import aiohttp
 import discord
 import pandas as pd
 import requests
@@ -42,7 +45,7 @@ class Tachibana_Com(commands.Cog):  # コグとして用いるクラスを定義
         target_url = 'http://njr-sys.net/irc/draftReserve/'
 
         d_today = (datetime.now() + timedelta(hours=-3)).date()
-        d_today = '2019-10-12'
+        # d_today = '2019-10-12'
         response = requests.get(target_url + str(d_today))
 
         soup = BeautifulSoup(response.text, 'lxml')
@@ -89,7 +92,7 @@ class Tachibana_Com(commands.Cog):  # コグとして用いるクラスを定義
                 value=f'[{title[i]}]({url[i]})\tat: {time[i]}',
                 inline=False)
 
-        embed.set_footer(text=f"受付時間外の予約は無効です")
+        embed.set_footer(text=f"受付時間外の予約は無効です!")
         await ctx.send(embed=embed)
 
     @draft.error
@@ -190,8 +193,8 @@ class Tachibana_Com(commands.Cog):  # コグとして用いるクラスを定義
     @commands.command()
     async def update(self, ctx):
         await self.bot.change_presence(activity=discord.Game(name="更新中"))
-        await ctx.send("更新を開始します")
-        sys.path.append('../ayame')
+
+        '''sys.path.append('../ayame')
         from ayame import tales, scips, proposal, guidehub, ex, author
         scips.scips()
         tales.tale()
@@ -199,7 +202,15 @@ class Tachibana_Com(commands.Cog):  # コグとして用いるクラスを定義
         guidehub.guide_hub()
         ex.ex()
         author.author()
-        await ctx.send('done')
+        await ctx.send('done')'''
+
+        if os.name is "nt":
+            await ctx.send("windows上でこのコマンドは使用できません")
+        elif os.name is "posix":
+            subprocess.Popen("./tachibana.sh")
+        else:
+            print("error")
+
         await self.bot.change_presence(activity=discord.Game(name=self.bot.status))
 
     @update.error
