@@ -1,10 +1,13 @@
 # !/usr/bin/env python3
 # -*- coding: utf-8 -*-
+import html
 import itertools
 import os
 import re
 
+import feedparser
 import pandas as pd
+import requests
 import zenhan
 
 BRANCHS = ['jp', 'en', 'ru', 'ko', 'es', 'cn',
@@ -235,5 +238,68 @@ def src_scp(msg):
 
     result = pd.concat([dictionary_title])
     result = result.drop_duplicates()
+
+    return result
+
+
+def get_scp_rss(target):
+    feed_data = feedparser.parse(target)
+    scp_rss = []
+    for entries in feed_data['entries']:
+        title = (entries['title'])
+        link = (entries['link'])
+        text = entries["content"][0]['value']
+        scp_rss.append([link, title, text])
+    return scp_rss
+
+
+def tag_to_discord(content):
+    result = []
+    for line in content:
+        line = line.replace("<p>", "\n")
+        line = line.replace("</p>", "\n")
+        line = line.replace("</div>", "")
+
+        line = line.replace("<br />", "\n")
+
+        if '<span class="rt">' in line:  # ルビ
+            siz0_0 = line.find('<span class="rt">')
+            siz0_1 = line.find('</span>', siz0_0 + 1)
+            line = line.replace('<span class="rt">', " - [")
+            line = line.replace('</span></span>', "]")  # 多分ここ違う
+
+        if '<strong>' in line:  # 強調
+            line = line.replace('<strong>', "**")
+            line = line.replace('</strong>', "**")
+
+        if '<span style="text-decoration: line-through;">' in line:  # 取り消し
+            line = line.replace(
+                '<span style="text-decoration: line-through;">', "~~")
+            line = line.replace('</span>', "~~ ", 1)
+
+        if '<span style="text-decoration: underline;">' in line:  # 下線
+            line = line.replace(
+                '<span style="text-decoration: underline;">', "__")
+            line = line.replace('</span>', "__ ", 1)
+
+        if '<em>' in line:  # 斜体
+            line = line.replace('<em>', "*")
+            line = line.replace('</em>', "*")
+
+        if 'href' in line:
+            match = re.findall(r'href=[\'"]?([^\'" >]+)', line)
+            if "javascript" in match[0]:
+                line = ""
+            # elif match:
+            #    print(match[0])
+            deco_f = f'['
+            deco_b = f"]({match[0]})"
+
+            p = re.compile(r"<[^>]*?>")
+            line = p.sub(f"{deco_b}", line)
+            line = line.replace(deco_b, deco_f, 1)
+
+        line = html.unescape(line)
+        result.append(line)
 
     return result

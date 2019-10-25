@@ -174,6 +174,34 @@ class Tachibana_Com(commands.Cog):  # コグとして用いるクラスを定義
     async def unknown_error_handler(self, ctx, error):
         await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
 
+    @commands.command(aliases=['mt'])
+    async def meeting(self, ctx, brt: typing.Optional[str] = 'all'):
+        content = ""
+        contentlist = lib.get_scp_rss(self.bot.meeting_addr)[0]
+        title = contentlist[1]
+        url = contentlist[0]
+        text = contentlist[2].split("</p>")
+        text = lib.tag_to_discord(text)
+
+        embed = discord.Embed(
+            title="本日の定例会テーマのお知らせです",
+            url=url,
+            color=0x0000a0)
+
+        for x in text:
+            content += x
+
+        embed.add_field(
+            name=title,
+            value=content,
+            inline=False)
+
+        await ctx.send(embed=embed)
+
+    @meeting.error
+    async def unknown_error_handler(self, ctx, error):
+        await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
+
         # エラーキャッチ
     @commands.Cog.listener()
     async def on_command_error(self, ctx, message):
@@ -186,36 +214,8 @@ class Tachibana_Com(commands.Cog):  # コグとして用いるクラスを定義
 
         if all(s in ctx.content for s in [
                str(self.bot.user.id), '更新']):  # 要書き直し
-            if ctx.author.id == 277825292536512513:
+            if ctx.author.id == self.bot.admin_id:
                 await ctx.channel.send(self.bot.json_data['announce'])
-
-    @commands.command()
-    @commands.has_permissions(manage_guild=True)  # 権限変える
-    async def update(self, ctx):
-        await self.bot.change_presence(activity=discord.Game(name="更新中"))
-
-        '''sys.path.append('../ayame')
-        from ayame import tales, scips, proposal, guidehub, ex, author
-        scips.scips()
-        tales.tale()
-        proposal.proposal()
-        guidehub.guide_hub()
-        ex.ex()
-        author.author()
-        await ctx.send('done')'''
-
-        if os.name is "nt":
-            await ctx.send("windows上でこのコマンドは使用できません")
-        elif os.name is "posix":
-            subprocess.Popen("./tachibana.sh")
-        else:
-            print("error")
-
-        await self.bot.change_presence(activity=discord.Game(name=self.bot.status))
-
-    @update.error
-    async def update_error(self, ctx, error):
-        await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
 
 
 def setup(bot):  # Bot本体側からコグを読み込む際に呼び出される関数。

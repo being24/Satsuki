@@ -33,6 +33,7 @@ class MyBot(commands.Bot):
         self.send_max = self.json_data['limit']
         self.admin_id = self.json_data['admin']["id"]
         self.status = self.json_data['status']
+        self.meeting_addr = self.json_data['regular_meeting_addr']
 
     async def on_ready(self):  # 起動時実行されるコマンド
         print('-----')
