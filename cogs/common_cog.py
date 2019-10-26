@@ -39,7 +39,7 @@ class Tachibana_Com(commands.Cog):  # コグとして用いるクラスを定義
     async def ping(self, ctx):
         await ctx.send('pong!')
 
-    @commands.command()
+    @commands.command(aliases=['df'])
     async def draft(self, ctx):
         target_url = 'http://njr-sys.net/irc/draftReserve/'
 
