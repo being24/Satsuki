@@ -12,7 +12,7 @@ import discord
 from discord.ext import commands
 
 INITIAL_COGS = [
-    'cogs.scp_cog', 'cogs.common_cog', 'cogs.src_cog'
+    'cogs.scp_cog', 'cogs.common_cog', 'cogs.src_cog', 'cogs.admin_cog',
 ]
 
 

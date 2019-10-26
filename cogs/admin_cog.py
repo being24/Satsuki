@@ -2,15 +2,29 @@
 # -*- coding: utf-8 -*-
 
 
+import os
+import typing
 
 import discord
 from discord.ext import commands  # Bot Commands Frameworkのインポート
 
-
+import libs as lib
 
 SCP_JP = "http://ja.scp-wiki.net"
 BRANCHS = ['jp', 'en', 'ru', 'ko', 'es', 'cn',
            'fr', 'pl', 'th', 'de', 'it', 'ua', 'pt', 'uo']
+
+
+def is_in_guild(guild_id):
+    async def predicate(ctx):
+        return ctx.guild and ctx.guild.id == guild_id
+    return commands.check(predicate)
+
+
+def is_owner():
+    async def predicate(ctx):
+        return ctx.author.id == 277825292536512513
+    return commands.check(predicate)
 
 
 class Tachibana_admin(commands.Cog):  # コグとして用いるクラスを定義。
@@ -18,8 +32,9 @@ class Tachibana_admin(commands.Cog):  # コグとして用いるクラスを定�
     def __init__(self, bot):  # TestCogクラスのコンストラクタ。Botを受取り、インスタンス変数として保持。
         self.bot = bot
 
-    @commands.command()
-    @commands.has_permissions(manage_guild=True)  # 権限変える
+    @commands.command(hidden=True)
+    @is_owner()
+    @is_in_guild(609058923353341973)
     async def update(self, ctx):
         await self.bot.change_presence(activity=discord.Game(name="更新中"))
 
@@ -46,6 +61,25 @@ class Tachibana_admin(commands.Cog):  # コグとして用いるクラスを定�
     async def update_error(self, ctx, error):
         await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
 
+    @commands.command(aliases=['re'], hidden=True)
+    @is_owner()
+    @is_in_guild(609058923353341973)
+    async def reload(self, ctx, module: str):
+        await self.bot.change_presence(activity=discord.Game(name="更新中"))
+
+        try:
+            self.bot.unload_extension(module)
+            self.bot.load_extension(module)
+            await ctx.send(f"{module} reloaded")
+        except Exception as e:
+            print(e)
+
+        await self.bot.change_presence(activity=discord.Game(name=self.bot.status))
+
+    @reload.error
+    async def reload_error(self, ctx, error):
+        await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
+
 
 def setup(bot):  # Bot本体側からコグを読み込む際に呼び出される関数。
-    bot.add_cog(Tachibana_SCP(bot))  # TestCogにBotを渡してインスタンス化し、Botにコグとして登録する。
+    bot.add_cog(Tachibana_admin(bot))  # TestCogにBotを渡してインスタンス化し、Botにコグとして登録する。
