@@ -5,6 +5,7 @@
 import asyncio
 import html
 import itertools
+import json
 import os
 import random
 import subprocess
@@ -143,7 +144,7 @@ class Tachibana_Com(commands.Cog):  # コグとして用いるクラスを定義
             self.master_path + "/data/scps.csv")
         last_update_UTC_nv = datetime.fromtimestamp(int(last_update_utime))
         last_update_JST = timezone('Asia/Tokyo').localize(last_update_UTC_nv)
-        await ctx.send("データベースの最終更新日時は" + str(last_update_JST) + "です")
+        await ctx.send(f"データベースの最終更新日時は{last_update_JST}です")
 
     @last_updated.error
     async def unknown_error_handler(self, ctx, error):
