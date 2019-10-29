@@ -15,9 +15,9 @@ BRANCHS = ['jp', 'en', 'ru', 'ko', 'es', 'cn',
            'fr', 'pl', 'th', 'de', 'it', 'ua', 'pt', 'uo']
 
 
-def is_in_guild(guild_id):
+def is_in_guild():
     async def predicate(ctx):
-        return ctx.guild and ctx.guild.id == guild_id
+        return ctx.guild and ctx.guild.id == 609058923353341973
     return commands.check(predicate)
 
 
@@ -34,7 +34,7 @@ class Tachibana_admin(commands.Cog):  # コグとして用いるクラスを定�
 
     @commands.command(hidden=True)
     @is_owner()
-    @is_in_guild(609058923353341973)
+    @is_in_guild()
     async def update(self, ctx):
         await self.bot.change_presence(activity=discord.Game(name="更新中"))
 
@@ -63,7 +63,7 @@ class Tachibana_admin(commands.Cog):  # コグとして用いるクラスを定�
 
     @commands.command(aliases=['re'], hidden=True)
     @is_owner()
-    @is_in_guild(609058923353341973)
+    @is_in_guild()
     async def reload(self, ctx, module: str):
         await self.bot.change_presence(activity=discord.Game(name="更新中"))
 
@@ -78,6 +78,17 @@ class Tachibana_admin(commands.Cog):  # コグとして用いるクラスを定�
 
     @reload.error
     async def reload_error(self, ctx, error):
+        await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
+
+    @commands.command(aliases=['sta'], hidden=True)
+    @commands.has_permissions(ban_members=True)
+    async def statistics(self, ctx):
+        csv_dict = lib.statistics_csv()
+        await ctx.send(f"{csv_dict}")
+
+
+    @statistics.error
+    async def statistics_error(self, ctx, error):
         await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
 
 
