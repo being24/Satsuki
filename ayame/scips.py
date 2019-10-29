@@ -154,7 +154,7 @@ def scips():
 
                     brts.append(res_key)
 
-        # print("page:" + key + "のデータ取得が完了しました。")
+        print("page:" + key + "のデータ取得が完了しました。")
 
     df = pd.DataFrame(columns=['url', 'title', 'author', 'branches'])
 
