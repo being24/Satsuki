@@ -41,7 +41,7 @@ class Tachibana_Com(commands.Cog):  # コグとして用いるクラスを定義
         await ctx.send('pong!')
 
     @commands.command(aliases=['df'])
-    async def draft(self, ctx):
+    async def draft(self, ctx, num: typing.Optional[int] = 0):
         target_url = 'http://njr-sys.net/irc/draftReserve/'
 
         d_today = (datetime.now() + timedelta(hours=-3)).date()
@@ -81,19 +81,36 @@ class Tachibana_Com(commands.Cog):  # コグとして用いるクラスを定義
             await ctx.send("本日の予約はありません")
             return
 
-        embed = discord.Embed(
-            title="下書き批評予約システムからデータを取得します",
-            description=f"本日の下書き批評予約は全{len(url)}件です",
-            color=0xff0080)
+        title_message = "下書き批評予約システムからデータを取得します"
 
-        for i in range(len(author)):
+        if num == 0:
+            embed = discord.Embed(
+                title=title_message,
+                description=f"本日の下書き批評予約は全{len(url)}件です",
+                color=0xff0080)
+
+            for i in range(len(author)):
+                embed.add_field(
+                    name=author[i],
+                    value=f'{i+1} : [{title[i]}]({url[i]})\tat: {time[i]}',
+                    inline=False)
+
+            embed.set_footer(text=f"受付時間外の予約は無効です!")
+            await ctx.send(embed=embed)
+
+        else:
+            embed = discord.Embed(
+                title=title_message,
+                description=f"{num}/{len(url)}件目の下書きです",
+                color=0xff0080)
+            num = num - 1
             embed.add_field(
-                name=author[i],
-                value=f'[{title[i]}]({url[i]})\tat: {time[i]}',
+                name=author[num],
+                value=f'{num+1} : [{title[num]}]({url[num]})\tat: {time[num]}',
                 inline=False)
 
-        embed.set_footer(text=f"受付時間外の予約は無効です!")
-        await ctx.send(embed=embed)
+            embed.set_footer(text=f"受付時間外の予約は無効です!")
+            await ctx.send(embed=embed)
 
     @draft.error
     async def unknown_error_handler(self, ctx, error):
@@ -201,6 +218,73 @@ class Tachibana_Com(commands.Cog):  # コグとして用いるクラスを定義
 
     @meeting.error
     async def unknown_error_handler(self, ctx, error):
+        await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
+
+    @commands.command(aliases=['sh'])
+    @commands.has_permissions(ban_members=True)
+    async def shuffle(self, ctx, num: typing.Optional[int] = 2):
+        settime = 10.0 * 60
+        cnt = 4
+        reaction_member = []
+        emoji_in = '\N{THUMBS UP SIGN}'
+        emoji_go = '\N{NEGATIVE SQUARED CROSS MARK}'
+
+        embed = discord.Embed(title="下書き批評に参加するメンバーを募集します", colour=0x1e90ff)
+        embed.add_field(
+            name=f"参加する方はリアクション{emoji_in}を押してください",
+            value="ご参加お待ちしております",
+            inline=True)
+        embed.set_footer(text='少し待ってからリアクションをつけてください')
+
+        msg = await ctx.send(embed=embed)
+
+        await msg.add_reaction(emoji_in)
+        await msg.add_reaction(emoji_go)
+        await asyncio.sleep(1)
+
+        while True:
+            try:
+                reaction, user = await self.bot.wait_for('reaction_add', timeout=settime)
+            except asyncio.TimeoutError:
+                await ctx.send('タイムアウトしました')
+                break
+            else:
+                if str(reaction.emoji) == emoji_go:
+                    if ctx.author.id == user.id:
+                        if len(reaction_member) < num:
+                            await ctx.send('最低人数を満たしませんでした')
+                            await msg.clear_reactions()
+                            break
+
+                        await ctx.send('募集を終了しました')
+                        random.shuffle(reaction_member)
+                        divided_reaction_member = [
+                            reaction_member[i::num] for i in range(num)]
+
+                        embed = discord.Embed(
+                            title="割り振りは以下の通りです",
+                            color=0x1e90ff)
+                        for i in range(num):
+                            embed.add_field(
+                                name=f'{i}', value=f'<@{reaction_member[i]}>', inline=True)
+                        embed.set_footer(text='よろしくお願いします')
+
+                        await msg.edit(embed=embed)
+                        await msg.clear_reactions()
+
+                        break
+                    else:
+                        await msg.remove_reaction(str(reaction.emoji), user)
+
+                elif str(reaction) == emoji_in:
+                    if user.id in reaction_member:
+                        pass
+                    else:
+                        reaction_member.append(user.id)
+
+    @shuffle.error
+    async def unknown_error_handler(self, ctx, error):
+        # '\N{THUMBS UP SIGN}'
         await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
 
         # エラーキャッチ
