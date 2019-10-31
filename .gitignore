@@ -1,0 +1,17 @@
+__pycache__
+*.txt
+.ipynb_checkpoints
+.vscode
+*.log
+*.csv
+*.ini
+test.py
+satsuki.py
+*.ps1
+*.pdf
+token
+token.*
+*.ipynb
+*.stackdump
+setting.json
+!ISO3166-1.CSV
