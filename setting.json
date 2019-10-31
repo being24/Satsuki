@@ -5,6 +5,6 @@
     "limit": 10,
     "announce": "アナウンス",
     "command_prefix": "!",
-    "status": "coding now!!!!!",
+    "status": "/help",
     "regular_meeting_addr": "http://ja.scp-wiki.net/feed/forum/t-1755883.xml"
 }

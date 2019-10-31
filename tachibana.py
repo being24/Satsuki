@@ -76,6 +76,5 @@ if __name__ == '__main__':
     with open(currentpath + "/setting.json", encoding='utf-8') as f:
         json_data = json.load(f)
 
-    # コマンドの最初の文字として'/'をcommand_prefixとする。
     bot = MyBot(command_prefix=json_data['command_prefix'])
     bot.run(token)  # Botのトークン

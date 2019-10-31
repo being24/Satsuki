@@ -14,3 +14,4 @@ token.*
 *.ipynb
 !ISO3166-1.CSV
 *.stackdump
+*.json

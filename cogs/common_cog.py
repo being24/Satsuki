@@ -302,6 +302,27 @@ class Tachibana_Com(commands.Cog):  # コグとして用いるクラスを定義
             if ctx.author.id == self.bot.admin_id:
                 await ctx.channel.send(self.bot.json_data['announce'])
 
+    @commands.Cog.listener()
+    async def on_member_join(self, member):
+        if member.guild.id == 609058923353341973 or 286871252784775179:
+            channel = self.bot.get_channel(member.guild._system_channel_id)
+            await asyncio.sleep(3)
+            embed = discord.Embed(
+                title=f"{member.guild.name}へようこそ",
+                colour=0x0080ff)
+            embed.add_field(
+                name=f"こんにちは、{member.name}。",
+                value=f"<#548544598826287116>の確認ののち、<#464055645935501312>であいさつをお願いします",
+                inline=True)
+            # 文面考えてほしい
+            embed.add_field(
+                name=f"welcome {member.name}.",
+                value=f"please check and read <#569530661350932481> and then give a reaction to this msg.",
+                inline=True)
+            embed.set_footer(text='読了したら何らかのリアクションをつけてください')
+            await channel.send(member.mention)
+            msg = await channel.send(embed=embed)
+
 
 def setup(bot):  # Bot本体側からコグを読み込む際に呼び出される関数。
     bot.add_cog(Tachibana_Com(bot))  # TestCogにBotを渡してインスタンス化し、Botにコグとして登録する。
