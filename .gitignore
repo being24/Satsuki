@@ -12,6 +12,6 @@ satsuki.py
 token
 token.*
 *.ipynb
-!ISO3166-1.CSV
 *.stackdump
-*.json
+setting.json
+!ISO3166-1.CSV
