@@ -18,7 +18,7 @@ import discord
 import pandas as pd
 import requests
 from bs4 import BeautifulSoup
-from discord.ext import commands  # Bot Commands Frameworkのインポート
+from discord.ext import commands, tasks
 from pytz import timezone
 
 import libs as lib
@@ -28,15 +28,23 @@ BRANCHS = ['jp', 'en', 'ru', 'ko', 'es', 'cn', 'cs',
            'fr', 'pl', 'th', 'de', 'it', 'ua', 'pt', 'uo']
 
 
-class Tachibana_Com(commands.Cog):  # コグとして用いるクラスを定義。
+class Tachibana_Com(commands.Cog):
 
-    def __init__(self, bot):  # TestCogクラスのコンストラクタ。Botを受取り、インスタンス変数として保持。
+    def __init__(self, bot):
         self.bot = bot
         self.SCP_JP = "http://ja.scp-wiki.net"
         self.master_path = os.path.dirname(
             os.path.dirname(os.path.abspath(__file__)))
 
-    @commands.command(aliases=['p'])  # コマンドの作成。コマンドはcommandデコレータで必ず修飾する。
+        with open(self.master_path + "/data/timer_dict.json", encoding='utf-8') as f:
+            self.timer_dict = json.load(f)
+
+        self.multi_timer.start()
+
+    def cog_unload(self):
+        self.multi_timer.cancel()
+
+    @commands.command(aliases=['p'])
     async def ping(self, ctx):
         await ctx.send('pong!')
 
@@ -284,10 +292,33 @@ class Tachibana_Com(commands.Cog):  # コグとして用いるクラスを定義
 
     @shuffle.error
     async def unknown_error_handler(self, ctx, error):
-        # '\N{THUMBS UP SIGN}'
         await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
 
+    @commands.command(aliases=['tm'])
+    @commands.has_permissions(ban_members=True)
+    async def timer(self, ctx, num: typing.Optional[int] = 30):
+        today = datetime.today()
+        before_five = (today + timedelta(minutes=num - 5)).strftime('%Y-%m-%d %H:%M:%S')
+        just_now = (today + timedelta(minutes=num)).strftime('%Y-%m-%d %H:%M:%S')
+
+        self.timer_dict[today.strftime('%Y-%m-%d %H:%M:%S')] = {
+            "-5": f"{before_five}",
+            "just": f"{just_now}",
+            "author": ctx.author.mention}
+
+        print(self.timer_dict)
+
+
+        f = open(self.master_path + "/data/timer_dict.json", "w")
+        json.dump(self.timer_dict, f, ensure_ascii=False, indent=4, separators=(',', ': '))
+
+        await ctx.send(f"{ctx.author.mention} : {num}分のタイマーを開始します")
+
+    @timer.error
+    async def unknown_error_handler(self, ctx, error):
+        await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
         # エラーキャッチ
+
     @commands.Cog.listener()
     async def on_command_error(self, ctx, message):
         print(message)
@@ -322,6 +353,15 @@ class Tachibana_Com(commands.Cog):  # コグとして用いるクラスを定義
             embed.set_footer(text='読了したら何らかのリアクションをつけてください')
             await channel.send(member.mention)
             msg = await channel.send(embed=embed)
+
+    @tasks.loop(seconds=30.0)
+    async def multi_timer(self):
+        print("!")
+
+    @multi_timer.before_loop
+    async def before_timer(self):
+        print('waiting...')
+        await self.bot.wait_until_ready()
 
 
 def setup(bot):  # Bot本体側からコグを読み込む際に呼び出される関数。
