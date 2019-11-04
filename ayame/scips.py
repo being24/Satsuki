@@ -50,7 +50,7 @@ start_word = {
     "uo": '<h1 id="toc1"><span>SCP一覧 <a name="list"></a></span></h1>'}
 
 end_word = {
-    "jp": '</div>',
+    "jp": '<li><a href="/joke-scps-jp">Joke SCP-JP</a>',
     "en": '<li><a href="/joke-scps">Joke SCPs</a>',
     "ru": '<li><a href="/joke-scps-ru">Joke SCP-RU</a>',
     "ko": '<li><a href="/joke-scps-ko">Joke SCP-KO</a>',
@@ -97,6 +97,8 @@ def scips():
                 break
             if "<li>" in line:
                 line = html.unescape(line)
+                if "newpage" in line:
+                    continue
                 if "href=" in line:
                     line = line.replace("http://ja.scp-wiki.net", "")
                     number = re.search("<a.*?href=.*?>", line)
