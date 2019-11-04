@@ -73,7 +73,7 @@ if __name__ == '__main__':
     handler.setFormatter(formatter)
     root_logger.addHandler(handler)
 
-    with open(currentpath + "/setting.json", encoding='utf-8') as f:
+    with open(currentpath + "/specific_setting.json", encoding='utf-8') as f:
         json_data = json.load(f)
 
     bot = MyBot(command_prefix=json_data['command_prefix'])
