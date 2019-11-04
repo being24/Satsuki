@@ -13,5 +13,5 @@ token
 token.*
 *.ipynb
 *.stackdump
-setting.json
 !ISO3166-1.CSV
+specific_setting.json
