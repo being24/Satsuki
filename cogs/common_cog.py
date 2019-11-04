@@ -298,19 +298,38 @@ class Tachibana_Com(commands.Cog):
     @commands.has_permissions(ban_members=True)
     async def timer(self, ctx, num: typing.Optional[int] = 30):
         today = datetime.today()
-        before_five = (today + timedelta(minutes=num - 5)).strftime('%Y-%m-%d %H:%M:%S')
-        just_now = (today + timedelta(minutes=num)).strftime('%Y-%m-%d %H:%M:%S')
+        before_five = today + timedelta(minutes=num - 5)
+        just_now = today + timedelta(minutes=num)
 
-        self.timer_dict[today.strftime('%Y-%m-%d %H:%M:%S')] = {
+        for key in list(self.timer_dict.keys()):
+            dict_time = datetime.strptime(
+                self.timer_dict[key]['just'], '%Y-%m-%d %H:%M:%S')
+            print(today - dict_time + timedelta(minutes=5))
+            if today < dict_time - timedelta(minutes=5):
+                self.timer_dict.pop(key, None)
+
+        before_five = (today + timedelta(minutes=num - 5)
+                       ).strftime('%Y-%m-%d %H:%M:%S')
+        just_now = (today + timedelta(minutes=num)
+                    ).strftime('%Y-%m-%d %H:%M:%S')
+        today = today.strftime('%Y-%m-%d %H:%M:%S')
+
+        self.timer_dict[today] = {
             "-5": f"{before_five}",
             "just": f"{just_now}",
-            "author": ctx.author.mention}
-
-        print(self.timer_dict)
-
+            "author": ctx.author.mention,
+            "channel": ctx.channel.id}
 
         f = open(self.master_path + "/data/timer_dict.json", "w")
-        json.dump(self.timer_dict, f, ensure_ascii=False, indent=4, separators=(',', ': '))
+        json.dump(
+            self.timer_dict,
+            f,
+            ensure_ascii=False,
+            indent=4,
+            separators=(
+                ',',
+                ': '))
+        f.close()
 
         await ctx.send(f"{ctx.author.mention} : {num}分のタイマーを開始します")
 
@@ -354,13 +373,15 @@ class Tachibana_Com(commands.Cog):
             await channel.send(member.mention)
             msg = await channel.send(embed=embed)
 
-    @tasks.loop(seconds=30.0)
+    @tasks.loop(seconds=5.0)
     async def multi_timer(self):
-        print("!")
+        now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+        # print(now)
 
     @multi_timer.before_loop
     async def before_timer(self):
-        print('waiting...')
+        print('booting...')
         await self.bot.wait_until_ready()
 
 
