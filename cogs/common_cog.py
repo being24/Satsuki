@@ -304,8 +304,7 @@ class Tachibana_Com(commands.Cog):
         for key in list(self.timer_dict.keys()):
             dict_time = datetime.strptime(
                 self.timer_dict[key]['just'], '%Y-%m-%d %H:%M:%S')
-            print(today - dict_time + timedelta(minutes=5))
-            if today < dict_time - timedelta(minutes=5):
+            if today > dict_time - timedelta(minutes=5):
                 self.timer_dict.pop(key, None)
 
         before_five = (today + timedelta(minutes=num - 5)
@@ -318,7 +317,8 @@ class Tachibana_Com(commands.Cog):
             "-5": f"{before_five}",
             "just": f"{just_now}",
             "author": ctx.author.mention,
-            "channel": ctx.channel.id}
+            "channel": ctx.channel.id,
+            "flag": 0}
 
         f = open(self.master_path + "/data/timer_dict.json", "w")
         json.dump(
@@ -375,9 +375,47 @@ class Tachibana_Com(commands.Cog):
 
     @tasks.loop(seconds=5.0)
     async def multi_timer(self):
-        now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        now = datetime.now()
+        for key in list(self.timer_dict.keys()):
+            dict_time_just = datetime.strptime(
+                self.timer_dict[key]['just'], '%Y-%m-%d %H:%M:%S')
+            dict_time_m5 = datetime.strptime(
+                self.timer_dict[key]['-5'], '%Y-%m-%d %H:%M:%S')
 
-        # print(now)
+            if dict_time_just < now:
+                mention = self.timer_dict[key]['author']
+                channel = self.bot.get_channel(self.timer_dict[key]['channel'])
+                await channel.send(f'時間です : {mention}')
+
+                self.timer_dict.pop(key, None)
+
+                f = open(self.master_path + "/data/timer_dict.json", "w")
+                json.dump(
+                    self.timer_dict,
+                    f,
+                    ensure_ascii=False,
+                    indent=4,
+                    separators=(
+                        ',',
+                        ': '))
+                f.close()
+
+            elif dict_time_m5 < now and self.timer_dict[key]['flag'] == 0:
+                mention = self.timer_dict[key]['author']
+                channel = self.bot.get_channel(self.timer_dict[key]['channel'])
+                self.timer_dict[key]['flag'] = 1
+                await channel.send(f'残り５分です : {mention}')
+
+                f = open(self.master_path + "/data/timer_dict.json", "w")
+                json.dump(
+                    self.timer_dict,
+                    f,
+                    ensure_ascii=False,
+                    indent=4,
+                    separators=(
+                        ',',
+                        ': '))
+                f.close()
 
     @multi_timer.before_loop
     async def before_timer(self):
