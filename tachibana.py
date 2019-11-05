@@ -6,7 +6,7 @@ import json
 import logging.config
 import os
 import sys
-import traceback  # エラー表示のためにインポート
+import traceback
 
 import discord
 from discord.ext import commands
@@ -17,14 +17,14 @@ INITIAL_COGS = [
 
 
 class MyBot(commands.Bot):
-    def __init__(self, command_prefix):  # コンストラクタ
+    def __init__(self, command_prefix):
 
-        super().__init__(command_prefix)  # スーパークラスのコンストラクタに値を渡して実行。
+        super().__init__(command_prefix)
 
-        for cog in INITIAL_COGS:  # INITIAL_COGSに格納されている名前から、コグを読み込む。
+        for cog in INITIAL_COGS:
             try:
                 self.load_extension(cog)
-            except Exception:  # エラーが発生した場合は、エラー内容を表示。
+            except Exception:
                 traceback.print_exc()
 
         with open(currentpath + "/setting.json", encoding='utf-8') as f:
@@ -35,7 +35,7 @@ class MyBot(commands.Bot):
         self.status = self.json_data['status']
         self.meeting_addr = self.json_data['regular_meeting_addr']
 
-    async def on_ready(self):  # 起動時実行されるコマンド
+    async def on_ready(self):
         print('-----')
         print('Logged in as')
         print(self.user.name)
@@ -45,7 +45,7 @@ class MyBot(commands.Bot):
         await bot.change_presence(activity=discord.Game(name=self.status))
 
 
-def read_token():  # トークンを 'root/token' から取得する
+def read_token():
     file = currentpath + "/token"
     try:
         for line in open(file, 'r'):
@@ -77,4 +77,4 @@ if __name__ == '__main__':
         json_data = json.load(f)
 
     bot = MyBot(command_prefix=json_data['command_prefix'])
-    bot.run(token)  # Botのトークン
+    bot.run(token)
