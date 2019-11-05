@@ -11,7 +11,7 @@
 
 ## 現在の状況について
 
-見ての通りTachibana本体にはまだ手を付けていません。ゆっくり開発していきます。
+大体できてきました。
 
 ### ayame
 2019-05-29:現在、改修が終わっているのはデータベース更新プログラムであるAyameのみです。これは現在のSatsukiでは細かく分割しているCSVをそれぞれ1つにまとめたものです。これにより検索を実装することを容易にしました。
@@ -21,6 +21,8 @@
 2019-08-09:現在、菖蒲の改修が進行中です。
 
 2019-08-21:tale等の検索に着手しました。
+
+2019-11-05:大体できてきたのでうれしい。
 
 ### data
 データやログを入れる場所です
@@ -32,9 +34,6 @@
 ロゴ画像の素材はこちらからお借りしました。  
 提供元：http://scp-jp-archive.wdfiles.com/local--resized-images/foundation-universe/Internal%20department2.png/small.jpg  
 作者：Nanimono Demonai さん  
-
-Tachibana ©︎︎ being241 2019 CC BY-SA 3.0
-
 
 ## 参考文献
 https://discordpy.readthedocs.io/ja/latest/index.html#  
