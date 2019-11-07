@@ -81,11 +81,10 @@ class Tachibana_admin(commands.Cog):  # コグとして用いるクラスを定�
         await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
 
     @commands.command(aliases=['sta'], hidden=True)
-    @commands.has_permissions(ban_members=True)
+    @commands.has_permissions(kick_members=True)
     async def statistics(self, ctx):
         csv_dict = lib.statistics_csv()
         await ctx.send(f"{csv_dict}")
-
 
     @statistics.error
     async def statistics_error(self, ctx, error):

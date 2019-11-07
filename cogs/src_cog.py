@@ -14,7 +14,7 @@ BRANCHS = ['jp', 'en', 'ru', 'ko', 'es', 'cn',
            'fr', 'pl', 'th', 'de', 'it', 'ua', 'pt', 'uo']
 
 
-class Tachibana_SRC(commands.Cog):  # コグとして用いるクラスを定義
+class Tachibana_SRC(commands.Cog, name='検索コマンド'):  # コグとして用いるクラスを定義
 
     def __init__(self, bot):  # TestCogクラスのコンストラクタBotを受取り、インスタンス変数として保持
         self.bot = bot
@@ -23,9 +23,6 @@ class Tachibana_SRC(commands.Cog):  # コグとして用いるクラスを定義
 
     @commands.command()
     async def tale(self, ctx, word: str):
-        '''if brt not in BRANCHS:
-            brt = "*"
-        '''
         reply = lib.src_tale(word)
 
         if len(reply) > self.bot.send_max:
@@ -55,7 +52,6 @@ class Tachibana_SRC(commands.Cog):  # コグとして用いるクラスを定義
 
     @commands.command(aliases=['prop'])
     async def proposal(self, ctx, word: str):
-
         reply = lib.src_proposal(word)
 
         if len(reply) > self.bot.send_max:
@@ -137,7 +133,7 @@ class Tachibana_SRC(commands.Cog):  # コグとして用いるクラスを定義
     @guide.error
     async def guide_error(self, ctx, error):
         if discord.ext.commands.errors.BadArgument:
-            await ctx.send('入力値が不正です')
+            await ctx.send('引数が必要です')
         else:
             await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
 
@@ -229,5 +225,5 @@ class Tachibana_SRC(commands.Cog):  # コグとして用いるクラスを定義
             await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
 
 
-def setup(bot):  # Bot本体側からコグを読み込む際に呼び出される関数
-    bot.add_cog(Tachibana_SRC(bot))  # TestCogにBotを渡してインスタンス化し、Botにコグとして登録する
+def setup(bot):
+    bot.add_cog(Tachibana_SRC(bot))

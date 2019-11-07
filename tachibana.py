@@ -19,7 +19,7 @@ INITIAL_COGS = [
 class MyBot(commands.Bot):
     def __init__(self, command_prefix):
 
-        super().__init__(command_prefix)
+        super().__init__(command_prefix, help_command=None)
 
         for cog in INITIAL_COGS:
             try:

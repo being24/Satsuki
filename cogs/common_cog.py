@@ -29,7 +29,7 @@ BRANCHS = ['jp', 'en', 'ru', 'ko', 'es', 'cn', 'cs',
            'fr', 'pl', 'th', 'de', 'it', 'ua', 'pt', 'uo']
 
 
-class Tachibana_Com(commands.Cog):
+class Tachibana_Com(commands.Cog, name='一般コマンド'):
 
     def __init__(self, bot):
         self.bot = bot
@@ -45,11 +45,12 @@ class Tachibana_Com(commands.Cog):
     def cog_unload(self):
         self.multi_timer.cancel()
 
-    @commands.command(aliases=['p'])
+    @commands.command(aliases=['p'], hidden=True)
     async def ping(self, ctx):
         await ctx.send('pong!')
 
     @commands.command(aliases=['df'])
+    @commands.has_permissions(kick_members=True)
     async def draft(self, ctx, num: typing.Optional[int] = 0):
         target_url = 'http://njr-sys.net/irc/draftReserve/'
 
@@ -230,7 +231,7 @@ class Tachibana_Com(commands.Cog):
         await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
 
     @commands.command(aliases=['sh'])
-    @commands.has_permissions(ban_members=True)
+    @commands.has_permissions(kick_members=True)
     async def shuffle(self, ctx, num: typing.Optional[int] = 2):
         settime = 10.0 * 60
         cnt = 4
@@ -301,7 +302,7 @@ class Tachibana_Com(commands.Cog):
         await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
 
     @commands.command(aliases=['tm'])
-    @commands.has_permissions(ban_members=True)
+    @commands.has_permissions(kick_members=True)
     async def timer(self, ctx, num: typing.Optional[int] = 30):
         today = datetime.today()
         before_five = today + timedelta(minutes=num - 5)
@@ -344,6 +345,74 @@ class Tachibana_Com(commands.Cog):
         await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
         # エラーキャッチ
 
+    @commands.command()
+    @commands.has_permissions(kick_members=True)
+    async def help(self, ctx):
+        msg = discord.Embed(
+            title='本BOTの使い方を説明させていただきます.',
+            description='よろしくお願いします.' +
+            ctx.author.mention,
+            colour=0xad1457)
+        msg.add_field(
+            name="/scp $scpnumber-branch$",
+            value="SCP内の各国記事のURLとタイトルを返します(ex1 /scp 173 ex2 /scp 1970jp)",
+            inline=False)
+        msg.add_field(
+            name="/search(src) $word$",
+            value="ヒットした記事を表示します.",
+            inline=False)
+        msg.add_field(
+            name="/tale $word$",
+            value="taleのURL,タイトル,著者を返します(ex /tale shinjimao04)",
+            inline=False)
+        msg.add_field(name="/proposal(prop) $word$",
+                      value="提言のURL,タイトルを返します(ex /proposal 艦橋)", inline=False)
+        msg.add_field(name="/joke $word$",
+                      value="jokeのURL,タイトルを返します(ex /joke ブライト)", inline=False)
+        msg.add_field(
+            name="/author(auth) $word$",
+            value="ヒットした著者ページを表示します.",
+            inline=False)
+        msg.add_field(
+            name="/explained(ex) $word$",
+            value="ヒットしたex-scpを表示します.",
+            inline=False)
+        msg.add_field(
+            name="/guide(gd) $word$",
+            value="ヒットしたガイドページを表示します.",
+            inline=False)
+        msg.add_field(
+            name="/draft(df)",
+            value="本日の下書き予約を表示します.引数に数字を与えるとその下書き予約を表示します.",
+            inline=False)
+        msg.add_field(name="/url $url$",
+                      value="$url$をSCPJPのアドレスに追加して返します.", inline=False)
+        msg.add_field(name="/dice $int$ $int:default=0$",
+                      value="サイコロを振って返します.", inline=False)
+        msg.add_field(name="/last_updated(lu)",
+                      value="データベースの最終更新日を表示します.", inline=False)
+        msg.add_field(name="/rand",
+                      value="ランダムに記事を表示します.引数で支部が指定できます.", inline=False)
+        msg.add_field(name="/help", value="ヘルプです.", inline=False)
+        msg.add_field(
+            name="/timer $minutes:default=30$",
+            value="簡易的なタイマーです.5分以上の場合、残り5分でもお知らせします.予期せぬ再起動にも安心！",
+            inline=False)
+        msg.add_field(
+            name="/meeting(mt)",
+            value="#scp-jp 定例会のお知らせスレッドから定例会のテーマを取得表示します.",
+            inline=False)
+        msg.add_field(
+            name="/shuffle(sh) $num:default=2$",
+            value="定例会の下書き批評回における振り分けを行います.(試験運用)",
+            inline=False)
+        msg.add_field(
+            name="追記",
+            value="バグ等を発見した場合は、然るべき場所にご報告ください.",
+            inline=False)
+
+        await ctx.send(embed=msg)
+
     @commands.Cog.listener()
     async def on_command_error(self, ctx, message):
         print(message)
@@ -367,7 +436,7 @@ class Tachibana_Com(commands.Cog):
                 title=f"{member.guild.name}へようこそ",
                 colour=0x0080ff)
             embed.add_field(
-                name=f"こんにちは、{member.name}。",
+                name=f"こんにちは、{member.name}.",
                 value=f"<#548544598826287116>の確認ののち、<#464055645935501312>であいさつをお願いします",
                 inline=True)
             # 文面考えてほしい
@@ -425,9 +494,9 @@ class Tachibana_Com(commands.Cog):
 
     @multi_timer.before_loop
     async def before_timer(self):
-        print('booting...')
+        # print('booting...')
         await self.bot.wait_until_ready()
 
 
-def setup(bot):  # Bot本体側からコグを読み込む際に呼び出される関数。
-    bot.add_cog(Tachibana_Com(bot))  # TestCogにBotを渡してインスタンス化し、Botにコグとして登録する。
+def setup(bot):
+    bot.add_cog(Tachibana_Com(bot))

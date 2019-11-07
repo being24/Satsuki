@@ -5,7 +5,7 @@
 import typing
 
 import discord
-from discord.ext import commands  # Bot Commands Frameworkのインポート
+from discord.ext import commands
 
 import libs as lib
 
@@ -14,12 +14,11 @@ BRANCHS = ['jp', 'en', 'ru', 'ko', 'es', 'cn',
            'fr', 'pl', 'th', 'de', 'it', 'ua', 'pt', 'uo']
 
 
-class Tachibana_SCP(commands.Cog):  # コグとして用いるクラスを定義。
+class Tachibana_SCP(commands.Cog, name='SCPコマンド'):
 
-    def __init__(self, bot):  # TestCogクラスのコンストラクタ。Botを受取り、インスタンス変数として保持。
+    def __init__(self, bot):
         self.bot = bot
 
-    # サブコマンドがなかったらnumber検索、そうじゃなかったら検索にするか→いやsrcはsrcにしとこう
     @commands.command()
     async def scp(self, ctx, *, num_brt):
         num_brt = num_brt.replace(" ", "")
