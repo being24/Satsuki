@@ -8,3 +8,4 @@ python3 $SCRIPT_DIR/ayame/proposal.py
 python3 $SCRIPT_DIR/ayame/auther.py
 python3 $SCRIPT_DIR/ayame/ex.py
 python3 $SCRIPT_DIR/ayame/joke.py
+python3 $SCRIPT_DIR/ayame/guidehub.py
