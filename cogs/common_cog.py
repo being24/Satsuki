@@ -15,6 +15,7 @@ from datetime import datetime, timedelta
 
 import aiohttp
 import discord
+import numpy as np
 import pandas as pd
 import requests
 from bs4 import BeautifulSoup
@@ -248,7 +249,7 @@ class Tachibana_Com(commands.Cog):
 
         await msg.add_reaction(emoji_in)
         await msg.add_reaction(emoji_go)
-        await asyncio.sleep(1)
+        await asyncio.sleep(0.3)
 
         while True:
             try:
@@ -265,16 +266,21 @@ class Tachibana_Com(commands.Cog):
                             break
 
                         await ctx.send('募集を終了しました')
+
+                        reaction_member = list(set(reaction_member))
+
                         random.shuffle(reaction_member)
-                        divided_reaction_member = [
-                            reaction_member[i::num] for i in range(num)]
+                        divided_reaction_member = np.array_split(
+                            reaction_member, num)
 
                         embed = discord.Embed(
                             title="割り振りは以下の通りです",
                             color=0x1e90ff)
+
                         for i in range(num):
+                            str_member = '\n'.join(divided_reaction_member[i])
                             embed.add_field(
-                                name=f'{i}', value=f'<@{reaction_member[i]}>', inline=True)
+                                name=f'grop:{i}', value=f'{str_member}', inline=True)
                         embed.set_footer(text='よろしくお願いします')
 
                         await msg.edit(embed=embed)
@@ -288,7 +294,7 @@ class Tachibana_Com(commands.Cog):
                     if user.id in reaction_member:
                         pass
                     else:
-                        reaction_member.append(user.id)
+                        reaction_member.append(user.mention)
 
     @shuffle.error
     async def unknown_error_handler(self, ctx, error):
@@ -373,7 +379,7 @@ class Tachibana_Com(commands.Cog):
             await channel.send(member.mention)
             msg = await channel.send(embed=embed)
 
-    @tasks.loop(seconds=5.0)
+    @tasks.loop(seconds=30.0)
     async def multi_timer(self):
         now = datetime.now()
         for key in list(self.timer_dict.keys()):
