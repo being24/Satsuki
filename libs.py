@@ -64,6 +64,8 @@ def scp_number(msg):
     result = list(result)
 
     if len(result) == 0 or number is re.sub("\\D", "", result[0]):
+        if len(number) > 4:
+            return None
         if "en" in brt:
             return("scp-" + str(number) + "はまだ存在しません")
         else:
