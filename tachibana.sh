@@ -1,3 +1,4 @@
 #!/bin/sh
 
-python3 /home/being241/scp/Tachibana/tachibana.py
+SCRIPT_DIR=$(cd $(dirname $0); pwd)
+python3 $SCRIPT_DIR/tachibana.py
