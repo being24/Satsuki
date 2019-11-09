@@ -203,6 +203,7 @@ class Tachibana_Com(commands.Cog, name='一般コマンド'):
         await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
 
     @commands.command(aliases=['mt'])
+    @commands.has_permissions(kick_members=True)
     async def meeting(self, ctx, brt: typing.Optional[str] = 'all'):
         content = ""
         contentlist = lib.get_scp_rss(self.bot.meeting_addr)[0]
