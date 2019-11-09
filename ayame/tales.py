@@ -97,8 +97,8 @@ def tale():
     for key in keys:
         response = requests.get(target_url[key])
         if response.status_code is not requests.codes.ok:
-            # print(f"{key} request err : {response.status_code}")
-            return
+            print(f"{key} request err : {response.status_code}")
+            continue
 
         scp_lines = response.text.split("\n")
         tales_start = scp_lines.index(start_word[key])
@@ -178,8 +178,6 @@ def tale():
                 if 'http://ja.scp-wiki.net/' in url:
                     url = url.replace("http://ja.scp-wiki.net", '')
 
-            # url,title end
-
                 urls.append(url)
                 titles.append(title)
                 authors.append(author)
@@ -193,7 +191,6 @@ def tale():
     df['title'] = titles
     df['author'] = authors
     df['branches'] = brts
-
     df.to_csv(masterpath + "/data/tale.csv", header=True, encoding="utf-8")
 
 
