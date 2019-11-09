@@ -290,12 +290,14 @@ def tag_to_discord(content):
 
         if 'href' in line:
             match = re.findall(r'href=[\'"]?([^\'" >]+)', line)
-            if "javascript" in match[0]:
+            if len(match) == 0:
                 line = ""
-            # elif match:
-            #    print(match[0])
-            deco_f = f'['
-            deco_b = f"]({match[0]})"
+            elif "javascript" in match[0]:
+                line = ""
+
+            if len(match) != 0:
+                deco_f = f'['
+                deco_b = f"]({match[0]})"
 
             p = re.compile(r"<[^>]*?>")
             line = p.sub(f"{deco_b}", line)

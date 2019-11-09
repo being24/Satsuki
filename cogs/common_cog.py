@@ -217,7 +217,6 @@ class Tachibana_Com(commands.Cog, name='一般コマンド'):
             color=0x0000a0)
 
         for x in text:
-            print(x)
             content += x
 
         embed.add_field(
