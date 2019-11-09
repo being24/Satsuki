@@ -84,8 +84,8 @@ def joke():
     for key in keys:
         response = requests.get(target_url[key])
         if response.status_code is not requests.codes.ok:
-            # print(f"{key} request err : {response.status_code}")
-            return
+            print(f"{key} request err : {response.status_code}")
+            continue
 
         number = ""
 

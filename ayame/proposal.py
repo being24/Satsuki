@@ -14,8 +14,6 @@ target_url = ["http://ja.scp-wiki.net/scp-001-jp",
 
 
 def proposal():
-    """for scpjp-proposal"""
-
     urls = []
     titles = []
     brts = []
@@ -30,8 +28,8 @@ def proposal():
 
         response = requests.get(url)
         if response.status_code is not requests.codes.ok:
-            # print("request err")
-            pass
+            print(f"{key} request err : {response.status_code}")
+            continue
 
         scp_lines = response.text.split("\n")
 
