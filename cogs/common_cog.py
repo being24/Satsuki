@@ -124,7 +124,10 @@ class Tachibana_Com(commands.Cog, name='一般コマンド'):
 
     @draft.error
     async def unknown_error_handler(self, ctx, error):
-        await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
+        if discord.ext.commands.errors.MissingPermissions:
+            await ctx.send(f'このコマンドを実行する権限がありません:{ctx.author.mention}')
+        else:
+            await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
 
     @commands.command()
     async def url(self, ctx, call):
@@ -229,7 +232,10 @@ class Tachibana_Com(commands.Cog, name='一般コマンド'):
 
     @meeting.error
     async def unknown_error_handler(self, ctx, error):
-        await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
+        if discord.ext.commands.errors.MissingPermissions:
+            await ctx.send(f'このコマンドを実行する権限がありません:{ctx.author.mention}')
+        else:
+            await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
 
     @commands.command(aliases=['sh'])
     @commands.has_permissions(kick_members=True)
@@ -300,7 +306,10 @@ class Tachibana_Com(commands.Cog, name='一般コマンド'):
 
     @shuffle.error
     async def unknown_error_handler(self, ctx, error):
-        await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
+        if discord.ext.commands.errors.MissingPermissions:
+            await ctx.send(f'このコマンドを実行する権限がありません:{ctx.author.mention}')
+        else:
+            await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
 
     @commands.command(aliases=['tm'])
     @commands.has_permissions(kick_members=True)
@@ -343,8 +352,10 @@ class Tachibana_Com(commands.Cog, name='一般コマンド'):
 
     @timer.error
     async def unknown_error_handler(self, ctx, error):
-        await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
-        # エラーキャッチ
+        if discord.ext.commands.errors.MissingPermissions:
+            await ctx.send(f'このコマンドを実行する権限がありません:{ctx.author.mention}')
+        else:
+            await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
 
     @commands.command()
     @commands.has_permissions(kick_members=True)
