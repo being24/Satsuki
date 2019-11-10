@@ -410,14 +410,14 @@ class Tachibana_Com(commands.Cog, name='一般コマンド'):
             name="/timer $minutes:default=30$",
             value="簡易的なタイマーです.5分以上の場合、残り5分でもお知らせします.予期せぬ再起動にも安心！",
             inline=False)
-        msg.add_field(
+        '''msg.add_field(
             name="/meeting(mt)",
             value="#scp-jp 定例会のお知らせスレッドから定例会のテーマを取得表示します.",
             inline=False)
         msg.add_field(
             name="/shuffle(sh) $num:default=2$",
             value="定例会の下書き批評回における振り分けを行います.(試験運用)",
-            inline=False)
+            inline=False)'''
         msg.add_field(
             name="追記",
             value="バグ等を発見した場合は、然るべき場所にご報告ください.",
