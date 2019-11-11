@@ -89,6 +89,8 @@ def proposal():
                 title = title.replace("''", '"')
                 titles.append(title)
 
+        print(f"page:{brt}のデータ取得が完了しました。")
+
     df = pd.DataFrame(columns=['url', 'title', 'author', 'branches'])
 
     df['url'] = urls

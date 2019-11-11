@@ -151,7 +151,7 @@ def ex():
 
                     brts.append(key)
 
-        print("page:" + key + "のデータ取得が完了しました。")
+        print(f"page:{key}のデータ取得が完了しました。")
 
     df = pd.DataFrame(columns=['url', 'title', 'author', 'branches'])
 
