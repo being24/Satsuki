@@ -449,7 +449,7 @@ class Tachibana_Com(commands.Cog, name='一般コマンド'):
                 colour=0x0080ff)
             embed.add_field(
                 name=f"こんにちは、{member.name}.",
-                value=f"<#548544598826287116>の確認ののち、<#464055645935501312>であいさつをお願いします",
+                value=f"<#548544598826287116>の確認ののち、<#464055645935501312>でアイサツをお願いします",
                 inline=True)
             # 文面考えてほしい
             embed.add_field(
