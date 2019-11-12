@@ -420,7 +420,7 @@ class Tachibana_Com(commands.Cog, name='一般コマンド'):
             inline=False)'''
         msg.add_field(
             name="追記",
-            value="バグ等を発見した場合は、然るべき場所にご報告ください.",
+            value="バグ等を発見した場合は、然るべき場所にご報告ください.\n__**また、動作確認にはDMを使用することも可能です**__",
             inline=False)
 
         await ctx.send(embed=msg)
