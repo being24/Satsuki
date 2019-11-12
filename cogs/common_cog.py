@@ -153,8 +153,10 @@ class Tachibana_Com(commands.Cog, name='一般コマンド'):
     async def dice(self, ctx, num1: int, num2: typing.Optional[int] = 0):
         nums = sorted([num1, num2])
 
-        if int(nums[1]) > 10000:
+        if any(x >= 10000 for x in nums):
             await ctx.send("入力値が大きすぎです")
+        elif any(x < 10000 for x in nums):
+            await ctx.send("正の値を入力してください")
 
         else:
             x = random.randint(nums[0], nums[1])
