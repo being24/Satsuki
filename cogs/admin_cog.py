@@ -65,17 +65,15 @@ class Tachibana_admin(commands.Cog):  # コグとして用いるクラスを定�
     @commands.command(aliases=['re'], hidden=True)
     @is_owner()
     @is_in_guild()
-    async def reload(self, ctx, module: str):
-        await self.bot.change_presence(activity=discord.Game(name="更新中"))
+    async def reload(self, ctx):
+        for cog in self.bot.INITIAL_COGS:
+            try:
+                self.bot.unload_extension(f"{cog}")
+                self.bot.load_extension(f"{cog}")
+                await ctx.send(f"{cog} reloaded")
+            except Exception as e:
+                print(e)
 
-        try:
-            self.bot.unload_extension(module)
-            self.bot.load_extension(module)
-            await ctx.send(f"{module} reloaded")
-        except Exception as e:
-            print(e)
-
-        await self.bot.change_presence(activity=discord.Game(name=self.bot.status))
 
     @reload.error
     async def reload_error(self, ctx, error):

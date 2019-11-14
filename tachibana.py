@@ -11,17 +11,20 @@ import traceback
 import discord
 from discord.ext import commands
 
-INITIAL_COGS = [
-    'cogs.scp_cog', 'cogs.common_cog', 'cogs.src_cog', 'cogs.admin_cog',
-]
-
 
 class MyBot(commands.Bot):
     def __init__(self, command_prefix):
 
         super().__init__(command_prefix, help_command=None)
 
-        for cog in INITIAL_COGS:
+        self.INITIAL_COGS = [
+            'cogs.scp_cog',
+            'cogs.common_cog',
+            'cogs.src_cog',
+            'cogs.admin_cog',
+        ]
+
+        for cog in self.INITIAL_COGS:
             try:
                 self.load_extension(cog)
             except Exception:
