@@ -11,10 +11,6 @@ from discord.ext import commands  # Bot Commands Frameworkのインポート
 
 import libs as lib
 
-SCP_JP = "http://ja.scp-wiki.net"
-BRANCHS = ['jp', 'en', 'ru', 'ko', 'es', 'cn',
-           'fr', 'pl', 'th', 'de', 'it', 'ua', 'pt', 'uo']
-
 
 def is_in_guild():
     async def predicate(ctx):
@@ -74,9 +70,21 @@ class Tachibana_admin(commands.Cog):  # コグとして用いるクラスを定�
             except Exception as e:
                 print(e)
 
-
     @reload.error
     async def reload_error(self, ctx, error):
+        await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
+
+    @commands.command(aliases=['st'], hidden=True)
+    @is_owner()
+    @is_in_guild()
+    async def status(self, ctx, word: str):
+        try:
+            await self.bot.change_presence(activity=discord.Game(name=word))
+        except BaseException:
+            pass
+
+    @status.error
+    async def status_error(self, ctx, error):
         await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
 
     @commands.command(aliases=['sta'], hidden=True)

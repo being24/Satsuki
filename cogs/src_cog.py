@@ -9,17 +9,12 @@ from discord.ext import commands  # Bot Commands Frameworkのインポート
 
 import libs as lib
 
-SCP_JP = "http://ja.scp-wiki.net"
-BRANCHS = ['jp', 'en', 'ru', 'ko', 'es', 'cn',
-           'fr', 'pl', 'th', 'de', 'it', 'ua', 'pt', 'uo']
-
 
 class Tachibana_SRC(commands.Cog, name='検索コマンド'):  # コグとして用いるクラスを定義
 
     def __init__(self, bot):  # TestCogクラスのコンストラクタBotを受取り、インスタンス変数として保持
         self.bot = bot
         self.URL = "http://ja.scp-wiki.net"
-
 
     @commands.command()
     async def tale(self, ctx, word: str):

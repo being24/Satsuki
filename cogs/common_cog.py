@@ -24,18 +24,15 @@ from pytz import timezone
 
 import libs as lib
 
-SCP_JP = "http://ja.scp-wiki.net"
-BRANCHS = ['jp', 'en', 'ru', 'ko', 'es', 'cn', 'cs',
-           'fr', 'pl', 'th', 'de', 'it', 'ua', 'pt', 'uo']
-
 
 class Tachibana_Com(commands.Cog, name='一般コマンド'):
-
     def __init__(self, bot):
         self.bot = bot
         self.SCP_JP = "http://ja.scp-wiki.net"
         self.master_path = os.path.dirname(
             os.path.dirname(os.path.abspath(__file__)))
+        self.BRANCHS = ['jp', 'en', 'ru', 'ko', 'es', 'cn', 'cs',
+                        'fr', 'pl', 'th', 'de', 'it', 'ua', 'pt', 'uo']
 
         with open(self.master_path + "/data/timer_dict.json", encoding='utf-8') as f:
             self.timer_dict = json.load(f)
@@ -192,7 +189,7 @@ class Tachibana_Com(commands.Cog, name='一般コマンド'):
         except FileNotFoundError as e:
             print(e)
 
-        if brt in BRANCHS:
+        if brt in self.BRANCHS:
             result = result.query('branches in @brt')
 
         result = result.sample()

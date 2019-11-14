@@ -9,15 +9,11 @@ from discord.ext import commands
 
 import libs as lib
 
-SCP_JP = "http://ja.scp-wiki.net"
-BRANCHS = ['jp', 'en', 'ru', 'ko', 'es', 'cn',
-           'fr', 'pl', 'th', 'de', 'it', 'ua', 'pt', 'uo']
-
 
 class Tachibana_SCP(commands.Cog, name='SCPコマンド'):
-
     def __init__(self, bot):
         self.bot = bot
+        self.SCP_JP = "http://ja.scp-wiki.net"
 
     @commands.command()
     async def scp(self, ctx, *, num_brt):
@@ -27,7 +23,7 @@ class Tachibana_SCP(commands.Cog, name='SCPコマンド'):
             if isinstance(reply, str):
                 await ctx.send(reply)
             else:
-                await ctx.send(reply[1] + "\n" + SCP_JP + reply[0])
+                await ctx.send(reply[1] + "\n" + self.SCP_JP + reply[0])
 
     @scp.error
     async def scp_error(self, ctx, error):
