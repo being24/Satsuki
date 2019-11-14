@@ -311,7 +311,7 @@ class Tachibana_Com(commands.Cog, name='一般コマンド'):
             await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
 
     @commands.command(aliases=['tm'])
-    @commands.has_permissions(kick_members=True)
+    # @commands.has_permissions(kick_members=True)
     async def timer(self, ctx, num: typing.Optional[int] = 30):
         today = datetime.today()
         before_five = today + timedelta(minutes=num - 5)
