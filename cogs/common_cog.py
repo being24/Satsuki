@@ -198,7 +198,7 @@ class Tachibana_Com(commands.Cog, name='一般コマンド'):
         result = itertools.chain(*result)
         result = list(result)
 
-        await ctx.send(result[1] + "\n" + SCP_JP + result[0])
+        await ctx.send(result[1] + "\n" + self.SCP_JP + result[0])
 
     @rand.error
     async def unknown_error_handler(self, ctx, error):
