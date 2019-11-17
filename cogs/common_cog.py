@@ -357,7 +357,6 @@ class Tachibana_Com(commands.Cog, name='一般コマンド'):
             await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
 
     @commands.command()
-    @commands.has_permissions(kick_members=True)
     async def help(self, ctx):
         msg = discord.Embed(
             title='本BOTの使い方を説明させていただきます.',
