@@ -80,6 +80,7 @@ class Tachibana_admin(commands.Cog):  # コグとして用いるクラスを定�
     async def status(self, ctx, word: str):
         try:
             await self.bot.change_presence(activity=discord.Game(name=word))
+            print(f"ステータスを{word}に変更しました")
         except BaseException:
             pass
 
