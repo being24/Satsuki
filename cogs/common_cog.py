@@ -189,6 +189,8 @@ class Tachibana_Com(commands.Cog, name='一般コマンド'):
         except FileNotFoundError as e:
             print(e)
 
+        brt = brt.lower()
+
         if brt in self.BRANCHS:
             result = result.query('branches in @brt')
 
