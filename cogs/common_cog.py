@@ -152,7 +152,7 @@ class Tachibana_Com(commands.Cog, name='一般コマンド'):
 
         if any(x >= 10000 for x in nums):
             await ctx.send("入力値が大きすぎです")
-        elif any(x < 10000 for x in nums):
+        elif any(x < 0 for x in nums):
             await ctx.send("正の値を入力してください")
 
         else:
