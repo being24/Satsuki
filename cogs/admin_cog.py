@@ -28,6 +28,8 @@ class Tachibana_admin(commands.Cog):  # コグとして用いるクラスを定�
 
     def __init__(self, bot):  # TestCogクラスのコンストラクタ。Botを受取り、インスタンス変数として保持。
         self.bot = bot
+        self.master_path = os.path.dirname(
+            os.path.dirname(os.path.abspath(__file__)))
 
     @commands.command(hidden=True)
     @is_owner()
@@ -48,7 +50,7 @@ class Tachibana_admin(commands.Cog):  # コグとして用いるクラスを定�
         if os.name is "nt":
             await ctx.send("windows上でこのコマンドは使用できません")
         elif os.name is "posix":
-            subprocess.Popen("./ayame.sh")  # currentpath使わんと
+            subprocess.Popen(self.master_path + "/ayame.sh")  # currentpath使わんと
         else:
             print("error")
 
