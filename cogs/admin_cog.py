@@ -48,7 +48,7 @@ class Tachibana_admin(commands.Cog):  # コグとして用いるクラスを定�
         if os.name is "nt":
             await ctx.send("windows上でこのコマンドは使用できません")
         elif os.name is "posix":
-            subprocess.Popen("./tachibana.sh")  # currentpath使わんと
+            subprocess.Popen("./ayame.sh")  # currentpath使わんと
         else:
             print("error")
 
@@ -80,7 +80,8 @@ class Tachibana_admin(commands.Cog):  # コグとして用いるクラスを定�
     async def status(self, ctx, word: str):
         try:
             await self.bot.change_presence(activity=discord.Game(name=word))
-            print(f"ステータスを{word}に変更しました")
+            await ctx.send(f"ステータスを{word}に変更しました")
+            self.bot.status = word
         except BaseException:
             pass
 
