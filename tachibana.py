@@ -21,6 +21,7 @@ class MyBot(commands.Bot):
             'cogs.common_cog',
             'cogs.src_cog',
             'cogs.admin_cog',
+            'cogs.dispander',
         ]
 
         for cog in self.INITIAL_COGS:
