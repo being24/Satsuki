@@ -50,7 +50,7 @@ class Tachibana_admin(commands.Cog):  # コグとして用いるクラスを定�
         if os.name is "nt":
             await ctx.send("windows上でこのコマンドは使用できません")
         elif os.name is "posix":
-            subprocess.Popen(self.master_path + "/ayame.sh")  # currentpath使わんと
+            subprocess.Popen(self.master_path + "/ayame.sh")
         else:
             print("error")
 
