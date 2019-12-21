@@ -457,8 +457,14 @@ class Tachibana_Com(commands.Cog, name='一般コマンド'):
                 value=f"please check and read <#569530661350932481> and then give a reaction to this msg.",
                 inline=True)
             embed.set_footer(text='読了したら何らかのリアクションをつけてください')
-            await channel.send(member.mention)
-            msg = await channel.send(embed=embed)
+            try:
+                await channel.send(member.mention)
+                msg = await channel.send(embed=embed)
+            except BaseException as e:
+                pass
+
+        else:
+            pass
 
     @tasks.loop(seconds=30.0)
     async def multi_timer(self):
