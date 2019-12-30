@@ -1,0 +1,7 @@
+discord 
+pandas 
+beautifulsoup4 
+requests 
+timezones 
+feedparser 
+zenhan
