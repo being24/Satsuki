@@ -13,7 +13,7 @@ RUN set -x && \
     git clone https://github.com/being24/Tachibana.git && \
     pip3 install -r ./Tachibana/docker_setting/requirements.txt
 
-CMD [echo 'Hello docker world!']
+CMD ["echo", "Now running..."]
 
 
 # docker run -it ubuntu:latest /bin/bash
