@@ -466,9 +466,19 @@ class Tachibana_Com(commands.Cog, name='一般コマンド'):
         else:
             pass
 
-    @tasks.loop(seconds=30.0)
+    @tasks.loop(seconds=35.0)
     async def multi_timer(self):
         now = datetime.now()
+
+        now_HM = now.strftime('%H:%M')
+        if now == '04:00':
+            if os.name is "nt":
+                await ctx.send("windows上でこのコマンドは使用できません")
+            elif os.name is "posix":
+                subprocess.Popen(self.master_path + "/ayame.sh")
+            else:
+                print("error")
+
         for key in list(self.timer_dict.keys()):
             dict_time_just = datetime.strptime(
                 self.timer_dict[key]['just'], '%Y-%m-%d %H:%M:%S')
