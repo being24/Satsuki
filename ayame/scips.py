@@ -16,18 +16,19 @@ target_url = {"jp0": "http://ja.scp-wiki.net/scp-series-jp",
               "en2": "http://ja.scp-wiki.net/scp-series-3",
               "en3": "http://ja.scp-wiki.net/scp-series-4",
               "en4": "http://ja.scp-wiki.net/scp-series-5",
-              "ru1": "http://ja.scp-wiki.net/scp-series-ru",
+              "en5": "http://ja.scp-wiki.net/scp-series-6",
+              "ru1": "http://ja.scp-wiki.net/scp-list-ru",
               "ko0": "http://ja.scp-wiki.net/scp-series-ko",
-              "es0": "http://ja.scp-wiki.net/scp-series-es",
+              "es0": "http://ja.scp-wiki.net/serie-scp-es",
               "cn0": "http://ja.scp-wiki.net/scp-series-cn",
               "cn1": "http://ja.scp-wiki.net/scp-series-cn-2",
-              "fr0": "http://ja.scp-wiki.net/scp-series-fr",
-              "pl0": "http://ja.scp-wiki.net/scp-series-pl",
+              "fr0": "http://ja.scp-wiki.net/liste-francaise",
+              "pl0": "http://ja.scp-wiki.net/lista-pl",
               "th0": "http://ja.scp-wiki.net/scp-series-th",
-              "de0": "http://ja.scp-wiki.net/scp-series-de",
-              "it0": "http://ja.scp-wiki.net/scp-series-it",
+              "de0": "http://ja.scp-wiki.net/scp-de",
+              "it0": "http://ja.scp-wiki.net/scp-it-serie-i",
               "ua0": "http://ja.scp-wiki.net/scp-series-ua",
-              "pt0": "http://ja.scp-wiki.net/scp-series-pt",
+              "pt0": "http://ja.scp-wiki.net/series-1-pt",
               "cs0": "http://ja.scp-wiki.net/scp-series-cs",
               "uo0": "http://ja.scp-wiki.net/scp-series-unofficial"
               }
@@ -67,11 +68,6 @@ end_word = {
     "uo": '<li><a href="/joke-scp-series-unofficial">Joke SCP</a>'}
 
 
-keys = ["jp0", "jp1", "en0", "en1", "en2", "en3", "en4", "ru1",
-        "ko0", "cn0", "cn1", "fr0", "pl0", "th0", "de0", "it0",
-        "ua0", "pt0", "es0", "cs0", "uo0"]
-
-
 def scips():
     nums = []
     titles = []
@@ -79,11 +75,11 @@ def scips():
 
     masterpath = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-    for key in keys:
+    for key in target_url.keys():
         response = requests.get(target_url[key])
         if response.status_code is not requests.codes.ok:
-            # print(f"{key} request err : {response.status_code}")
-            return
+            print(f"{key} request err : {response.status_code}")
+            continue
 
         number = ""
 
