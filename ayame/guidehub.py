@@ -17,7 +17,7 @@ end_word = '<div class="footnotes-footer">'
 def guide_hub():
     response = requests.get(target_url)
     if response.status_code is not requests.codes.ok:
-        print(f"request err : {response.status_code}")
+        print(f"\trequest err : {response.status_code}")
 
     masterpath = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 

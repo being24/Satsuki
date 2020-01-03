@@ -82,7 +82,7 @@ def tale():
     for key in target_url.keys():
         response = requests.get(target_url[key])
         if response.status_code is not requests.codes.ok:
-            print(f"{key} request err : {response.status_code}")
+            print(f"\t{key} request err : {response.status_code}")
             continue
 
         scp_lines = response.text.split("\n")
@@ -168,7 +168,7 @@ def tale():
                 authors.append(author)
                 brts.append(key)
 
-        print(f"page:{key}のデータ取得が完了しました。")
+        print(f"\tpage:{key}のデータ取得が完了しました。")
 
     df = pd.DataFrame(columns=['url', 'title', 'author', 'branches'])
 

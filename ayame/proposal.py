@@ -35,7 +35,7 @@ def proposal():
     for brt in target_url.keys():
         response = requests.get(target_url[brt])
         if response.status_code is not requests.codes.ok:
-            print(f"{brt} request err : {response.status_code}")
+            print(f"\t{brt} request err : {response.status_code}")
             continue
 
         scp_lines = response.text.split("\n")
@@ -47,7 +47,6 @@ def proposal():
             scp_start = scp_lines.index(
                 '<p style="text-align: center;"><em>ようこそ、担当職員様。ご希望のファイルを選択してください。</em></p>')
             scp_start = scp_start - 3
-            print(scp_lines[scp_start + 5])
 
         for line in scp_lines[scp_start + 5:]:
             line = html.unescape(line)
@@ -74,7 +73,7 @@ def proposal():
                 title = title.replace("''", '"')
                 titles.append(title)
 
-        print(f"page:{brt}のデータ取得が完了しました。")
+        print(f"\tpage:{brt}のデータ取得が完了しました。")
 
     df = pd.DataFrame(columns=['url', 'title', 'author', 'branches'])
 
