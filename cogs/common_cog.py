@@ -476,6 +476,9 @@ class Tachibana_Com(commands.Cog, name='一般コマンド'):
                 await ctx.send("windows上でこのコマンドは使用できません")
             elif os.name is "posix":
                 subprocess.Popen(self.master_path + "/ayame.sh")
+                channel = client.get_channel(638727598024687626)  # debug mode
+                # ここで現在の状態を送信するためstaコマンドを関数化する必要がある
+                await channel.send('菖蒲 : 更新しました')
             else:
                 print("error")
 
