@@ -11,8 +11,8 @@ RUN set -x && \
     rm -rf /var/lib/apt/lists/* && \
     pip3 install -U setuptools && \
     git clone https://github.com/being24/Tachibana.git && \
-    pip3 install -r ./Tachibana/docker_setting/requirements.txt　&& \
-    sh ./Tachibana/ayame.sh 
+    pip3 install -r ./Tachibana/docker_setting/requirements.txt && \
+    sh ./Tachibana/ayame.sh
 
 CMD ["echo", "Now running..."]
 
