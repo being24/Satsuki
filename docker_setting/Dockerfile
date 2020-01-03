@@ -12,7 +12,10 @@ RUN set -x && \
     pip3 install -U setuptools && \
     git clone https://github.com/being24/Tachibana.git && \
     pip3 install -r ./Tachibana/docker_setting/requirements.txt && \
-    sh ./Tachibana/ayame.sh
+    sh ./Tachibana/ayame.sh && \
+    echo "Hello, World" > ./Tachibana/data/file.txt
+
+VOLUME [ "./Tachibana/data" ]
 
 CMD ["echo", "Now running..."]
 
