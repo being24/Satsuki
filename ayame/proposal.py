@@ -24,21 +24,6 @@ target_url = {'jp': "http://ja.scp-wiki.net/scp-001-jp",
               'ru': 'http://ja.scp-wiki.net/scp-1001-ru'
               }
 
-keys = [
-    "jp",
-    "en",
-    "ru",
-    "cn",
-    "fr",
-    "pl",
-    "es",
-    "de",
-    "th",
-    "it",
-    "ua",
-    "pt",
-    "ko"]
-
 
 def proposal():
     urls = []
@@ -47,7 +32,7 @@ def proposal():
 
     masterpath = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-    for brt in keys:
+    for brt in target_url.keys():
         response = requests.get(target_url[brt])
         if response.status_code is not requests.codes.ok:
             print(f"{brt} request err : {response.status_code}")

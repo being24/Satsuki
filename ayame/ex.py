@@ -55,22 +55,6 @@ end_word = {"en": '</ul>',
             }
 
 
-keys = [
-    "en",
-    "jp",
-    "ru",
-    "ko",
-    "cn",
-    "fr",
-    "pl",
-    "es",
-    "th",
-    "de",
-    "it",
-    "ua",
-    "pt"]
-
-
 def ex():
     nums = []
     titles = []
@@ -78,7 +62,7 @@ def ex():
 
     masterpath = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-    for key in keys:
+    for key in target_url.keys():
         response = requests.get(target_url[key])
         if response.status_code is not requests.codes.ok:
             print(f"{key} request err : {response.status_code}")

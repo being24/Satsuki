@@ -53,21 +53,6 @@ end_word = {"jp": '<td>その他<a name="misc"></a></td>',
             "ko": '</div>',
             }
 
-keys = [
-    "jp",
-    "en",
-    "ru",
-    "cn",
-    "fr",
-    "pl",
-    "es",
-    "de",
-    "th",
-    "it",
-    "ua",
-    "pt",
-    "ko"]
-
 
 exclusion_list = ['#top',
                   'http://ja.scp-wiki.net/forum/t-6047066/',
@@ -94,7 +79,7 @@ def tale():
 
     masterpath = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-    for key in keys:
+    for key in target_url.keys():
         response = requests.get(target_url[key])
         if response.status_code is not requests.codes.ok:
             print(f"{key} request err : {response.status_code}")
