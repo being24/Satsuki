@@ -16,3 +16,4 @@ token.*
 !ISO3166-1.CSV
 tachibana.code-workspace
 !requirements.txt
+specific_setting.json
