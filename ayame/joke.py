@@ -56,22 +56,6 @@ end_word = {"en": '</div>',
             "uo": '</div>',
             }
 
-keys = [
-    "jp",
-    "en",
-    "ru",
-    "ko",
-    "cn",
-    "fr",
-    "pl",
-    "es",
-    "th",
-    "de",
-    "it",
-    "ua",
-    "pt",
-    "uo"]
-
 
 def joke():
 
@@ -81,10 +65,10 @@ def joke():
 
     masterpath = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-    for key in keys:
+    for key in target_url.keys():
         response = requests.get(target_url[key])
         if response.status_code is not requests.codes.ok:
-            print(f"{key} request err : {response.status_code}")
+            print(f"\t{key} request err : {response.status_code}")
             continue
 
         number = ""
@@ -152,7 +136,11 @@ def joke():
                     titles.append(metatitle)
                     brts.append(key)
 
+<<<<<<< HEAD
         print(f"page:{key}のデータ取得が完了しました。")
+=======
+        print(f"\tpage:{key}のデータ取得が完了しました。")
+>>>>>>> c6bdb7906d88682a77d9a764dd60d3ca0e8e80ca
 
     df = pd.DataFrame(columns=['url', 'title', 'author', 'branches'])
 

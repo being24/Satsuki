@@ -466,9 +466,28 @@ class Tachibana_Com(commands.Cog, name='一般コマンド'):
         else:
             pass
 
+<<<<<<< HEAD
     @tasks.loop(seconds=30.0)
     async def multi_timer(self):
         now = datetime.now()
+=======
+    @tasks.loop(seconds=35.0)
+    async def multi_timer(self):
+        now = datetime.now()
+
+        now_HM = now.strftime('%H:%M')
+        if now == '04:00':
+            if os.name is "nt":
+                await ctx.send("windows上でこのコマンドは使用できません")
+            elif os.name is "posix":
+                subprocess.Popen(self.master_path + "/ayame.sh")
+                channel = client.get_channel(638727598024687626)  # debug mode
+                # ここで現在の状態を送信するためstaコマンドを関数化する必要がある
+                await channel.send('菖蒲 : 更新しました')
+            else:
+                print("error")
+
+>>>>>>> c6bdb7906d88682a77d9a764dd60d3ca0e8e80ca
         for key in list(self.timer_dict.keys()):
             dict_time_just = datetime.strptime(
                 self.timer_dict[key]['just'], '%Y-%m-%d %H:%M:%S')

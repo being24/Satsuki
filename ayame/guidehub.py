@@ -17,7 +17,11 @@ end_word = '<div class="footnotes-footer">'
 def guide_hub():
     response = requests.get(target_url)
     if response.status_code is not requests.codes.ok:
+<<<<<<< HEAD:ayame/guidehub.py
         print(f"request err : {response.status_code}")
+=======
+        print(f"\trequest err : {response.status_code}")
+>>>>>>> c6bdb7906d88682a77d9a764dd60d3ca0e8e80ca:ayame/guidehub.py
 
     masterpath = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 

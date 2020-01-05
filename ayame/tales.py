@@ -53,21 +53,6 @@ end_word = {"jp": '<td>その他<a name="misc"></a></td>',
             "ko": '</div>',
             }
 
-keys = [
-    "jp",
-    "en",
-    "ru",
-    "cn",
-    "fr",
-    "pl",
-    "es",
-    "de",
-    "th",
-    "it",
-    "ua",
-    "pt",
-    "ko"]
-
 
 exclusion_list = ['#top',
                   'http://ja.scp-wiki.net/forum/t-6047066/',
@@ -94,10 +79,10 @@ def tale():
 
     masterpath = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-    for key in keys:
+    for key in target_url.keys():
         response = requests.get(target_url[key])
         if response.status_code is not requests.codes.ok:
-            print(f"{key} request err : {response.status_code}")
+            print(f"\t{key} request err : {response.status_code}")
             continue
 
         scp_lines = response.text.split("\n")
@@ -183,7 +168,11 @@ def tale():
                 authors.append(author)
                 brts.append(key)
 
+<<<<<<< HEAD
         print(f"page:{key}のデータ取得が完了しました。")
+=======
+        print(f"\tpage:{key}のデータ取得が完了しました。")
+>>>>>>> c6bdb7906d88682a77d9a764dd60d3ca0e8e80ca
 
     df = pd.DataFrame(columns=['url', 'title', 'author', 'branches'])
 

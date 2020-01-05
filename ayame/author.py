@@ -18,7 +18,7 @@ end_word = '<h2><span>著者ページへの参加条件</span></h2>'
 def author():
     response = requests.get(target_url)
     if response.status_code is not requests.codes.ok:
-        print(f"{key} request err : {response.status_code}")
+        print(f"\t{key} request err : {response.status_code}")
 
     lines = response.text.split("\n")
     start = lines.index(start_word)

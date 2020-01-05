@@ -15,4 +15,9 @@ token.*
 *.stackdump
 !ISO3166-1.CSV
 specific_setting.json
+<<<<<<< HEAD
 tachibana.code-workspace
+=======
+tachibana.code-workspace
+!requirements.txt
+>>>>>>> c6bdb7906d88682a77d9a764dd60d3ca0e8e80ca

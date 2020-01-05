@@ -57,6 +57,7 @@ def read_token():
     except FileNotFoundError:
         print("ファイルが見つかりません・・・。")
         print(sys.exc_info())
+        return
 
     return token
 
