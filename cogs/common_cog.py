@@ -466,17 +466,16 @@ class Tachibana_Com(commands.Cog, name='一般コマンド'):
         else:
             pass
 
-    @tasks.loop(seconds=35.0)
+    @tasks.loop(seconds=60.0)
     async def multi_timer(self):
         now = datetime.now()
-
         now_HM = now.strftime('%H:%M')
-        if now == '04:00':
+        if now_HM == '04:30':
+            channel = self.bot.get_channel(638727598024687626)  # debug mode
             if os.name is "nt":
-                await ctx.send("windows上でこのコマンドは使用できません")
+                await channel.send("windows上でこのコマンドは使用できません")
             elif os.name is "posix":
                 subprocess.Popen(self.master_path + "/ayame.sh")
-                channel = client.get_channel(638727598024687626)  # debug mode
                 # ここで現在の状態を送信するためstaコマンドを関数化する必要がある
                 await channel.send('菖蒲 : 更新しました')
             else:
@@ -510,7 +509,7 @@ class Tachibana_Com(commands.Cog, name='一般コマンド'):
                 mention = self.timer_dict[key]['author']
                 channel = self.bot.get_channel(self.timer_dict[key]['channel'])
                 self.timer_dict[key]['flag'] = 1
-                await channel.send(f'残り５分です : {mention}')
+                await channel.send(f'残り5分です : {mention}')
 
                 f = open(self.master_path + "/data/timer_dict.json", "w")
                 json.dump(
