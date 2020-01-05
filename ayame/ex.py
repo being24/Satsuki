@@ -55,25 +55,6 @@ end_word = {"en": '</ul>',
             }
 
 
-<<<<<<< HEAD
-keys = [
-    "en",
-    "jp",
-    "ru",
-    "ko",
-    "cn",
-    "fr",
-    "pl",
-    "es",
-    "th",
-    "de",
-    "it",
-    "ua",
-    "pt"]
-
-
-=======
->>>>>>> c6bdb7906d88682a77d9a764dd60d3ca0e8e80ca
 def ex():
     nums = []
     titles = []
@@ -154,11 +135,7 @@ def ex():
 
                     brts.append(key)
 
-<<<<<<< HEAD
-        print(f"page:{key}のデータ取得が完了しました。")
-=======
         print(f"\tpage:{key}のデータ取得が完了しました。")
->>>>>>> c6bdb7906d88682a77d9a764dd60d3ca0e8e80ca
 
     df = pd.DataFrame(columns=['url', 'title', 'author', 'branches'])
 

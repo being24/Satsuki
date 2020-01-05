@@ -23,24 +23,6 @@ target_url = {'jp': "http://ja.scp-wiki.net/scp-001-jp",
               'cs': 'http://ja.scp-wiki.net/scp-001-cs',
               'ru': 'http://ja.scp-wiki.net/scp-1001-ru'
               }
-<<<<<<< HEAD
-
-keys = [
-    "jp",
-    "en",
-    "ru",
-    "cn",
-    "fr",
-    "pl",
-    "es",
-    "de",
-    "th",
-    "it",
-    "ua",
-    "pt",
-    "ko"]
-=======
->>>>>>> c6bdb7906d88682a77d9a764dd60d3ca0e8e80ca
 
 
 def proposal():
@@ -50,17 +32,10 @@ def proposal():
 
     masterpath = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-<<<<<<< HEAD
-    for brt in keys:
-        response = requests.get(target_url[brt])
-        if response.status_code is not requests.codes.ok:
-            print(f"{brt} request err : {response.status_code}")
-=======
     for brt in target_url.keys():
         response = requests.get(target_url[brt])
         if response.status_code is not requests.codes.ok:
             print(f"\t{brt} request err : {response.status_code}")
->>>>>>> c6bdb7906d88682a77d9a764dd60d3ca0e8e80ca
             continue
 
         scp_lines = response.text.split("\n")
@@ -72,10 +47,6 @@ def proposal():
             scp_start = scp_lines.index(
                 '<p style="text-align: center;"><em>ようこそ、担当職員様。ご希望のファイルを選択してください。</em></p>')
             scp_start = scp_start - 3
-<<<<<<< HEAD
-            print(scp_lines[scp_start + 5])
-=======
->>>>>>> c6bdb7906d88682a77d9a764dd60d3ca0e8e80ca
 
         for line in scp_lines[scp_start + 5:]:
             line = html.unescape(line)
@@ -102,11 +73,7 @@ def proposal():
                 title = title.replace("''", '"')
                 titles.append(title)
 
-<<<<<<< HEAD
-        print(f"page:{brt}のデータ取得が完了しました。")
-=======
         print(f"\tpage:{brt}のデータ取得が完了しました。")
->>>>>>> c6bdb7906d88682a77d9a764dd60d3ca0e8e80ca
 
     df = pd.DataFrame(columns=['url', 'title', 'author', 'branches'])
 

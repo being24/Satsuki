@@ -466,11 +466,6 @@ class Tachibana_Com(commands.Cog, name='一般コマンド'):
         else:
             pass
 
-<<<<<<< HEAD
-    @tasks.loop(seconds=30.0)
-    async def multi_timer(self):
-        now = datetime.now()
-=======
     @tasks.loop(seconds=35.0)
     async def multi_timer(self):
         now = datetime.now()
@@ -487,7 +482,6 @@ class Tachibana_Com(commands.Cog, name='一般コマンド'):
             else:
                 print("error")
 
->>>>>>> c6bdb7906d88682a77d9a764dd60d3ca0e8e80ca
         for key in list(self.timer_dict.keys()):
             dict_time_just = datetime.strptime(
                 self.timer_dict[key]['just'], '%Y-%m-%d %H:%M:%S')

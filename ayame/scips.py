@@ -28,11 +28,7 @@ target_url = {"jp0": "http://ja.scp-wiki.net/scp-series-jp",
               "de0": "http://ja.scp-wiki.net/scp-de",
               "it0": "http://ja.scp-wiki.net/scp-it-serie-i",
               "ua0": "http://ja.scp-wiki.net/scp-series-ua",
-<<<<<<< HEAD
-              "pt0": "http://ja.scp-wiki.net/scp-series-pt",
-=======
               "pt0": "http://ja.scp-wiki.net/series-1-pt",
->>>>>>> c6bdb7906d88682a77d9a764dd60d3ca0e8e80ca
               "cs0": "http://ja.scp-wiki.net/scp-series-cs",
               "uo0": "http://ja.scp-wiki.net/scp-series-unofficial"
               }
@@ -72,14 +68,6 @@ end_word = {
     "uo": '<li><a href="/joke-scp-series-unofficial">Joke SCP</a>'}
 
 
-<<<<<<< HEAD
-keys = ["jp0", "jp1", "en0", "en1", "en2", "en3", "en4", "ru1",
-        "ko0", "cn0", "cn1", "fr0", "pl0", "th0", "de0", "it0",
-        "ua0", "pt0", "es0", "cs0", "uo0"]
-
-
-=======
->>>>>>> c6bdb7906d88682a77d9a764dd60d3ca0e8e80ca
 def scips():
     nums = []
     titles = []
@@ -90,13 +78,8 @@ def scips():
     for key in target_url.keys():
         response = requests.get(target_url[key])
         if response.status_code is not requests.codes.ok:
-<<<<<<< HEAD
-            # print(f"{key} request err : {response.status_code}")
-            return
-=======
             print(f"\t{key} request err : {response.status_code}")
             continue
->>>>>>> c6bdb7906d88682a77d9a764dd60d3ca0e8e80ca
 
         number = ""
 
@@ -169,11 +152,7 @@ def scips():
 
                     brts.append(res_key)
 
-<<<<<<< HEAD
-        print(f"page:{key}のデータ取得が完了しました。")
-=======
         print(f"\tpage:{key}のデータ取得が完了しました。")
->>>>>>> c6bdb7906d88682a77d9a764dd60d3ca0e8e80ca
 
     df = pd.DataFrame(columns=['url', 'title', 'author', 'branches'])
 
