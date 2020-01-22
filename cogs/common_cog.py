@@ -426,10 +426,6 @@ class Tachibana_Com(commands.Cog, name='一般コマンド'):
         await ctx.send(embed=msg)
 
     @commands.Cog.listener()
-    async def on_command_error(self, ctx, message):
-        print(message)
-
-    @commands.Cog.listener()
     async def on_message(self, ctx):
         if ctx.author.bot:
             return

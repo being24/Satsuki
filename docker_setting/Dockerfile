@@ -4,6 +4,8 @@ WORKDIR /opt/
 
 ENV LC_CTYPE='C.UTF-8'
 
+COPY token /opt
+
 RUN set -x && \
     apt-get update && \
     apt-get install -y --no-install-recommends python3.7 python3-pip nano git && \
@@ -13,11 +15,8 @@ RUN set -x && \
     git clone https://github.com/being24/Tachibana.git && \
     pip3 install -r ./Tachibana/docker_setting/requirements.txt && \
     sh ./Tachibana/ayame.sh && \
-    echo "Hello, World" > ./Tachibana/data/file.txt
+    chmod 0700 ./Tachibana/*.sh && \
+    mv /opt/token /opt/Tachibana && \
+    echo "Hello, Tachibana ready!"
 
-VOLUME [ "./Tachibana/data" ]
-
-CMD ["echo", "Now running..."]
-
-
-# docker run -it ubuntu:latest /bin/bash
+CMD ["/opt/Tachibana/bot.sh"]
