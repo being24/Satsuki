@@ -10,7 +10,7 @@ import pandas as pd
 import requests
 import zenhan
 
-BRANCHS = ['jp', 'en', 'ru', 'ko', 'es', 'cn',
+BRANCHS = ['jp', 'en', 'ru', 'ko', 'es', 'cn', 'cs',
            'fr', 'pl', 'th', 'de', 'it', 'ua', 'pt', 'uo']
 currentpath = os.path.dirname(os.path.abspath(__file__))
 

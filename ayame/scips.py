@@ -11,6 +11,7 @@ import requests
 
 target_url = {"jp0": "http://ja.scp-wiki.net/scp-series-jp",
               "jp1": "http://ja.scp-wiki.net/scp-series-jp-2",
+              "jp2": "http://ja.scp-wiki.net/scp-series-jp-3",
               "en0": "http://ja.scp-wiki.net/scp-series",
               "en1": "http://ja.scp-wiki.net/scp-series-2",
               "en2": "http://ja.scp-wiki.net/scp-series-3",
