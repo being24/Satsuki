@@ -17,3 +17,4 @@ token.*
 tachibana.code-workspace
 !requirements.txt
 specific_setting.json
+git_find_big.sh
