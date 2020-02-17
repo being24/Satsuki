@@ -17,11 +17,7 @@ class MyBot(commands.Bot):
         super().__init__(command_prefix, help_command=None)
 
         self.INITIAL_COGS = [
-            'cogs.scp_cog',
-            'cogs.common_cog',
-            'cogs.src_cog',
             'cogs.admin_cog',
-            'cogs.dispander',
             'cogs.error_handler',
         ]
 
@@ -31,14 +27,6 @@ class MyBot(commands.Bot):
             except Exception:
                 traceback.print_exc()
 
-        with open(currentpath + "/setting.json", encoding='utf-8') as f:
-            self.json_data = json.load(f)
-
-        self.send_max = self.json_data['limit']
-        self.admin_id = self.json_data['admin']["id"]
-        self.status = self.json_data['status']
-        self.meeting_addr = self.json_data['regular_meeting_addr']
-
     async def on_ready(self):
         print('-----')
         print('Logged in as')
@@ -46,7 +34,7 @@ class MyBot(commands.Bot):
         print(self.user.id)
         print('------')
         logging.info('rebooted')
-        await bot.change_presence(activity=discord.Game(name=self.status))
+        await bot.change_presence(activity=discord.Game(name="plane bot"))
 
 
 def read_token():
@@ -78,8 +66,5 @@ if __name__ == '__main__':
     handler.setFormatter(formatter)
     root_logger.addHandler(handler)
 
-    with open(currentpath + "/specific_setting.json", encoding='utf-8') as f:
-        json_data = json.load(f)
-
-    bot = MyBot(command_prefix=json_data['command_prefix'])
+    bot = MyBot(command_prefix="!")
     bot.run(token)
