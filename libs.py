@@ -296,8 +296,8 @@ def tag_to_discord(content):
                 line = ""
 
             if len(match) != 0:
-                deco_f = f'['
-                deco_b = f"]({match[0]})"
+                deco_f = f' ['
+                deco_b = f"]({match[0]}) "
 
             p = re.compile(r"<[^>]*?>")
             line = p.sub(f"{deco_b}", line)
