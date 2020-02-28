@@ -17,7 +17,7 @@ class MyBot(commands.Bot):
         super().__init__(command_prefix, help_command=None)
 
         self.INITIAL_COGS = [
-            filename[:-3] for filename in os.listdir("./cogs") if filename.endswith(".py")]
+            filename[:-3] for filename in os.listdir(currentpath + "/cogs") if filename.endswith(".py")]
 
         for cog in self.INITIAL_COGS:
             try:
