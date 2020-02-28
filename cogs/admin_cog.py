@@ -66,8 +66,8 @@ class Tachibana_admin(commands.Cog):  # コグとして用いるクラスを定�
     async def reload(self, ctx):
         for cog in self.bot.INITIAL_COGS:
             try:
-                self.bot.unload_extension(f"{cog}")
-                self.bot.load_extension(f"{cog}")
+                self.bot.unload_extension(f'cogs.{cog}')
+                self.bot.load_extension(f'cogs.{cog}')
                 await ctx.send(f"{cog} reloaded")
             except Exception as e:
                 print(e)
