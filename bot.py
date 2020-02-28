@@ -17,13 +17,7 @@ class MyBot(commands.Bot):
         super().__init__(command_prefix, help_command=None)
 
         self.INITIAL_COGS = [
-            'cogs.scp_cog',
-            'cogs.common_cog',
-            'cogs.src_cog',
-            'cogs.admin_cog',
-            'cogs.dispander',
-            'cogs.error_handler',
-        ]
+            filename[:-3] for filename in os.listdir("./cogs") if filename.endswith(".py")]
 
         for cog in self.INITIAL_COGS:
             try:
