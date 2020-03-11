@@ -21,7 +21,7 @@ class MyBot(commands.Bot):
 
         for cog in self.INITIAL_COGS:
             try:
-                self.load_extension(cog)
+                self.load_extension(f'cogs.{cog}')
             except Exception:
                 traceback.print_exc()
 

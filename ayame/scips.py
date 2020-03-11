@@ -2,12 +2,13 @@
 # coding: utf-8
 
 import html
+import itertools
 import os
 import re
 
-
 import pandas as pd
 import requests
+from bs4 import BeautifulSoup, NavigableString, Tag
 
 target_url = {"jp0": "http://ja.scp-wiki.net/scp-series-jp",
               "jp1": "http://ja.scp-wiki.net/scp-series-jp-2",
@@ -34,40 +35,6 @@ target_url = {"jp0": "http://ja.scp-wiki.net/scp-series-jp",
               "uo0": "http://ja.scp-wiki.net/scp-series-unofficial"
               }
 
-start_word = {
-    "jp": '<h1 id="toc1"><span>SCP-JP一覧 <a name="list"></a></span></h1>',
-    "en": '<h1 id="toc1"><span>SCP一覧 <a name="list"></a></span></h1>',
-    "ru": '<h1 id="toc1"><span>SCP-RU一覧 <a name="list"></a></span></h1>',
-    "ko": '<h1 id="toc1"><span>SCP-KO一覧 <a name="list"></a></span></h1>',
-    "es": '<h1 id="toc1"><span>SCP-ES一覧 <a name="list"></a></span></h1>',
-    "cn": '<h1 id="toc1"><span>SCP-CN一覧 <a name="list"></a></span></h1>',
-    "fr": '<h1 id="toc1"><span>SCP-FR一覧 <a name="list"></a></span></h1>',
-    "pl": '<h1 id="toc1"><span>SCP-PL一覧 <a name="list"></a></span></h1>',
-    "th": '<h1 id="toc1"><span>SCP-TH一覧 <a name="list"></a></span></h1>',
-    "de": '<h1 id="toc1"><span>SCP-DE一覧 <a name="list"></a></span></h1>',
-    "it": '<h1 id="toc1"><span>SCP-IT一覧 <a name="list"></a></span></h1>',
-    "ua": '<h1 id="toc1"><span>SCP-UA一覧 <a name="list"></a></span></h1>',
-    "pt": '<h1 id="toc1"><span>SCP-PT一覧 <a name="list"></a></span></h1>',
-    "cs": '<h1 id="toc1"><span>SCP-CS一覧 <a name="list"></a></span></h1>',
-    "uo": '<h1 id="toc1"><span>SCP一覧 <a name="list"></a></span></h1>'}
-
-end_word = {
-    "jp": '<li><a href="/joke-scps-jp">Joke SCP-JP</a>',
-    "en": '<li><a href="/joke-scps">Joke SCPs</a>',
-    "ru": '<li><a href="/joke-scps-ru">Joke SCP-RU</a>',
-    "ko": '<li><a href="/joke-scps-ko">Joke SCP-KO</a>',
-    "es": '<li><a href="/joke-scps-es">Joke SCP-ES</a>',
-    "cn": '<li><a href="/joke-scps-cn">Joke SCP-CN</a>',
-    "fr": '<li><a href="/joke-scps-fr">Joke SCP-FR</a>',
-    "pl": '<li><a href="/joke-scps-pl">Joke SCP-PL</a>',
-    "th": '<li><a href="/joke-scps-th">Joke SCP-TH</a>',
-    "de": '<li><a href="/joke-scps-de">Joke SCP-DE</a>',
-    "it": '<li><a class="newpage" href="/joke-scps-it">Joke SCP-IT</a>',
-    "ua": '<li><a class="newpage" href="/joke-scps-ua">Joke SCP-UA</a>',
-    "pt": '<li><a href="/joke-scps-pt">Joke SCP-PT</a>',
-    "cs": '</div>',
-    "uo": '<li><a href="/joke-scp-series-unofficial">Joke SCP</a>'}
-
 
 def scips():
     nums = []
@@ -75,6 +42,7 @@ def scips():
     brts = []
 
     masterpath = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    re_scp_num = re.compile(r'a href="/scp-[0-9][0-9][0-9]+')
 
     for key in target_url.keys():
         response = requests.get(target_url[key])
@@ -84,74 +52,82 @@ def scips():
 
         number = ""
 
-        scp_lines = response.text.split("\n")
+        soup = BeautifulSoup(response.text, 'lxml')
 
         res_key = key[:-1]
-        scp_start = scp_lines.index(start_word[res_key])
 
-        for line in scp_lines[scp_start:]:
-            if end_word[res_key] in line:
-                break
-            if "<li>" in line:
+        scp_lines = []
+        class_content = soup.find_all(class_="content-panel standalone series")
+        class_content = class_content[0]
+        for line in class_content:
+            if isinstance(line, Tag):
+                scp_lines.append(str(line).split('\n'))
+            else:
+                pass
+
+        scp_lines = itertools.chain(*scp_lines)
+        scp_lines = list(scp_lines)
+
+        for line in scp_lines:
+            m = re.search(re_scp_num, line)
+            if m:
                 line = html.unescape(line)
-                if "newpage" in line:
-                    continue
-                if "href=" in line:
-                    line = line.replace("http://ja.scp-wiki.net", "")
-                    number = re.search("<a.*?href=.*?>", line)
-                # print(number.group())  # debug
-                    try:
-                        number = re.split('("/.*?")', number.group())
-                    except BaseException:
-                        print("warn")
-                        return
 
-                    number = number[1].replace('"', "")
-                    nums.append(number)
-                    metatitle = ""
-                    # http://ja.scp-wiki.net/scp-3349 あかん！あかん！
-                    # この辺、バグ呼ぶだろうなあ・・・
-                    if '<span style="font-size:0%;">' in line:  # siz0%
-                        siz0_0 = line.find('<span style="font-size:0%;">')
-                        siz0_1 = line.find(
-                            '</span>', siz0_0 + 1) + len('</span>')
-                        line = line.replace(
-                            line[siz0_0:siz0_1], "")
+                line = line.replace("http://ja.scp-wiki.net", "")
+                number = re.search("<a.*?href=.*?>", line)
+            # print(number.group())  # debug
+                try:
+                    number = re.split('("/.*?")', number.group())
+                except BaseException:
+                    print("warn")
+                    return
 
-                    if '<span class="rt">' in line:  # ルビ
-                        siz0_0 = line.find('<span class="rt">')
-                        siz0_1 = line.find('</span>', siz0_0 + 1)
-                        line = line.replace('<span class="rt">', " - [")
-                        line = line.replace('</span></span>', "]")  # 多分ここ違う
+                number = number[1].replace('"', "")
+                nums.append(number)
+                metatitle = ""
+                # http://ja.scp-wiki.net/scp-3349 あかん！あかん！
+                # この辺、バグ呼ぶだろうなあ・・・
+                if '<span style="font-size:0%;">' in line:  # siz0%
+                    siz0_0 = line.find('<span style="font-size:0%;">')
+                    siz0_1 = line.find(
+                        '</span>', siz0_0 + 1) + len('</span>')
+                    line = line.replace(
+                        line[siz0_0:siz0_1], "")
 
-                    if '<strong>' in line:  # 強調
-                        line = line.replace('<strong>', "**")
-                        line = line.replace('</strong>', "**")
+                if '<span class="rt">' in line:  # ルビ
+                    siz0_0 = line.find('<span class="rt">')
+                    siz0_1 = line.find('</span>', siz0_0 + 1)
+                    line = line.replace('<span class="rt">', " - [")
+                    line = line.replace('</span></span>', "]")  # 多分ここ違う
 
-                    if '<span style="text-decoration: line-through;">' in line:  # 取り消し
-                        line = line.replace(
-                            '<span style="text-decoration: line-through;">', "~~")
-                        line = line.replace('</span>', "~~ ", 1)
+                if '<strong>' in line:  # 強調
+                    line = line.replace('<strong>', "**")
+                    line = line.replace('</strong>', "**")
 
-                    if '<span style="text-decoration: underline;">' in line:  # 下線
-                        line = line.replace(
-                            '<span style="text-decoration: underline;">', "__")
-                        line = line.replace('</span>', "__ ", 1)
+                if '<span style="text-decoration: line-through;">' in line:  # 取り消し
+                    line = line.replace(
+                        '<span style="text-decoration: line-through;">', "~~")
+                    line = line.replace('</span>', "~~ ", 1)
 
-                    if '<em>' in line:  # 斜体
-                        line = line.replace('<em>', "*")
-                        line = line.replace('</em>', "*")
+                if '<span style="text-decoration: underline;">' in line:  # 下線
+                    line = line.replace(
+                        '<span style="text-decoration: underline;">', "__")
+                    line = line.replace('</span>', "__ ", 1)
 
-                    for sptitle in re.split("<.*?>", line)[2:]:
-                        metatitle = metatitle + sptitle
+                if '<em>' in line:  # 斜体
+                    line = line.replace('<em>', "*")
+                    line = line.replace('</em>', "*")
 
-                    if number == "/scp-4494":
-                        metatitle = "The Specter、正義の戦士！"  # 敗北感
-                    elif number == "/scp-1355-jp":  # 一文字づつ精査→*を\*にするのもありっちゃあり
-                        metatitle = r"SCP-1355-JP - /\*Kingdom\*/"
-                    titles.append(metatitle)
+                for sptitle in re.split("<.*?>", line)[2:]:
+                    metatitle = metatitle + sptitle
 
-                    brts.append(res_key)
+                if number == "/scp-4494":
+                    metatitle = "The Specter、正義の戦士！"  # 敗北感
+                elif number == "/scp-1355-jp":  # 一文字づつ精査→*を\*にするのもありっちゃあり
+                    metatitle = r"SCP-1355-JP - /\*Kingdom\*/"
+                titles.append(metatitle)
+
+                brts.append(res_key)
 
         print(f"\tpage:{key}のデータ取得が完了しました。")
 
