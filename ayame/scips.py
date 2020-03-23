@@ -42,7 +42,8 @@ def scips():
     brts = []
 
     masterpath = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    re_scp_num = re.compile(r'a href="/scp-[0-9][0-9][0-9]+')
+    re_uel_atf = re.compile(r'a href="/scp-\d\d\d+')
+    re_uel_bef = re.compile(r'a href="/scp-..-\d\d\d+')
 
     for key in target_url.keys():
         response = requests.get(target_url[key])
@@ -69,8 +70,7 @@ def scips():
         scp_lines = list(scp_lines)
 
         for line in scp_lines:
-            m = re.search(re_scp_num, line)
-            if m:
+            if re.search(re_uel_atf, line) or re.search(re_uel_bef, line):
                 line = html.unescape(line)
 
                 line = line.replace("http://ja.scp-wiki.net", "")
