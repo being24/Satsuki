@@ -3,7 +3,6 @@
 
 import codecs
 import json
-import logging.config
 import os
 import sys
 import traceback
@@ -39,7 +38,6 @@ class MyBot(commands.Bot):
         print(self.user.name)
         print(self.user.id)
         print('------')
-        logging.info('rebooted')
         await bot.change_presence(activity=discord.Game(name=self.status))
 
 
@@ -61,16 +59,6 @@ if __name__ == '__main__':
     currentpath = os.path.dirname(os.path.abspath(__file__))
 
     token = read_token()
-
-    root_logger = logging.getLogger()
-    root_logger.setLevel(logging.INFO)
-
-    handler = logging.FileHandler(
-        currentpath + "/data/log/logger.log", 'a', 'utf-8')
-    formatter = logging.Formatter(
-        '%(levelname)s : %(asctime)s : %(message)s')
-    handler.setFormatter(formatter)
-    root_logger.addHandler(handler)
 
     with open(currentpath + "/specific_setting.json", encoding='utf-8') as f:
         json_data = json.load(f)

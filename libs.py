@@ -307,23 +307,3 @@ def tag_to_discord(content):
         result.append(line)
 
     return result
-
-
-def statistics_csv():
-    dictionary = pd.DataFrame(columns=['url', 'title', 'author', 'branches'])
-    try:
-        dictionary = pd.read_csv(
-            currentpath +
-            f"/data/scps.csv",
-            index_col=0)
-    except FileNotFoundError as e:
-        print(e)
-
-    num_dict = {}
-
-    num_dict["all"] = len(dictionary)
-
-    for brt in BRANCHS:
-        num_dict[brt] = len(dictionary.query('branches in @brt'))
-
-    return num_dict
