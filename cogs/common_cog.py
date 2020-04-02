@@ -42,10 +42,6 @@ class Tachibana_Com(commands.Cog, name='一般コマンド'):
     def cog_unload(self):
         self.multi_timer.cancel()
 
-    @commands.command(aliases=['p'], hidden=True)
-    async def ping(self, ctx):
-        await ctx.send('pong!')
-
     @commands.command(aliases=['df'])
     @commands.has_permissions(kick_members=True)
     async def draft(self, ctx, num: typing.Optional[int] = 0):

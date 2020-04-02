@@ -5,8 +5,9 @@
 import os
 import subprocess
 import typing
-
 import discord
+
+import pandas as pd
 from discord.ext import commands
 
 
@@ -28,7 +29,7 @@ class admin(commands.Cog):
         self.master_path = os.path.dirname(
             os.path.dirname(os.path.abspath(__file__)))
 
-    def return_num_of_scp():
+    def return_num_of_scp(self):
         dictionary = pd.DataFrame(
             columns=[
                 'url',
@@ -78,7 +79,7 @@ class admin(commands.Cog):
     @is_owner()
     @is_in_guild()
     async def num_of_scp(self, ctx):
-        csv_dict = num_of_scp_csv()
+        csv_dict = self.return_num_of_scp()
         await ctx.send(f"{csv_dict}")
 
     @num_of_scp.error

@@ -39,6 +39,7 @@ class admin(commands.Cog):
                 await ctx.send(f"{cog} reloaded")
             except Exception as e:
                 print(e)
+        await ctx.send("done")
 
     @reload.error
     async def reload_error(self, ctx, error):
