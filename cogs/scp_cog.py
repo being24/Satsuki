@@ -33,5 +33,5 @@ class Tachibana_SCP(commands.Cog, name='SCPコマンド'):
             await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
 
 
-def setup(bot):  # Bot本体側からコグを読み込む際に呼び出される関数。
-    bot.add_cog(Tachibana_SCP(bot))  # TestCogにBotを渡してインスタンス化し、Botにコグとして登録する。
+def setup(bot):
+    bot.add_cog(Tachibana_SCP(bot))
