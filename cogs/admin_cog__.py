@@ -28,18 +28,26 @@ class admin(commands.Cog):
         self.master_path = os.path.dirname(
             os.path.dirname(os.path.abspath(__file__)))
 
-    @commands.command(aliases=['re'], hidden=True) # これでinvokeの練習使用かね
+    @commands.group(aliases=['re'], hidden=True)
     @is_owner()
     @is_in_guild()
-    async def reload(self, ctx):
-        for cog in self.bot.INITIAL_COGS:
+    async def reload(self, ctx, cogname: typing.Optional[str] = "ALL"):
+        if cogname is "ALL":
+            for cog in self.bot.INITIAL_COGS:
+                try:
+                    self.bot.unload_extension(f'cogs.{cog}')
+                    self.bot.load_extension(f'cogs.{cog}')
+                except Exception as e:
+                    print(e)
+            await ctx.send(f"{(self.bot.INITIAL_COGS)}をreloadしました")
+        else:
             try:
-                self.bot.unload_extension(f'cogs.{cog}')
-                self.bot.load_extension(f'cogs.{cog}')
-                await ctx.send(f"{cog} reloaded")
+                self.bot.unload_extension(f'cogs.{cogname}')
+                self.bot.load_extension(f'cogs.{cogname}')
+                await ctx.send(f"{cogname}をreloadしました")
             except Exception as e:
                 print(e)
-        await ctx.send("done")
+                await ctx.send(e)
 
     @commands.command(aliases=['st'], hidden=True)
     @is_owner()
