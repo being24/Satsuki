@@ -72,11 +72,20 @@ class Tachibana_Com(commands.Cog, name='一般コマンド'):
                     flag = 1
                     time.append(detail.string.replace(" ", ""))
             elif i % 4 * flag == 1:
-                author.append(detail.string.replace(" ", ""))
+                if detail.string is None:
+                    author.append("None")
+                else:
+                    author.append(detail.string.replace(" ", ""))
             elif i % 4 * flag == 2:
-                title.append(detail.string.replace(" ", ""))
+                if detail.string is None:
+                    title.append("None")
+                else:
+                    title.append(detail.string.replace(" ", ""))
             elif i % 4 * flag == 3:
-                url.append(detail.a.get("href"))
+                if detail.string is None:
+                    url.append("None")
+                else:
+                    url.append(detail.a.get("href"))
             else:
                 pass
 
@@ -118,7 +127,7 @@ class Tachibana_Com(commands.Cog, name='一般コマンド'):
     @draft.error
     async def unknown_error_handler(self, ctx, error):
         if discord.ext.commands.errors.MissingPermissions:
-            await ctx.send(f'このコマンドを実行する権限がありません:{ctx.author.mention}')
+            await ctx.send(f'このコマンドを実行する権限がありません:{ctx.author.mention}{error}')
         else:
             await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
 

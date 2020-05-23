@@ -58,7 +58,12 @@ def scips():
         res_key = key[:-1]
 
         scp_lines = []
-        class_content = soup.find_all(class_="content-panel standalone series")
+        if res_key == "jp":
+            class_content = soup.find_all(
+                class_="content-panel standalone series scp")
+        else:
+            class_content = soup.find_all(
+                class_="content-panel standalone series")
         class_content = class_content[0]
         for line in class_content:
             if isinstance(line, Tag):
