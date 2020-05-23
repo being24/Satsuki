@@ -9,6 +9,7 @@ import traceback
 
 import discord
 from discord.ext import commands
+from dotenv import load_dotenv
 
 
 class MyBot(commands.Bot):
@@ -16,7 +17,8 @@ class MyBot(commands.Bot):
         super().__init__(command_prefix, help_command=None)
 
         self.INITIAL_COGS = [
-            filename[:-3] for filename in os.listdir(currentpath + "/cogs") if filename.endswith(".py")]
+            filename[:-3] for filename in os.listdir(currentpath + "/cogs")
+            if filename.endswith(".py")]
 
         for cog in self.INITIAL_COGS:
             try:
@@ -42,15 +44,13 @@ class MyBot(commands.Bot):
 
 
 def read_token():
-    file = currentpath + "/token"
-    try:
-        for line in open(file, 'r'):
-            temp = line.replace(" ", "").strip().split("=")
-            token = temp[1]
-    except FileNotFoundError:
-        print("ファイルが見つかりません・・・。")
-        print(sys.exc_info())
-        return
+    dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
+    load_dotenv(dotenv_path)
+
+    token = os.getenv('DISCORD_BOT_TOKEN')
+
+    if not isinstance(token, str):
+        raise FileNotFoundError("Token not found error!")
 
     return token
 
