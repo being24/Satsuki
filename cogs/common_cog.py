@@ -3,38 +3,52 @@
 
 
 import asyncio
-import html
 import itertools
 import json
 import os
 import random
 import subprocess
-import sys
 import typing
 from datetime import datetime, timedelta
 
-import aiohttp
 import discord
-import numpy as np
 import pandas as pd
-import requests
-from bs4 import BeautifulSoup
 from discord.ext import commands, tasks
 from pytz import timezone
 
-import libs as lib
 
-
-class Tachibana_Com(commands.Cog, name='一般コマンド'):
+class Satsuki_Com(commands.Cog, name='皐月分類外コマンド'):
     def __init__(self, bot):
         self.bot = bot
-        self.SCP_JP = "http://ja.scp-wiki.net"
+        self.SCP_JP = "http://scp-jp.wikidot.com"
         self.master_path = os.path.dirname(
             os.path.dirname(os.path.abspath(__file__)))
-        self.BRANCHS = ['jp', 'en', 'ru', 'ko', 'es', 'cn', 'cs',
-                        'fr', 'pl', 'th', 'de', 'it', 'ua', 'pt', 'uo']
 
-        with open(self.master_path + "/data/timer_dict.json", encoding='utf-8') as f:
+        self.welcome_list = [609058923353341973, 286871252784775179]
+        self.BRANCHS = [
+            'jp',
+            'en',
+            'ru',
+            'ko',
+            'es',
+            'cn',
+            'cs',
+            'fr',
+            'pl',
+            'th',
+            'de',
+            'it',
+            'ua',
+            'pt',
+            'uo']  # 外部に依存させたいな
+
+        self.json_name = self.master_path + "/data/timer_dict.json"
+
+        if not os.path.isfile(self.json_name):
+            self.timer_dict = {}
+            self.dump_json(self.timer_dict)
+
+        with open(self.json_name, encoding='utf-8') as f:
             self.timer_dict = json.load(f)
 
         self.multi_timer.start()
@@ -42,94 +56,16 @@ class Tachibana_Com(commands.Cog, name='一般コマンド'):
     def cog_unload(self):
         self.multi_timer.cancel()
 
-    @commands.command(aliases=['df'])
-    @commands.has_permissions(kick_members=True)
-    async def draft(self, ctx, num: typing.Optional[int] = 0):
-        target_url = 'http://njr-sys.net/irc/draftReserve/'
-
-        d_today = (datetime.now() + timedelta(hours=-3)).date()
-        # d_today = '2019-10-12'
-        response = requests.get(target_url + str(d_today))
-
-        soup = BeautifulSoup(response.text, "html.parser")
-
-        limen_object = datetime.strptime(
-            f'{d_today}-20:45:00', '%Y-%m-%d-%H:%M:%S')
-
-        url = []
-        time = []
-        title = []
-        author = []
-
-        for i, detail in enumerate(soup.find_all(class_='irc-table__message')):
-            if i % 4 == 0:
-                time_object = datetime.strptime(
-                    f'{d_today}-{detail.string.replace(" ", "")}',
-                    '%Y-%m-%d-%H:%M:%S')
-                if time_object < limen_object:
-                    flag = 0
-                else:
-                    flag = 1
-                    time.append(detail.string.replace(" ", ""))
-            elif i % 4 * flag == 1:
-                if detail.string is None:
-                    author.append("None")
-                else:
-                    author.append(detail.string.replace(" ", ""))
-            elif i % 4 * flag == 2:
-                if detail.string is None:
-                    title.append("None")
-                else:
-                    title.append(detail.string.replace(" ", ""))
-            elif i % 4 * flag == 3:
-                if detail.string is None:
-                    url.append("None")
-                else:
-                    url.append(detail.a.get("href"))
-            else:
-                pass
-
-        if len(url) == 0:
-            await ctx.send("本日の予約はありません")
-            return
-
-        title_message = "下書き批評予約システムからデータを取得します"
-
-        if num == 0:
-            embed = discord.Embed(
-                title=title_message,
-                description=f"本日の下書き批評予約は全{len(url)}件です",
-                color=0xff0080)
-
-            for i in range(len(author)):
-                embed.add_field(
-                    name=author[i],
-                    value=f'{i+1} : [{title[i]}]({url[i]})\tat: {time[i]}',
-                    inline=False)
-
-            embed.set_footer(text=f"受付時間外の予約は無効です!")
-            await ctx.send(embed=embed)
-
-        else:
-            embed = discord.Embed(
-                title=title_message,
-                description=f"{num}/{len(url)}件目の下書きです",
-                color=0xff0080)
-            num = num - 1
-            embed.add_field(
-                name=author[num],
-                value=f'{num+1} : [{title[num]}]({url[num]})\tat: {time[num]}',
-                inline=False)
-
-            embed.set_footer(text=f"受付時間外の予約は無効です!")
-            await ctx.send(embed=embed)
-
-    @draft.error
-    async def unknown_error_handler(self, ctx, error):
-        if discord.ext.commands.errors.MissingPermissions:
-            await ctx.send(f'このコマンドを実行する権限がありません:{ctx.author.mention}{error}')
-        else:
-            await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
+    def dump_json(self, json_data):
+        with open(self.json_name, "w") as f:
+            json.dump(
+                json_data,
+                f,
+                ensure_ascii=False,
+                indent=4,
+                separators=(
+                    ',',
+                    ': '))
 
     @commands.command()
     async def url(self, ctx, call):
@@ -153,15 +89,15 @@ class Tachibana_Com(commands.Cog, name='一般コマンド'):
 
     @commands.command()
     async def dice(self, ctx, num1: int, num2: typing.Optional[int] = 0):
-        nums = sorted([num1, num2])
+        num_list = sorted([num1, num2])
 
-        if any(x >= 10000 for x in nums):
+        if any(x >= 10000 for x in num_list):
             await ctx.send("入力値が大きすぎです")
-        elif any(x < 0 for x in nums):
+        elif any(x < 0 for x in num_list):
             await ctx.send("正の値を入力してください")
 
         else:
-            x = random.randint(nums[0], nums[1])
+            x = random.randint(num_list[0], num_list[1])
             if x is not None:
                 await ctx.send("出目は " + str(x) + " です")
 
@@ -208,114 +144,8 @@ class Tachibana_Com(commands.Cog, name='一般コマンド'):
         await ctx.send(result[1] + "\n" + self.SCP_JP + result[0])
 
     @rand.error
-    async def unknown_error_handler(self, ctx, error):
+    async def rand_error(self, ctx, error):
         await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
-
-    @commands.command(aliases=['mt'])
-    @commands.has_permissions(kick_members=True)
-    async def meeting(self, ctx, brt: typing.Optional[str] = 'all'):
-        content = ""
-        contentlist = lib.get_scp_rss(self.bot.meeting_addr)[0]
-        title = contentlist[1]
-        url = contentlist[0]
-        text = contentlist[2].split("</p>")
-        text = lib.tag_to_discord(text)
-
-        embed = discord.Embed(
-            title="本日の定例会テーマのお知らせです",
-            url=url,
-            color=0x0000a0)
-
-        for x in text:
-            content += x
-
-        embed.add_field(
-            name=title,
-            value=content,
-            inline=False)
-
-        await ctx.send(embed=embed)
-
-    @meeting.error
-    async def unknown_error_handler(self, ctx, error):
-        if discord.ext.commands.errors.MissingPermissions:
-            await ctx.send(f'このコマンドを実行する権限がありません:{ctx.author.mention}')
-        else:
-            await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
-
-    @commands.command(aliases=['sh'])
-    @commands.has_permissions(kick_members=True)
-    async def shuffle(self, ctx, num: typing.Optional[int] = 2):
-        settime = 10.0 * 60
-        cnt = 4
-        reaction_member = []
-        emoji_in = '\N{THUMBS UP SIGN}'
-        emoji_go = '\N{NEGATIVE SQUARED CROSS MARK}'
-
-        embed = discord.Embed(title="下書き批評に参加するメンバーを募集します", colour=0x1e90ff)
-        embed.add_field(
-            name=f"参加する方はリアクション{emoji_in}を押してください",
-            value="ご参加お待ちしております",
-            inline=True)
-        embed.set_footer(text='少し待ってからリアクションをつけてください')
-
-        msg = await ctx.send(embed=embed)
-
-        await msg.add_reaction(emoji_in)
-        await msg.add_reaction(emoji_go)
-        await asyncio.sleep(0.3)
-
-        while True:
-            try:
-                reaction, user = await self.bot.wait_for('reaction_add', timeout=settime)
-            except asyncio.TimeoutError:
-                await ctx.send('タイムアウトしました')
-                break
-            else:
-                if str(reaction.emoji) == emoji_go:
-                    if ctx.author.id == user.id:
-                        if len(reaction_member) < num:
-                            await ctx.send('最低人数を満たしませんでした')
-                            await msg.clear_reactions()
-                            break
-
-                        await ctx.send('募集を終了しました')
-
-                        reaction_member = list(set(reaction_member))
-
-                        random.shuffle(reaction_member)
-                        divided_reaction_member = np.array_split(
-                            reaction_member, num)
-
-                        embed = discord.Embed(
-                            title="割り振りは以下の通りです",
-                            color=0x1e90ff)
-
-                        for i in range(num):
-                            str_member = '\n'.join(divided_reaction_member[i])
-                            embed.add_field(
-                                name=f'grop:{i}', value=f'{str_member}', inline=True)
-                        embed.set_footer(text='よろしくお願いします')
-
-                        await msg.edit(embed=embed)
-                        await msg.clear_reactions()
-
-                        break
-                    else:
-                        await msg.remove_reaction(str(reaction.emoji), user)
-
-                elif str(reaction) == emoji_in:
-                    if user.id in reaction_member:
-                        pass
-                    else:
-                        reaction_member.append(user.mention)
-
-    @shuffle.error
-    async def unknown_error_handler(self, ctx, error):
-        if discord.ext.commands.errors.MissingPermissions:
-            await ctx.send(f'このコマンドを実行する権限がありません:{ctx.author.mention}')
-        else:
-            await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
 
     @commands.command(aliases=['tm'])
     # @commands.has_permissions(kick_members=True)
@@ -343,23 +173,14 @@ class Tachibana_Com(commands.Cog, name='一般コマンド'):
             "channel": ctx.channel.id,
             "flag": 0}
 
-        f = open(self.master_path + "/data/timer_dict.json", "w")
-        json.dump(
-            self.timer_dict,
-            f,
-            ensure_ascii=False,
-            indent=4,
-            separators=(
-                ',',
-                ': '))
-        f.close()
+        self.dump_json(self.timer_dict)
 
         await ctx.send(f"{ctx.author.mention} : {num}分のタイマーを開始します")
 
     @timer.error
-    async def unknown_error_handler(self, ctx, error):
-        if discord.ext.commands.errors.MissingPermissions:
-            await ctx.send(f'このコマンドを実行する権限がありません:{ctx.author.mention}')
+    async def timer_error(self, ctx, error):
+        if isinstance(error, commands.MissingPermissions):
+            await ctx.send(f'このコマンドを実行する権限がありません:{ctx.author.mention}\n{error}')
         else:
             await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
 
@@ -431,18 +252,8 @@ class Tachibana_Com(commands.Cog, name='一般コマンド'):
         await ctx.send(embed=msg)
 
     @commands.Cog.listener()
-    async def on_message(self, ctx):
-        if ctx.author.bot:
-            return
-
-        if all(s in ctx.content for s in [
-               str(self.bot.user.id), '更新']):  # 要書き直し
-            if ctx.author.id == self.bot.admin_id:
-                await ctx.channel.send(self.bot.json_data['announce'])
-
-    @commands.Cog.listener()
     async def on_member_join(self, member):
-        if member.guild.id == 609058923353341973 or 286871252784775179:
+        if any([member.guild.id == i for i in self.welcome_list]):
             channel = self.bot.get_channel(member.guild._system_channel_id)
             await asyncio.sleep(3)
             embed = discord.Embed(
@@ -450,34 +261,29 @@ class Tachibana_Com(commands.Cog, name='一般コマンド'):
                 colour=0x0080ff)
             embed.add_field(
                 name=f"こんにちは,{member.name}.",
-                value=f"<#548544598826287116>の確認ののち,<#464055645935501312>でアイサツをお願いします.",
+                value="<#548544598826287116>の確認ののち,<#464055645935501312>でアイサツをお願いします.",
                 inline=True)
-            # 文面考えてほしい
             embed.add_field(
                 name=f"welcome {member.name}.",
-                value=f"please check and read <#569530661350932481> and then give a reaction to this msg.",
+                value="please check and read <#569530661350932481> and then give a reaction to this msg.",
                 inline=True)
             embed.set_footer(text='読了したら何らかのリアクションをつけてください')
             try:
                 await channel.send(member.mention)
-                msg = await channel.send(embed=embed)
-            except BaseException as e:
+                await channel.send(embed=embed)
+            except BaseException:
                 pass
 
-        else:
-            pass
-
-    @tasks.loop(seconds=60.0)
+    @tasks.loop(minutes=1.0)
     async def multi_timer(self):
         now = datetime.now()
         now_HM = now.strftime('%H:%M')
         if now_HM == '04:30':
-            channel = self.bot.get_channel(638727598024687626)  # debug mode
-            if os.name is "nt":
+            channel = self.bot.get_channel(638727598024687626)
+            if os.name == "nt":
                 await channel.send("windows上でこのコマンドは使用できません")
-            elif os.name is "posix":
+            elif os.name == "posix":
                 subprocess.Popen(self.master_path + "/ayame.sh")
-                # ここで現在の状態を送信するためstaコマンドを関数化する必要がある
                 await channel.send('菖蒲 : 更新しました')
             else:
                 print("error")
@@ -495,16 +301,7 @@ class Tachibana_Com(commands.Cog, name='一般コマンド'):
 
                 self.timer_dict.pop(key, None)
 
-                f = open(self.master_path + "/data/timer_dict.json", "w")
-                json.dump(
-                    self.timer_dict,
-                    f,
-                    ensure_ascii=False,
-                    indent=4,
-                    separators=(
-                        ',',
-                        ': '))
-                f.close()
+                self.dump_json(self.timer_dict)
 
             elif dict_time_m5 < now and self.timer_dict[key]['flag'] == 0:
                 mention = self.timer_dict[key]['author']
@@ -512,16 +309,7 @@ class Tachibana_Com(commands.Cog, name='一般コマンド'):
                 self.timer_dict[key]['flag'] = 1
                 await channel.send(f'残り5分です : {mention}')
 
-                f = open(self.master_path + "/data/timer_dict.json", "w")
-                json.dump(
-                    self.timer_dict,
-                    f,
-                    ensure_ascii=False,
-                    indent=4,
-                    separators=(
-                        ',',
-                        ': '))
-                f.close()
+                self.dump_json(self.timer_dict)
 
     @multi_timer.before_loop
     async def before_timer(self):
@@ -530,4 +318,4 @@ class Tachibana_Com(commands.Cog, name='一般コマンド'):
 
 
 def setup(bot):
-    bot.add_cog(Tachibana_Com(bot))
+    bot.add_cog(Satsuki_Com(bot))

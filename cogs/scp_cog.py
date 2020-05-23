@@ -2,15 +2,13 @@
 # -*- coding: utf-8 -*-
 
 
-import typing
-
 import discord
 from discord.ext import commands
 
 import libs as lib
 
 
-class Tachibana_SCP(commands.Cog, name='SCPコマンド'):
+class Satsuki_SCP_cog(commands.Cog, name='SCPコマンド'):
     def __init__(self, bot):
         self.bot = bot
         self.SCP_JP = "http://ja.scp-wiki.net"
@@ -34,4 +32,4 @@ class Tachibana_SCP(commands.Cog, name='SCPコマンド'):
 
 
 def setup(bot):
-    bot.add_cog(Tachibana_SCP(bot))
+    bot.add_cog(Satsuki_SCP_cog(bot))

@@ -4,26 +4,13 @@
 
 import os
 import subprocess
-import typing
 import discord
 
 import pandas as pd
 from discord.ext import commands
 
 
-def is_in_guild():
-    async def predicate(ctx):
-        return ctx.guild and ctx.guild.id == 609058923353341973
-    return commands.check(predicate)
-
-
-def is_owner():
-    async def predicate(ctx):
-        return ctx.author.id == 277825292536512513
-    return commands.check(predicate)
-
-
-class admin(commands.Cog):
+class Update_data_cog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.master_path = os.path.dirname(
@@ -39,7 +26,7 @@ class admin(commands.Cog):
         try:
             dictionary = pd.read_csv(
                 self.master_path +
-                f"/data/scps.csv",
+                "/data/scps.csv",
                 index_col=0)
         except FileNotFoundError as e:
             print(e)
@@ -57,14 +44,13 @@ class admin(commands.Cog):
         return num_dict
 
     @commands.command(hidden=True)
-    @is_owner()
-    @is_in_guild()
+    @commands.has_permissions(ban_members=True)
     async def update(self, ctx):
         await self.bot.change_presence(activity=discord.Game(name="更新中"))
 
-        if os.name is "nt":
+        if os.name == "nt":
             await ctx.send("windows上でこのコマンドは使用できません")
-        elif os.name is "posix":
+        elif os.name == "posix":
             subprocess.Popen(self.master_path + "/ayame.sh")
         else:
             print("error")
@@ -76,8 +62,7 @@ class admin(commands.Cog):
         await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
 
     @commands.command(aliases=['num'], hidden=True)
-    @is_owner()
-    @is_in_guild()
+    @commands.has_permissions(ban_members=True)
     async def num_of_scp(self, ctx):
         csv_dict = self.return_num_of_scp()
         await ctx.send(f"{csv_dict}")
@@ -88,4 +73,4 @@ class admin(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(admin(bot))
+    bot.add_cog(Update_data_cog(bot))

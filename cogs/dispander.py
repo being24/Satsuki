@@ -1,9 +1,19 @@
+'''
+[Module name]
+
+Copyright (c) [2020] [1ntegrale9]
+
+This software is released under the MIT License.
+http://opensource.org/licenses/mit-license.php
+'''
+
+
 from discord import Embed
 from discord.ext import commands
 import re
 
 regex_discord_message_url = (
-    'https://(canary.)?discordapp.com/channels/'
+    'https://(ptb.|canary.)?discordapp(app)?.com/channels/'
     '(?P<guild>[0-9]{18})/(?P<channel>[0-9]{18})/(?P<message>[0-9]{18})'
 )
 

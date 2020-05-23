@@ -2,15 +2,13 @@
 # -*- coding: utf-8 -*-
 
 
-import typing
-
 import discord
 from discord.ext import commands  # Bot Commands Frameworkのインポート
 
 import libs as lib
 
 
-class Tachibana_SRC(commands.Cog, name='検索コマンド'):  # コグとして用いるクラスを定義
+class Satsuki_SRC_cog(commands.Cog, name='検索コマンド'):  # コグとして用いるクラスを定義
 
     def __init__(self, bot):  # TestCogクラスのコンストラクタBotを受取り、インスタンス変数として保持
         self.bot = bot
@@ -212,8 +210,8 @@ class Tachibana_SRC(commands.Cog, name='検索コマンド'):  # コグとして
         embed.set_footer(text="タイトルから検索しています")
         await ctx.send(embed=embed)
 
-    @tale.error
-    async def tale_error(self, ctx, error):
+    @search.error
+    async def search_error(self, ctx, error):
         if discord.ext.commands.errors.BadArgument:
             await ctx.send('入力値が不正です')
         else:
@@ -221,4 +219,4 @@ class Tachibana_SRC(commands.Cog, name='検索コマンド'):  # コグとして
 
 
 def setup(bot):
-    bot.add_cog(Tachibana_SRC(bot))
+    bot.add_cog(Satsuki_SRC_cog(bot))
