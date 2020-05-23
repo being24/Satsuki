@@ -18,6 +18,7 @@ RUN set -x && \
     git clone https://github.com/being24/Tachibana.git && \
     pip3 install -r ./Tachibana/docker_setting/requirements.txt && \
     chmod 0755 ./Tachibana/*.sh && \
+    chmod 0700 ./Tachibana/bot.py && \
     sh ./Tachibana/ayame.sh && \
     mv /opt/token /opt/Tachibana && \
     echo "Hello, Tachibana ready!"
