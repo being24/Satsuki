@@ -9,7 +9,7 @@ import pandas as pd
 import requests
 from prettyprinter import cpprint
 
-target_url = "http://ja.scp-wiki.net/guide-hub"
+target_url = "http://scp-jp.wikidot.com/guide-hub"
 start_word = '<h1 id="toc0"><span>先ずはこれを読んでください</span></h1>'
 end_word = '<div class="footnotes-footer">'
 

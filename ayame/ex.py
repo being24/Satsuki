@@ -8,20 +8,20 @@ import re
 import pandas as pd
 import requests
 
-target_url = {"en": "http://ja.scp-wiki.net/scp-ex",
-              "jp": "http://ja.scp-wiki.net/scp-jp-ex",
-              "ru": "http://ja.scp-wiki.net/scp-ru-ex",
-              "ko": "http://ja.scp-wiki.net/scp-ko-ex",
-              "cn": "http://ja.scp-wiki.net/scp-cn-ex",
-              "fr": "http://ja.scp-wiki.net/scp-fr-ex",
-              "pl": "http://ja.scp-wiki.net/scp-pl-ex",
-              "es": "http://ja.scp-wiki.net/scp-es-ex",
-              "th": "http://ja.scp-wiki.net/scp-th-ex",
-              "de": "http://ja.scp-wiki.net/scp-de-ex",
-              "it": "http://ja.scp-wiki.net/scp-it-ex",
-              "ua": "http://ja.scp-wiki.net/scp-ua-ex",
-              "pt": "http://ja.scp-wiki.net/scp-pt-ex",
-              "uo": "http://ja.scp-wiki.net/explained-scp-series-unofficial"
+target_url = {"en": "http://scp-jp.wikidot.com/scp-ex",
+              "jp": "http://scp-jp.wikidot.com/scp-jp-ex",
+              "ru": "http://scp-jp.wikidot.com/scp-ru-ex",
+              "ko": "http://scp-jp.wikidot.com/scp-ko-ex",
+              "cn": "http://scp-jp.wikidot.com/scp-cn-ex",
+              "fr": "http://scp-jp.wikidot.com/scp-fr-ex",
+              "pl": "http://scp-jp.wikidot.com/scp-pl-ex",
+              "es": "http://scp-jp.wikidot.com/scp-es-ex",
+              "th": "http://scp-jp.wikidot.com/scp-th-ex",
+              "de": "http://scp-jp.wikidot.com/scp-de-ex",
+              "it": "http://scp-jp.wikidot.com/scp-it-ex",
+              "ua": "http://scp-jp.wikidot.com/scp-ua-ex",
+              "pt": "http://scp-jp.wikidot.com/scp-pt-ex",
+              "uo": "http://scp-jp.wikidot.com/explained-scp-series-unofficial"
               }
 
 start_word = {"en": '<h1 id="toc0"><span>SCP-EXシリーズ</span></h1>',
@@ -81,7 +81,7 @@ def ex():
                 line = html.unescape(line)
 
                 if "a href=" in line:
-                    line = line.replace("http://ja.scp-wiki.net", "")
+                    line = line.replace("http://scp-jp.wikidot.com", "")
                     number = re.search("<a.*?href=.*?>", line)
                 # print(number.group())  # debug
                     try:
@@ -93,7 +93,7 @@ def ex():
                     number = number[1].replace('"', "")
                     nums.append(number)
                     metatitle = ""
-                    # http://ja.scp-wiki.net/scp-3349 あかん！あかん！
+                    # http://scp-jp.wikidot.com/scp-3349 あかん！あかん！
                     # この辺、バグ呼ぶだろうなあ・・・
                     if '<span style="font-size:0%;">' in line:  # siz0%
                         siz0_0 = line.find('<span style="font-size:0%;">')

@@ -8,20 +8,20 @@ import re
 import pandas as pd
 import requests
 
-target_url = {'jp': "http://ja.scp-wiki.net/scp-001-jp",
-              'en': "http://ja.scp-wiki.net/scp-001",
-              'ko': 'http://ja.scp-wiki.net/scp-001-ko',
-              'cn': 'http://ja.scp-wiki.net/scp-001-cn',
-              'fr': 'http://ja.scp-wiki.net/scp-001-fr',
-              'pl': 'http://ja.scp-wiki.net/scp-001-pl',
-              'es': 'http://ja.scp-wiki.net/scp-es-001',
-              'th': 'http://ja.scp-wiki.net/scp-001-th',
-              'de': 'http://ja.scp-wiki.net/scp-001-de',
-              'it': 'http://ja.scp-wiki.net/scp-001-it',
-              'ua': 'http://ja.scp-wiki.net/scp-001-ua',
-              'pt': 'http://ja.scp-wiki.net/scp-001-pt',
-              'cs': 'http://ja.scp-wiki.net/scp-001-cs',
-              'ru': 'http://ja.scp-wiki.net/scp-1001-ru'
+target_url = {'jp': "http://scp-jp.wikidot.com/scp-001-jp",
+              'en': "http://scp-jp.wikidot.com/scp-001",
+              'ko': 'http://scp-jp.wikidot.com/scp-001-ko',
+              'cn': 'http://scp-jp.wikidot.com/scp-001-cn',
+              'fr': 'http://scp-jp.wikidot.com/scp-001-fr',
+              'pl': 'http://scp-jp.wikidot.com/scp-001-pl',
+              'es': 'http://scp-jp.wikidot.com/scp-es-001',
+              'th': 'http://scp-jp.wikidot.com/scp-001-th',
+              'de': 'http://scp-jp.wikidot.com/scp-001-de',
+              'it': 'http://scp-jp.wikidot.com/scp-001-it',
+              'ua': 'http://scp-jp.wikidot.com/scp-001-ua',
+              'pt': 'http://scp-jp.wikidot.com/scp-001-pt',
+              'cs': 'http://scp-jp.wikidot.com/scp-001-cs',
+              'ru': 'http://scp-jp.wikidot.com/scp-1001-ru'
               }
 
 
@@ -53,8 +53,8 @@ def proposal():
 
             if line == "</div>":
                 break
-            if "http://ja.scp-wiki.net" in line:
-                line = line.replace("http://ja.scp-wiki.net", "")
+            if "http://scp-jp.wikidot.com" in line:
+                line = line.replace("http://scp-jp.wikidot.com", "")
 
             if "<p>" in line:
                 try:

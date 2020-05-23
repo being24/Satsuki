@@ -12,7 +12,7 @@ class Satsuki_SRC_cog(commands.Cog, name='検索コマンド'):  # コグとし�
 
     def __init__(self, bot):  # TestCogクラスのコンストラクタBotを受取り、インスタンス変数として保持
         self.bot = bot
-        self.URL = "http://ja.scp-wiki.net"
+        self.URL = "http://scp-jp.wikidot.com"
 
     @commands.command()
     async def tale(self, ctx, word: str):

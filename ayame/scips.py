@@ -10,29 +10,29 @@ import pandas as pd
 import requests
 from bs4 import BeautifulSoup, NavigableString, Tag
 
-target_url = {"jp0": "http://ja.scp-wiki.net/scp-series-jp",
-              "jp1": "http://ja.scp-wiki.net/scp-series-jp-2",
-              "jp2": "http://ja.scp-wiki.net/scp-series-jp-3",
-              "en0": "http://ja.scp-wiki.net/scp-series",
-              "en1": "http://ja.scp-wiki.net/scp-series-2",
-              "en2": "http://ja.scp-wiki.net/scp-series-3",
-              "en3": "http://ja.scp-wiki.net/scp-series-4",
-              "en4": "http://ja.scp-wiki.net/scp-series-5",
-              "en5": "http://ja.scp-wiki.net/scp-series-6",
-              "ru1": "http://ja.scp-wiki.net/scp-list-ru",
-              "ko0": "http://ja.scp-wiki.net/scp-series-ko",
-              "es0": "http://ja.scp-wiki.net/serie-scp-es",
-              "cn0": "http://ja.scp-wiki.net/scp-series-cn",
-              "cn1": "http://ja.scp-wiki.net/scp-series-cn-2",
-              "fr0": "http://ja.scp-wiki.net/liste-francaise",
-              "pl0": "http://ja.scp-wiki.net/lista-pl",
-              "th0": "http://ja.scp-wiki.net/scp-series-th",
-              "de0": "http://ja.scp-wiki.net/scp-de",
-              "it0": "http://ja.scp-wiki.net/scp-it-serie-i",
-              "ua0": "http://ja.scp-wiki.net/scp-series-ua",
-              "pt0": "http://ja.scp-wiki.net/series-1-pt",
-              "cs0": "http://ja.scp-wiki.net/scp-series-cs",
-              "uo0": "http://ja.scp-wiki.net/scp-series-unofficial"
+target_url = {"jp0": "http://scp-jp.wikidot.com/scp-series-jp",
+              "jp1": "http://scp-jp.wikidot.com/scp-series-jp-2",
+              "jp2": "http://scp-jp.wikidot.com/scp-series-jp-3",
+              "en0": "http://scp-jp.wikidot.com/scp-series",
+              "en1": "http://scp-jp.wikidot.com/scp-series-2",
+              "en2": "http://scp-jp.wikidot.com/scp-series-3",
+              "en3": "http://scp-jp.wikidot.com/scp-series-4",
+              "en4": "http://scp-jp.wikidot.com/scp-series-5",
+              "en5": "http://scp-jp.wikidot.com/scp-series-6",
+              "ru1": "http://scp-jp.wikidot.com/scp-list-ru",
+              "ko0": "http://scp-jp.wikidot.com/scp-series-ko",
+              "es0": "http://scp-jp.wikidot.com/serie-scp-es",
+              "cn0": "http://scp-jp.wikidot.com/scp-series-cn",
+              "cn1": "http://scp-jp.wikidot.com/scp-series-cn-2",
+              "fr0": "http://scp-jp.wikidot.com/liste-francaise",
+              "pl0": "http://scp-jp.wikidot.com/lista-pl",
+              "th0": "http://scp-jp.wikidot.com/scp-series-th",
+              "de0": "http://scp-jp.wikidot.com/scp-de",
+              "it0": "http://scp-jp.wikidot.com/scp-it-serie-i",
+              "ua0": "http://scp-jp.wikidot.com/scp-series-ua",
+              "pt0": "http://scp-jp.wikidot.com/series-1-pt",
+              "cs0": "http://scp-jp.wikidot.com/scp-series-cs",
+              "uo0": "http://scp-jp.wikidot.com/scp-series-unofficial"
               }
 
 
@@ -78,7 +78,7 @@ def scips():
             if re.search(re_uel_atf, line) or re.search(re_uel_bef, line):
                 line = html.unescape(line)
 
-                line = line.replace("http://ja.scp-wiki.net", "")
+                line = line.replace("http://scp-jp.wikidot.com", "")
                 number = re.search("<a.*?href=.*?>", line)
             # print(number.group())  # debug
                 try:
@@ -90,7 +90,7 @@ def scips():
                 number = number[1].replace('"', "")
                 nums.append(number)
                 metatitle = ""
-                # http://ja.scp-wiki.net/scp-3349 あかん！あかん！
+                # http://scp-jp.wikidot.com/scp-3349 あかん！あかん！
                 # この辺、バグ呼ぶだろうなあ・・・
                 if '<span style="font-size:0%;">' in line:  # siz0%
                     siz0_0 = line.find('<span style="font-size:0%;">')

@@ -10,7 +10,7 @@ import pandas as pd
 import requests
 from prettyprinter import cpprint
 
-target_url = "http://ja.scp-wiki.net/members-pages-jp"
+target_url = "http://scp-jp.wikidot.com/members-pages-jp"
 start_word = '<h2 id="toc0"><span>管理者</span></h2>'
 end_word = '<h2><span>著者ページへの参加条件</span></h2>'
 
@@ -82,8 +82,8 @@ def author():
 
         elif '<td><a href="' in line:
 
-            if 'http://ja.scp-wiki.net' in line:
-                line = line.replace('http://ja.scp-wiki.net', "")
+            if 'http://scp-jp.wikidot.com' in line:
+                line = line.replace('http://scp-jp.wikidot.com', "")
             sp_line = re.split('[<>]', line)
             url = sp_line[3].replace("a href=", "").replace('"', "")
             title = sp_line[4].replace('"', "")

@@ -8,20 +8,20 @@ import re
 import pandas as pd
 import requests
 
-target_url = {"en": "http://ja.scp-wiki.net/joke-scps",
-              "jp": "http://ja.scp-wiki.net/joke-scps-jp",
-              "ru": "http://ja.scp-wiki.net/joke-scps-ru",
-              "ko": "http://ja.scp-wiki.net/joke-scps-ko",
-              "cn": "http://ja.scp-wiki.net/joke-scps-cn",
-              "fr": "http://ja.scp-wiki.net/joke-scps-fr",
-              "pl": "http://ja.scp-wiki.net/joke-scps-pl",
-              "es": "http://ja.scp-wiki.net/joke-scps-es",
-              "th": "http://ja.scp-wiki.net/joke-scps-th",
-              "de": "http://ja.scp-wiki.net/joke-scps-de",
-              "it": "http://ja.scp-wiki.net/joke-scps-it",
-              "ua": "http://ja.scp-wiki.net/joke-scps-ua",
-              "pt": "http://ja.scp-wiki.net/joke-scps-pt",
-              "uo": "http://ja.scp-wiki.net/joke-scp-series-unofficial"
+target_url = {"en": "http://scp-jp.wikidot.com/joke-scps",
+              "jp": "http://scp-jp.wikidot.com/joke-scps-jp",
+              "ru": "http://scp-jp.wikidot.com/joke-scps-ru",
+              "ko": "http://scp-jp.wikidot.com/joke-scps-ko",
+              "cn": "http://scp-jp.wikidot.com/joke-scps-cn",
+              "fr": "http://scp-jp.wikidot.com/joke-scps-fr",
+              "pl": "http://scp-jp.wikidot.com/joke-scps-pl",
+              "es": "http://scp-jp.wikidot.com/joke-scps-es",
+              "th": "http://scp-jp.wikidot.com/joke-scps-th",
+              "de": "http://scp-jp.wikidot.com/joke-scps-de",
+              "it": "http://scp-jp.wikidot.com/joke-scps-it",
+              "ua": "http://scp-jp.wikidot.com/joke-scps-ua",
+              "pt": "http://scp-jp.wikidot.com/joke-scps-pt",
+              "uo": "http://scp-jp.wikidot.com/joke-scp-series-unofficial"
               }
 
 start_word = {"en": '<div class="content-panel standalone series">',
@@ -84,7 +84,7 @@ def joke():
                 line = html.unescape(line)
 
                 if "a href=" in line:
-                    line = line.replace("http://ja.scp-wiki.net", "")
+                    line = line.replace("http://scp-jp.wikidot.com", "")
                     number = re.search("<a.*?href=.*?>", line)
                 # print(number.group())  # debug
                     try:

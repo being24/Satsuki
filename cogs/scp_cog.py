@@ -11,7 +11,7 @@ import libs as lib
 class Satsuki_SCP_cog(commands.Cog, name='SCPコマンド'):
     def __init__(self, bot):
         self.bot = bot
-        self.SCP_JP = "http://ja.scp-wiki.net"
+        self.SCP_JP = "http://scp-jp.wikidot.com"
 
     @commands.command()
     async def scp(self, ctx, *, num_brt):

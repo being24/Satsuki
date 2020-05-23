@@ -8,19 +8,19 @@ import re
 import pandas as pd
 import requests
 
-target_url = {"jp": "http://ja.scp-wiki.net/foundation-tales-jp",
-              "en": "http://ja.scp-wiki.net/foundation-tales",
-              "ru": "http://ja.scp-wiki.net/foundation-tales-ru",
-              "cn": "http://ja.scp-wiki.net/foundation-tales-cn",
-              "fr": "http://ja.scp-wiki.net/foundation-tales-fr",
-              "pl": 'http://ja.scp-wiki.net/foundation-tales-pl',
-              "es": 'http://ja.scp-wiki.net/foundation-tales-es',
-              "de": 'http://ja.scp-wiki.net/foundation-tales-de',
-              "th": 'http://ja.scp-wiki.net/foundation-tales-th',
-              "it": 'http://ja.scp-wiki.net/foundation-tales-it',
-              "ua": 'http://ja.scp-wiki.net/foundation-tales-ua',
-              "pt": 'http://ja.scp-wiki.net/foundation-tales-pt',
-              "ko": 'http://ja.scp-wiki.net/foundation-tales-ko'
+target_url = {"jp": "http://scp-jp.wikidot.com/foundation-tales-jp",
+              "en": "http://scp-jp.wikidot.com/foundation-tales",
+              "ru": "http://scp-jp.wikidot.com/foundation-tales-ru",
+              "cn": "http://scp-jp.wikidot.com/foundation-tales-cn",
+              "fr": "http://scp-jp.wikidot.com/foundation-tales-fr",
+              "pl": 'http://scp-jp.wikidot.com/foundation-tales-pl',
+              "es": 'http://scp-jp.wikidot.com/foundation-tales-es',
+              "de": 'http://scp-jp.wikidot.com/foundation-tales-de',
+              "th": 'http://scp-jp.wikidot.com/foundation-tales-th',
+              "it": 'http://scp-jp.wikidot.com/foundation-tales-it',
+              "ua": 'http://scp-jp.wikidot.com/foundation-tales-ua',
+              "pt": 'http://scp-jp.wikidot.com/foundation-tales-pt',
+              "ko": 'http://scp-jp.wikidot.com/foundation-tales-ko'
               }
 
 start_word = {"jp": '<p>アルファベット順著者</p>',
@@ -55,7 +55,7 @@ end_word = {"jp": '<td>その他<a name="misc"></a></td>',
 
 
 exclusion_list = ['#top',
-                  'http://ja.scp-wiki.net/forum/t-6047066/',
+                  'http://scp-jp.wikidot.com/forum/t-6047066/',
                   # '<td><a href="/scp',
                   '<td><a href="/1600con17"',
                   '<td><a href="/warucontest">',
@@ -149,7 +149,7 @@ def tale():
                 elif '<td><a target="_blank" href="' in line:
                     sp_line = re.split('[<>]', line)
                     url = sp_line[3].replace('"', "").replace(
-                        'a target=_blank href=http://ja.scp-wiki.net', "")
+                        'a target=_blank href=http://scp-jp.wikidot.com', "")
                     title = sp_line[4]
 
                 elif '<li><a href="' in line:
@@ -160,8 +160,8 @@ def tale():
                 else:
                     continue
 
-                if 'http://ja.scp-wiki.net/' in url:
-                    url = url.replace("http://ja.scp-wiki.net", '')
+                if 'http://scp-jp.wikidot.com/' in url:
+                    url = url.replace("http://scp-jp.wikidot.com", '')
 
                 urls.append(url)
                 titles.append(title)
