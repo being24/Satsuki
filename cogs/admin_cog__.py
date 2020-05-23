@@ -4,6 +4,7 @@
 
 import os
 import subprocess
+import time
 import typing
 
 import discord
@@ -62,7 +63,10 @@ class admin(commands.Cog):
 
     @commands.command(aliases=['p'], hidden=True)
     async def ping(self, ctx):
-        await ctx.send('pong!')
+        startt = time.time()
+        mes = await ctx.send("Pinging....")
+
+        await mes.edit(content="pong!\n" + str(round(time.time() - startt, 3) * 1000) + "ms")
 
     @commands.command(aliases=['wh'], hidden=True)
     @is_owner()

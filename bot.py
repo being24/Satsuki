@@ -63,5 +63,5 @@ if __name__ == '__main__':
     with open(currentpath + "/specific_setting.json", encoding='utf-8') as f:
         json_data = json.load(f)
 
-    bot = MyBot(command_prefix=json_data['command_prefix'])
+    bot = MyBot(command_prefix=commands.when_mentioned_or('/'))
     bot.run(token)
