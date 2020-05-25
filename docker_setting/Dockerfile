@@ -6,8 +6,6 @@ ENV LC_CTYPE='C.UTF-8'
 ENV TZ='Asia/Tokyo'
 ENV DEBIAN_FRONTEND=noninteractive
 
-COPY token /opt
-
 RUN set -x && \
     apt-get update && \
     apt-get install -y --no-install-recommends python3.7 python3-pip tzdata nano git && \
@@ -15,12 +13,11 @@ RUN set -x && \
     rm -rf /var/lib/apt/lists/* && \
     cp /usr/share/zoneinfo/Asia/Tokyo /etc/localtime && \
     pip3 install -U setuptools && \
-    git clone https://github.com/being24/Tachibana.git && \
-    pip3 install -r ./Tachibana/docker_setting/requirements.txt && \
-    chmod 0755 ./Tachibana/*.sh && \
-    chmod 0700 ./Tachibana/bot.py && \
-    sh ./Tachibana/ayame.sh && \
-    mv /opt/token /opt/Tachibana && \
-    echo "Hello, Tachibana ready!"
+    git clone https://github.com/being24/Satsuki.git && \
+    pip3 install -r ./Satsuki/docker_setting/requirements.txt && \
+    chmod 0755 ./Satsuki/*.sh && \
+    chmod 0700 ./Satsuki/bot.py && \
+    sh ./Satsuki/ayame.sh && \
+    echo "Hello, Satsuki ready!"
 
-CMD ["/opt/Tachibana/bot.sh"]
+CMD ["/opt/Satsuki/bot.sh"]
