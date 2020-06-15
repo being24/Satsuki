@@ -13,7 +13,7 @@ from discord.ext import commands
 import re
 
 regex_discord_message_url = (
-    'https://(ptb.|canary.)?discordapp(app)?.com/channels/'
+    'https://(ptb.|canary.)?discord(app)?.com/channels/'
     '(?P<guild>[0-9]{18})/(?P<channel>[0-9]{18})/(?P<message>[0-9]{18})'
 )
 
