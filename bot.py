@@ -80,7 +80,6 @@ if __name__ == '__main__':
     with open(currentpath + "/data/specific_setting.json", encoding='utf-8') as f:
         json_data = json.load(f)
 
-
     use_sentry(
         bot,
         dsn=dsn,

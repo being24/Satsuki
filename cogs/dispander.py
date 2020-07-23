@@ -33,10 +33,10 @@ class ExpandDiscordMessageUrl(commands.Cog):
         for m in messages:
             try:
                 if message.content:
-                    await message.channel.send(embed=compose_embed(m))
+                    await message.channel.send(embed=self.compose_embed(m))
                 for embed in m.embeds:
                     await message.channel.send(embed=embed)
-            except BaseException as e:
+            except BaseException:
                 pass
 
     async def extract_messsages(self, message):
@@ -62,7 +62,7 @@ class ExpandDiscordMessageUrl(commands.Cog):
         try:
             message = await channel.fetch_message(message_id)
             return message
-        except Exception as e:
+        except Exception:
             return None
 
     def compose_embed(self, message):
