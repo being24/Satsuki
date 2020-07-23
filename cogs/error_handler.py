@@ -1,7 +1,7 @@
 import sys
 import traceback
+import logging
 
-import discord
 from discord.ext import commands
 
 
@@ -50,6 +50,10 @@ class CommandErrorHandler(commands.Cog):
             error,
             error.__traceback__,
             file=sys.stderr)
+        error_content = f'error content: {error}\nmessage_content: {ctx.message.content}\nmessage_author : {ctx.message.author}\n{ctx.message.jump_url}'
+
+        logging.error(error_content, exc_info=True)
+        # 設定を変えてwarnまで出るようにするべし:ここで本番
 
     @commands.command(name='repeat', aliases=['mimic', 'copy'])
     async def do_repeat(self, ctx, *, inp: str):

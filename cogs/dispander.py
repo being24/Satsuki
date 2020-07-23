@@ -32,17 +32,16 @@ class ExpandDiscordMessageUrl(commands.Cog):
         messages = await self.extract_messsages(message)
         for m in messages:
             try:
-                await message.channel.send(embed=self.compose_embed(m))
+                if message.content:
+                    await message.channel.send(embed=compose_embed(m))
+                for embed in m.embeds:
+                    await message.channel.send(embed=embed)
             except BaseException as e:
                 pass
 
     async def extract_messsages(self, message):
         messages = []
         for ids in re.finditer(regex_discord_message_url, message.content):
-            '''
-            if message.guild.id != int(ids['guild']):
-                return
-            '''
             msg_guild = self.bot.get_guild(int(ids['guild']))
             if msg_guild is None:
                 await message.channel.send("サーバに入室していません")

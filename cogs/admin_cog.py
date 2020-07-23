@@ -10,10 +10,9 @@ import discord
 from discord.ext import commands
 
 
-def is_double_owner():  # botのオーナーかつサーバー主のみが実行できるコマンド
+def is_double_owner():
     async def predicate(ctx):
-        return ctx.guild and ctx.author.id == ctx.guild.owner_id \
-            and ctx.author.id == ctx.bot.admin_id
+        return ctx.guild and await ctx.bot.is_owner(ctx.author)
     return commands.check(predicate)
 
 
@@ -25,23 +24,19 @@ class admin(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        self.owner_data = await self.bot.application_info()
+        await self.bot.is_owner(self.bot.user)
 
     @commands.group(aliases=['re'], hidden=True)
     @is_double_owner()
     async def reload(self, ctx, cogname: typing.Optional[str] = "ALL"):
-        reloaded_cogs = []
         if cogname == "ALL":
             for cog in self.bot.INITIAL_COGS:
                 try:
                     self.bot.unload_extension(f'cogs.{cog}')
                     self.bot.load_extension(f'cogs.{cog}')
-                    reloaded_cogs.append(cog)
                 except Exception as e:
                     print(e)
-            reloaded_cogs = '\n'.join(reloaded_cogs)
-            await ctx.send(f"{reloaded_cogs}")
-            await ctx.send("\n上記cogをreloadしました")
+            await ctx.send(f"{(self.bot.INITIAL_COGS)}をreloadしました")
         else:
             try:
                 self.bot.unload_extension(f'cogs.{cogname}')
@@ -64,23 +59,38 @@ class admin(commands.Cog):
     async def ping(self, ctx):
         start_time = time.time()
         mes = await ctx.send("Pinging....")
-        latency = str(round(time.time() - start_time, 3) * 1000)
-        await mes.edit(content=f"pong!\n{latency}ms")
+        await mes.edit(content="pong!\n" + str(round(time.time() - start_time, 3) * 1000) + "ms")
 
     @commands.command(aliases=['wh'], hidden=True)
     @is_double_owner()
     async def where(self, ctx):
-        guild_list = []
-        await ctx.send("現在入っているサーバーは以下の通りです")
-        for s in ctx.cog.bot.guilds:
-            guild_list.append(s.name.replace('\u3000', ' '))
-        guild_list = '\n'.join(guild_list)
-        await ctx.send(f"{guild_list}")
+        await ctx.send("現在入っているサーバーは以下です")
+        server_list = [i.name.replace('\u3000', ' ')
+                       for i in ctx.bot.guilds]
+        await ctx.send(f"{server_list}")
 
     @commands.command(aliases=['mem'], hidden=True)
     @is_double_owner()
     async def num_of_member(self, ctx):
         await ctx.send(f"{ctx.guild.member_count}")
+
+    @commands.command(aliases=['send'], hidden=True)
+    @is_double_owner()
+    async def send_json(self, ctx):
+        json_files = [
+            filename for filename in os.listdir(self.master_path + "/data")
+            if filename.endswith(".json")]
+
+        my_files = [discord.File(f'{self.master_path}/data/{i}')
+                    for i in json_files]
+
+        await ctx.send(files=my_files)
+
+    @commands.command(aliases=['receive'], hidden=True)
+    @is_double_owner()
+    async def receive_json(self, ctx):
+        for attachment in ctx.message.attachments:
+            await attachment.save(f"{self.master_path}/data/{attachment.filename}")
 
 
 def setup(bot):

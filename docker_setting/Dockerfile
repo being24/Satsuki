@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM python:3.7.8-buster
 
 WORKDIR /opt/
 
@@ -8,7 +8,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 RUN set -x && \
     apt-get update && \
-    apt-get install -y --no-install-recommends python3.7 python3-pip tzdata nano git && \
+    apt-get install -y --no-install-recommends python3-pip nano git tzdata&& \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
     cp /usr/share/zoneinfo/Asia/Tokyo /etc/localtime && \
