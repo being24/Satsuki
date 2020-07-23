@@ -85,6 +85,7 @@ def joke():
 
                 if "a href=" in line:
                     line = line.replace("http://scp-jp.wikidot.com", "")
+                    line = line.replace("http://ja.scp-wiki.net", "")
                     number = re.search("<a.*?href=.*?>", line)
                 # print(number.group())  # debug
                     try:
