@@ -54,16 +54,6 @@ class CommandErrorHandler(commands.Cog):
             logging.error(error_content, exc_info=True)
             # 設定を変えてwarnまで出るようにするべし:ここで本番
 
-    @commands.command(name='repeat', aliases=['mimic', 'copy'])
-    async def do_repeat(self, ctx, *, inp: str):
-        await ctx.send(inp)
-
-    @do_repeat.error
-    async def do_repeat_handler(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument):
-            if error.param.name == 'inp':
-                await ctx.send("You forgot to give me input to repeat!")
-
 
 def setup(bot):
     bot.add_cog(CommandErrorHandler(bot))
