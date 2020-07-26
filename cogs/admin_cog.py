@@ -1,3 +1,4 @@
+  
 # !/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
@@ -16,7 +17,7 @@ class Admin(commands.Cog):
         self.master_path = os.path.dirname(
             os.path.dirname(os.path.abspath(__file__)))
 
-    def cog_check(self, ctx):
+    async def cog_check(self, ctx):
         return ctx.guild and await self.bot.is_owner(ctx.author)
 
     @commands.command(aliases=['re'], hidden=True)
