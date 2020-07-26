@@ -18,6 +18,6 @@ RUN set -x && \
     chmod 0755 ./Satsuki/*.sh && \
     chmod 0700 ./Satsuki/bot.py && \
     sh ./Satsuki/ayame.sh && \
-    echo "Hello, Satsuki ready!"
+    echo "Hello, Satsuki ready! @2020/07/27"
 
 CMD ["/opt/Satsuki/bot.sh"]

@@ -50,3 +50,9 @@ satsukiのリポジトリです．最近docker化しました．
 ## スペシャルサンクス
 
 デバッグに協力してくれたサーバー犬小屋の皆
+
+## memo
+
+```py
+sudo docker run -d -v satsuki-data:/opt --env-file .env --restart=always being241/satsuki^
+```
