@@ -67,13 +67,6 @@ class SatsukiCom(commands.Cog, name='皐月分類外コマンド'):
         if reply is not None:
             await ctx.send(reply)
 
-    @url.error
-    async def url_error(self, ctx, error):
-        if isinstance(error, commands.BadArgument):
-            await ctx.send('入力値が不正です')
-        else:
-            await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
-
     @commands.command()
     async def dice(self, ctx, num1: int, num2: typing.Optional[int] = 0):
         num_list = sorted([num1, num2])
@@ -88,13 +81,6 @@ class SatsukiCom(commands.Cog, name='皐月分類外コマンド'):
             if x is not None:
                 await ctx.send("出目は " + str(x) + " です")
 
-    @dice.error
-    async def dice_error(self, ctx, error):
-        if isinstance(error, commands.BadArgument):
-            await ctx.send('入力値が不正です')
-        else:
-            await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
-
     @commands.command(aliases=['lu'])
     async def last_updated(self, ctx):
         last_update_utime = os.path.getmtime(
@@ -102,10 +88,6 @@ class SatsukiCom(commands.Cog, name='皐月分類外コマンド'):
         last_update_UTC_nv = datetime.fromtimestamp(int(last_update_utime))
         last_update_JST = timezone('Asia/Tokyo').localize(last_update_UTC_nv)
         await ctx.send(f"データベースの最終更新日時は{last_update_JST}です")
-
-    @last_updated.error
-    async def unknown_error_handler(self, ctx, error):
-        await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
 
     @commands.command()
     async def rand(self, ctx, brt: typing.Optional[str] = 'all'):
@@ -129,10 +111,6 @@ class SatsukiCom(commands.Cog, name='皐月分類外コマンド'):
         result = list(result)
 
         await ctx.send(result[1] + "\n" + self.SCP_JP + result[0])
-
-    @rand.error
-    async def rand_error(self, ctx, error):
-        await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
 
     @commands.command(aliases=['tm'])
     # @commands.has_permissions(kick_members=True)

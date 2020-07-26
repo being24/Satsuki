@@ -23,13 +23,6 @@ class SatsukiSCPCog(commands.Cog, name='SCPコマンド'):
             else:
                 await ctx.send(reply[1] + "\n" + self.SCP_JP + reply[0])
 
-    @scp.error
-    async def scp_error(self, ctx, error):
-        if isinstance(error, commands.BadArgument):
-            await ctx.send('入力値が不正です')
-        else:
-            await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
-
 
 def setup(bot):
     bot.add_cog(SatsukiSCPCog(bot))

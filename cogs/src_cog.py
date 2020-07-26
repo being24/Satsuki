@@ -35,13 +35,6 @@ class SatsukiSRCCog(commands.Cog, name='検索コマンド'):  # コグとして
         embed.set_footer(text="タイトル、URL、著者名から検索しています")
         await ctx.send(embed=embed)
 
-    @tale.error
-    async def tale_error(self, ctx, error):
-        if isinstance(error, commands.BadArgument):
-            await ctx.send('入力値が不正です')
-        else:
-            await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
-
     @commands.command(aliases=['prop'])
     async def proposal(self, ctx, word: str):
         reply = lib.src_proposal(word)
@@ -63,13 +56,6 @@ class SatsukiSRCCog(commands.Cog, name='検索コマンド'):  # コグとして
 
         embed.set_footer(text="タイトル、URLから検索しています")
         await ctx.send(embed=embed)
-
-    @proposal.error
-    async def proposal_error(self, ctx, error):
-        if isinstance(error, commands.BadArgument):
-            await ctx.send('入力値が不正です')
-        else:
-            await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
 
     @commands.command()
     async def joke(self, ctx, word: str):
@@ -93,15 +79,10 @@ class SatsukiSRCCog(commands.Cog, name='検索コマンド'):  # コグとして
         embed.set_footer(text="タイトル、URLから検索しています")
         await ctx.send(embed=embed)
 
-    @joke.error
-    async def joke_error(self, ctx, error):
-        if isinstance(error, commands.BadArgument):
-            await ctx.send('入力値が不正です')
-        else:
-            await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
-
     @commands.command(aliases=['gd'])
-    async def guide(self, ctx, word: str):
+    async def guide(self, ctx, word: str = None):
+        if word is None:
+            return await ctx.send('引数が必要です')
         reply = lib.src_guide(word)
 
         if len(reply) > self.bot.send_max:
@@ -121,13 +102,6 @@ class SatsukiSRCCog(commands.Cog, name='検索コマンド'):  # コグとして
 
         embed.set_footer(text="タイトル、URLから検索しています")
         await ctx.send(embed=embed)
-
-    @guide.error
-    async def guide_error(self, ctx, error):
-        if isinstance(error, commands.BadArgument):
-            await ctx.send('引数が必要です')
-        else:
-            await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
 
     @commands.command(aliases=['auth'])
     async def author(self, ctx, word: str):
@@ -151,13 +125,6 @@ class SatsukiSRCCog(commands.Cog, name='検索コマンド'):  # コグとして
         embed.set_footer(text="著者名から検索しています")
         await ctx.send(embed=embed)
 
-    @author.error
-    async def author_error(self, ctx, error):
-        if isinstance(error, commands.BadArgument):
-            await ctx.send('入力値が不正です')
-        else:
-            await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
-
     @commands.command(aliases=['ex'])
     async def explained(self, ctx, word: str):
         reply = lib.src_explained(word)
@@ -180,13 +147,6 @@ class SatsukiSRCCog(commands.Cog, name='検索コマンド'):  # コグとして
         embed.set_footer(text="タイトル、URLから検索しています")
         await ctx.send(embed=embed)
 
-    @explained.error
-    async def explained_error(self, ctx, error):
-        if isinstance(error, commands.BadArgument):
-            await ctx.send('入力値が不正です')
-        else:
-            await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
-
     @commands.command(aliases=['src'])
     async def search(self, ctx, word: str):
         reply = lib.src_scp(word)
@@ -208,13 +168,6 @@ class SatsukiSRCCog(commands.Cog, name='検索コマンド'):  # コグとして
 
         embed.set_footer(text="タイトルから検索しています")
         await ctx.send(embed=embed)
-
-    @search.error
-    async def search_error(self, ctx, error):
-        if isinstance(error, commands.BadArgument):
-            await ctx.send('入力値が不正です')
-        else:
-            await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
 
 
 def setup(bot):
