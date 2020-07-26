@@ -20,7 +20,7 @@ class MyBot(commands.Bot):
         for cog in os.listdir(currentpath + "/cogs"):
             if cog.endswith(".py"):
                 try:
-                    self.load_extension(f'cogs.{cog}')
+                    self.load_extension(f'cogs.{cog[:-3]}')
                 except Exception:
                     traceback.print_exc()
 
