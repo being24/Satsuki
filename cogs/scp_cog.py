@@ -8,7 +8,7 @@ from discord.ext import commands
 import libs as lib
 
 
-class Satsuki_SCP_cog(commands.Cog, name='SCPコマンド'):
+class SatsukiSCPCog(commands.Cog, name='SCPコマンド'):
     def __init__(self, bot):
         self.bot = bot
         self.SCP_JP = "http://scp-jp.wikidot.com"
@@ -25,11 +25,11 @@ class Satsuki_SCP_cog(commands.Cog, name='SCPコマンド'):
 
     @scp.error
     async def scp_error(self, ctx, error):
-        if discord.ext.commands.errors.BadArgument:
+        if isinstance(error, commands.BadArgument):
             await ctx.send('入力値が不正です')
         else:
             await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
 
 
 def setup(bot):
-    bot.add_cog(Satsuki_SCP_cog(bot))
+    bot.add_cog(SatsukiSCPCog(bot))

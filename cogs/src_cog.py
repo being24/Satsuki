@@ -8,8 +8,7 @@ from discord.ext import commands  # Bot Commands Frameworkのインポート
 import libs as lib
 
 
-class Satsuki_SRC_cog(commands.Cog, name='検索コマンド'):  # コグとして用いるクラスを定義
-
+class SatsukiSRCCog(commands.Cog, name='検索コマンド'):  # コグとして用いるクラスを定義
     def __init__(self, bot):  # TestCogクラスのコンストラクタBotを受取り、インスタンス変数として保持
         self.bot = bot
         self.URL = "http://scp-jp.wikidot.com"
@@ -38,7 +37,7 @@ class Satsuki_SRC_cog(commands.Cog, name='検索コマンド'):  # コグとし�
 
     @tale.error
     async def tale_error(self, ctx, error):
-        if discord.ext.commands.errors.BadArgument:
+        if isinstance(error, commands.BadArgument):
             await ctx.send('入力値が不正です')
         else:
             await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
@@ -67,7 +66,7 @@ class Satsuki_SRC_cog(commands.Cog, name='検索コマンド'):  # コグとし�
 
     @proposal.error
     async def proposal_error(self, ctx, error):
-        if discord.ext.commands.errors.BadArgument:
+        if isinstance(error, commands.BadArgument):
             await ctx.send('入力値が不正です')
         else:
             await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
@@ -96,7 +95,7 @@ class Satsuki_SRC_cog(commands.Cog, name='検索コマンド'):  # コグとし�
 
     @joke.error
     async def joke_error(self, ctx, error):
-        if discord.ext.commands.errors.BadArgument:
+        if isinstance(error, commands.BadArgument):
             await ctx.send('入力値が不正です')
         else:
             await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
@@ -125,7 +124,7 @@ class Satsuki_SRC_cog(commands.Cog, name='検索コマンド'):  # コグとし�
 
     @guide.error
     async def guide_error(self, ctx, error):
-        if discord.ext.commands.errors.BadArgument:
+        if isinstance(error, commands.BadArgument):
             await ctx.send('引数が必要です')
         else:
             await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
@@ -154,7 +153,7 @@ class Satsuki_SRC_cog(commands.Cog, name='検索コマンド'):  # コグとし�
 
     @author.error
     async def author_error(self, ctx, error):
-        if discord.ext.commands.errors.BadArgument:
+        if isinstance(error, commands.BadArgument):
             await ctx.send('入力値が不正です')
         else:
             await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
@@ -183,7 +182,7 @@ class Satsuki_SRC_cog(commands.Cog, name='検索コマンド'):  # コグとし�
 
     @explained.error
     async def explained_error(self, ctx, error):
-        if discord.ext.commands.errors.BadArgument:
+        if isinstance(error, commands.BadArgument):
             await ctx.send('入力値が不正です')
         else:
             await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
@@ -212,11 +211,11 @@ class Satsuki_SRC_cog(commands.Cog, name='検索コマンド'):  # コグとし�
 
     @search.error
     async def search_error(self, ctx, error):
-        if discord.ext.commands.errors.BadArgument:
+        if isinstance(error, commands.BadArgument):
             await ctx.send('入力値が不正です')
         else:
             await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
 
 
 def setup(bot):
-    bot.add_cog(Satsuki_SRC_cog(bot))
+    bot.add_cog(SatsukiSRCCog(bot))

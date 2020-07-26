@@ -17,7 +17,7 @@ from discord.ext import commands, tasks
 from pytz import timezone
 
 
-class Satsuki_Com(commands.Cog, name='皐月分類外コマンド'):
+class SatsukiCom(commands.Cog, name='皐月分類外コマンド'):
     def __init__(self, bot):
         self.bot = bot
         self.SCP_JP = "http://scp-jp.wikidot.com"
@@ -26,21 +26,8 @@ class Satsuki_Com(commands.Cog, name='皐月分類外コマンド'):
 
         self.welcome_list = [609058923353341973, 286871252784775179]
         self.BRANCHS = [
-            'jp',
-            'en',
-            'ru',
-            'ko',
-            'es',
-            'cn',
-            'cs',
-            'fr',
-            'pl',
-            'th',
-            'de',
-            'it',
-            'ua',
-            'pt',
-            'uo']  # 外部に依存させたいな
+            'jp', 'en', 'ru', 'ko', 'es', 'cn', 'cs', 'fr', 'pl', 'th', 'de', 'it', 'ua', 'pt', 'uo'
+        ]  # 外部に依存させたいな
 
         self.json_name = self.master_path + "/data/timer_dict.json"
 
@@ -71,18 +58,18 @@ class Satsuki_Com(commands.Cog, name='皐月分類外コマンド'):
     async def url(self, ctx, call):
         call = call.replace(" ", "").replace("　", "")
         if "http" in call:
-            reply = "外部サイトを貼らないでください." + ctx.author.mention
+            reply = f"外部サイトを貼らないでください.{ctx.author.mention}"
         elif "/" in call[0:1]:
             reply = self.SCP_JP + call
         else:
-            reply = self.SCP_JP + "/" + call
+            reply = f"{self.SCP_JP}/{call}"
 
         if reply is not None:
             await ctx.send(reply)
 
     @url.error
     async def url_error(self, ctx, error):
-        if discord.ext.commands.errors.BadArgument:
+        if isinstance(error, commands.BadArgument):
             await ctx.send('入力値が不正です')
         else:
             await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
@@ -103,7 +90,7 @@ class Satsuki_Com(commands.Cog, name='皐月分類外コマンド'):
 
     @dice.error
     async def dice_error(self, ctx, error):
-        if discord.ext.commands.errors.BadArgument:
+        if isinstance(error, commands.BadArgument):
             await ctx.send('入力値が不正です')
         else:
             await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
@@ -188,8 +175,7 @@ class Satsuki_Com(commands.Cog, name='皐月分類外コマンド'):
     async def help(self, ctx):
         msg = discord.Embed(
             title='本BOTの使い方を説明させていただきます.',
-            description='よろしくお願いします.' +
-            ctx.author.mention,
+            description=f'よろしくお願いします.{ctx.author.mention}',
             colour=0xad1457)
         msg.add_field(
             name="/scp $scpnumber-branch$",
@@ -254,7 +240,7 @@ class Satsuki_Com(commands.Cog, name='皐月分類外コマンド'):
     @commands.Cog.listener()
     async def on_member_join(self, member):
         if any([member.guild.id == i for i in self.welcome_list]):
-            channel = self.bot.get_channel(member.guild._system_channel_id)
+            channel = member.guild.system_channel
             await asyncio.sleep(3)
             embed = discord.Embed(
                 title=f"{member.guild.name}へようこそ",
@@ -269,13 +255,13 @@ class Satsuki_Com(commands.Cog, name='皐月分類外コマンド'):
                 inline=True)
             embed.set_footer(text='読了したら何らかのリアクションをつけてください')
             try:
-                await channel.send(member.mention)
-                await channel.send(embed=embed)
+                await channel.send(member.mention, embed=embed)
             except BaseException:
                 pass
 
     @tasks.loop(minutes=1.0)
     async def multi_timer(self):
+        await self.bot.wait_until_ready()
         now = datetime.now()
         now_HM = now.strftime('%H:%M')
         if now_HM == '04:30':
@@ -311,11 +297,6 @@ class Satsuki_Com(commands.Cog, name='皐月分類外コマンド'):
 
                 self.dump_json(self.timer_dict)
 
-    @multi_timer.before_loop
-    async def before_timer(self):
-        # print('booting...')
-        await self.bot.wait_until_ready()
-
 
 def setup(bot):
-    bot.add_cog(Satsuki_Com(bot))
+    bot.add_cog(SatsukiCom(bot))

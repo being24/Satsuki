@@ -1,32 +1,39 @@
 # !/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import discord
 import json
 import logging
 import os
 import traceback
-
-import discord
 from discord.ext import commands
 from discord_sentry_reporting import use_sentry
 from dotenv import load_dotenv
 from sentry_sdk.integrations.aiohttp import AioHttpIntegration
 from sentry_sdk.integrations.logging import LoggingIntegration
 
+dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
+load_dotenv(dotenv_path)
+
+token = os.getenv('DISCORD_BOT_TOKEN')
+dsn = os.getenv('SENTRY_DSN')
+
+if token is None:
+    raise FileNotFoundError("Token not found error!")
+if dsn is None:
+    raise FileNotFoundError("dsn not found error!")
+
 
 class MyBot(commands.Bot):
     def __init__(self, command_prefix):
         super().__init__(command_prefix, help_command=None)
 
-        self.INITIAL_COGS = [
-            filename[:-3] for filename in os.listdir(currentpath + "/cogs")
-            if filename.endswith(".py")]
-
-        for cog in self.INITIAL_COGS:
-            try:
-                self.load_extension(f'cogs.{cog}')
-            except Exception:
-                traceback.print_exc()
+        for cog in os.listdir(currentpath + "/cogs"):
+            if cog.endswith(".py"):
+                try:
+                    self.load_extension(f'cogs.{cog}')
+                except Exception:
+                    traceback.print_exc()
 
         with open(currentpath + "/data/setting.json", encoding='utf-8') as f:
             self.json_data = json.load(f)
@@ -46,21 +53,6 @@ class MyBot(commands.Bot):
         await bot.change_presence(activity=discord.Game(name=self.status))
 
 
-def read_env():
-    dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
-    load_dotenv(dotenv_path)
-
-    token = os.getenv('DISCORD_BOT_TOKEN')
-    dsn = os.getenv('SENTRY_DSN')
-
-    if not isinstance(token, str):
-        raise FileNotFoundError("Token not found error!")
-    if not isinstance(dsn, str):
-        raise FileNotFoundError("dsn not found error!")
-
-    return token, dsn
-
-
 if __name__ == '__main__':
     logging.basicConfig(
         level=logging.INFO,
@@ -73,8 +65,6 @@ if __name__ == '__main__':
     )
 
     currentpath = os.path.dirname(os.path.abspath(__file__))
-
-    token, dsn = read_env()
 
     bot = MyBot(command_prefix=commands.when_mentioned_or('/'))
     with open(currentpath + "/data/specific_setting.json", encoding='utf-8') as f:
