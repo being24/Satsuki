@@ -12,17 +12,6 @@ from dotenv import load_dotenv
 from sentry_sdk.integrations.aiohttp import AioHttpIntegration
 from sentry_sdk.integrations.logging import LoggingIntegration
 
-dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
-load_dotenv(dotenv_path)
-
-token = os.getenv('DISCORD_BOT_TOKEN')
-dsn = os.getenv('SENTRY_DSN')
-
-if token is None:
-    raise FileNotFoundError("Token not found error!")
-if dsn is None:
-    raise FileNotFoundError("dsn not found error!")
-
 
 class MyBot(commands.Bot):
     def __init__(self, command_prefix):
@@ -54,6 +43,17 @@ class MyBot(commands.Bot):
 
 
 if __name__ == '__main__':
+    dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
+    load_dotenv(dotenv_path)
+
+    token = os.getenv('DISCORD_BOT_TOKEN')
+    dsn = os.getenv('SENTRY_DSN')
+
+    if token is None:
+        raise FileNotFoundError("Token not found error!")
+    if dsn is None:
+        raise FileNotFoundError("dsn not found error!")
+
     logging.basicConfig(
         level=logging.INFO,
         format='%(levelname)s: %(message)s')
