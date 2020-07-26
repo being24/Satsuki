@@ -10,24 +10,16 @@ import discord
 from discord.ext import commands
 
 
-def is_double_owner():
-    async def predicate(ctx):
-        return ctx.guild and await ctx.bot.is_owner(ctx.author)
-    return commands.check(predicate)
-
-
-class admin(commands.Cog):
+class Admin(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.master_path = os.path.dirname(
             os.path.dirname(os.path.abspath(__file__)))
 
-    @commands.Cog.listener()
-    async def on_ready(self):
-        await self.bot.is_owner(self.bot.user)
+    def cog_check(self, ctx):
+        return ctx.guild and await self.bot.is_owner(ctx.author)
 
-    @commands.group(aliases=['re'], hidden=True)
-    @is_double_owner()
+    @commands.command(aliases=['re'], hidden=True)
     async def reload(self, ctx, cogname: typing.Optional[str] = "ALL"):
         if cogname == "ALL":
             for cog in self.bot.INITIAL_COGS:
@@ -36,7 +28,7 @@ class admin(commands.Cog):
                     self.bot.load_extension(f'cogs.{cog}')
                 except Exception as e:
                     print(e)
-            await ctx.send(f"{(self.bot.INITIAL_COGS)}をreloadしました")
+            await ctx.send(f"{self.bot.INITIAL_COGS}をreloadしました")
         else:
             try:
                 self.bot.unload_extension(f'cogs.{cogname}')
@@ -47,7 +39,6 @@ class admin(commands.Cog):
                 await ctx.send(e)
 
     @commands.command(aliases=['st'], hidden=True)
-    @is_double_owner()
     async def status(self, ctx, word: str):
         try:
             await self.bot.change_presence(activity=discord.Game(name=word))
@@ -62,7 +53,6 @@ class admin(commands.Cog):
         await mes.edit(content="pong!\n" + str(round(time.time() - start_time, 3) * 1000) + "ms")
 
     @commands.command(aliases=['wh'], hidden=True)
-    @is_double_owner()
     async def where(self, ctx):
         await ctx.send("現在入っているサーバーは以下です")
         server_list = [i.name.replace('\u3000', ' ')
@@ -70,12 +60,10 @@ class admin(commands.Cog):
         await ctx.send(f"{server_list}")
 
     @commands.command(aliases=['mem'], hidden=True)
-    @is_double_owner()
     async def num_of_member(self, ctx):
         await ctx.send(f"{ctx.guild.member_count}")
 
     @commands.command(aliases=['send'], hidden=True)
-    @is_double_owner()
     async def send_json(self, ctx):
         json_files = [
             filename for filename in os.listdir(self.master_path + "/data")
@@ -87,11 +75,10 @@ class admin(commands.Cog):
         await ctx.send(files=my_files)
 
     @commands.command(aliases=['receive'], hidden=True)
-    @is_double_owner()
     async def receive_json(self, ctx):
         for attachment in ctx.message.attachments:
             await attachment.save(f"{self.master_path}/data/{attachment.filename}")
 
 
 def setup(bot):
-    bot.add_cog(admin(bot))
+    bot.add_cog(Admin(bot))

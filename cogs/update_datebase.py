@@ -10,7 +10,7 @@ import pandas as pd
 from discord.ext import commands
 
 
-class Update_data_cog(commands.Cog):
+class UpdateDataCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.master_path = os.path.dirname(
@@ -31,9 +31,7 @@ class Update_data_cog(commands.Cog):
         except FileNotFoundError as e:
             print(e)
 
-        num_dict = {}
-
-        num_dict["all"] = len(dictionary)
+        num_dict = {"all": len(dictionary)}
 
         BRANCHS = ['jp', 'en', 'ru', 'ko', 'es', 'cn', 'cs',
                    'fr', 'pl', 'th', 'de', 'it', 'ua', 'pt', 'uo']
@@ -73,4 +71,4 @@ class Update_data_cog(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(Update_data_cog(bot))
+    bot.add_cog(UpdateDataCog(bot))

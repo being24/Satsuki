@@ -83,7 +83,7 @@ def tag_to_discord(content):
     return result
 
 
-class Critique_cog(commands.Cog, name='批評定例会用コマンド'):
+class CritiqueCog(commands.Cog, name='批評定例会用コマンド'):
     def __init__(self, bot):
         self.bot = bot
         self.SCP_JP = "http://scp-jp.wikidot.com"
@@ -91,21 +91,8 @@ class Critique_cog(commands.Cog, name='批評定例会用コマンド'):
             os.path.dirname(os.path.abspath(__file__)))
 
         self.BRANCHS = [
-            'jp',
-            'en',
-            'ru',
-            'ko',
-            'es',
-            'cn',
-            'cs',
-            'fr',
-            'pl',
-            'th',
-            'de',
-            'it',
-            'ua',
-            'pt',
-            'uo']  # 外部に依存させたいな
+            'jp', 'en', 'ru', 'ko', 'es', 'cn', 'cs', 'fr', 'pl', 'th', 'de', 'it', 'ua', 'pt', 'uo'
+        ]  # 外部に依存させたいな
 
     @commands.command(aliases=['df'])
     @commands.has_permissions(kick_members=True)
@@ -303,4 +290,4 @@ class Critique_cog(commands.Cog, name='批評定例会用コマンド'):
 
 
 def setup(bot):
-    bot.add_cog(Critique_cog(bot))
+    bot.add_cog(CritiqueCog(bot))

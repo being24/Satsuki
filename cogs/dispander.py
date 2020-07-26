@@ -1,11 +1,11 @@
-'''
-[Module name]
+"""
+dispander
 
-Copyright (c) [2020] [1ntegrale9]
+Copyright (c) 2020 1ntegrale9
 
 This software is released under the MIT License.
 http://opensource.org/licenses/mit-license.php
-'''
+"""
 
 
 from discord import Embed
@@ -57,7 +57,8 @@ class ExpandDiscordMessageUrl(commands.Cog):
             messages.append(fetched_message)
         return messages
 
-    async def fetch_message_from_id(self, guild, channel_id, message_id):
+    @staticmethod
+    async def fetch_message_from_id(guild, channel_id, message_id):
         channel = guild.get_channel(channel_id)
         try:
             message = await channel.fetch_message(message_id)
@@ -65,7 +66,8 @@ class ExpandDiscordMessageUrl(commands.Cog):
         except Exception:
             return None
 
-    def compose_embed(self, message):
+    @staticmethod
+    def compose_embed(message):
         embed = Embed(
             description=message.content,
             timestamp=message.created_at,

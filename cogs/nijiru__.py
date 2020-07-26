@@ -11,7 +11,7 @@ from discord.ext import commands
 import libs as lib
 
 
-class nijiru_alter(commands.Cog, name='煮汁代替定例会予約'):
+class NijiruAlter(commands.Cog, name='煮汁代替定例会予約'):
     def __init__(self, bot):
         self.bot = bot
         self.SB_URL = (
@@ -19,7 +19,7 @@ class nijiru_alter(commands.Cog, name='煮汁代替定例会予約'):
             "http://scp-jp-sandbox2.wikidot.com/")
 
     @commands.command(aliases=['reserv'], enabled=False)
-    async def reservation(self, ctx, title, url):
+    async def reservation(self, ctx, title, url=None):
         if url is None:
             await ctx.send("引数が不足しています.")
             pass
@@ -31,4 +31,4 @@ class nijiru_alter(commands.Cog, name='煮汁代替定例会予約'):
 
 
 def setup(bot):
-    bot.add_cog(nijiru_alter(bot))
+    bot.add_cog(NijiruAlter(bot))

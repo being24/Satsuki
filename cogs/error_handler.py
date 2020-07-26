@@ -3,6 +3,7 @@ import traceback
 import logging
 
 from discord.ext import commands
+import discord
 
 
 class CommandErrorHandler(commands.Cog):
@@ -15,45 +16,43 @@ class CommandErrorHandler(commands.Cog):
         ctx   : Context
         error : Exception"""
 
-        if hasattr(ctx.command, 'on_error'):
+        if hasattr(ctx.command, 'on_error'):  # ローカルのハンドリングがあるコマンドは除く
             return
 
-        ignored = (commands.CommandNotFound, commands.UserInputError)
-        error = getattr(error, 'original', error)
-
-        if isinstance(error, ignored):
+        if isinstance(error, commands.CommandNotFound):
             return
 
         elif isinstance(error, commands.DisabledCommand):
             return await ctx.send(f'{ctx.command} has been disabled.')
-
         elif isinstance(error, commands.CheckFailure):
+
             await ctx.send(f'you have no permission to execute {ctx.command}.')
             return
 
         elif isinstance(error, commands.NoPrivateMessage):
             try:
-                return await ctx.author.send(f'{ctx.command} can not be used in Private Messages.')
-            except BaseException:
-                pass
+                return await ctx.send(f'{ctx.command} can not be used in Private Messages.')
+            except discord.HTTPException:
+                print("couldn't send direct message")
 
         elif isinstance(error, commands.BadArgument):
-            if ctx.command.qualified_name == 'tag list':
-                return await ctx.send('I could not find that member. Please try again.')
+            return await ctx.send("無効な引数です")
 
-        print(
-            'Ignoring exception in command {}:'.format(
-                ctx.command),
-            file=sys.stderr)
-        traceback.print_exception(
-            type(error),
-            error,
-            error.__traceback__,
-            file=sys.stderr)
-        error_content = f'error content: {error}\nmessage_content: {ctx.message.content}\nmessage_author : {ctx.message.author}\n{ctx.message.jump_url}'
+        elif isinstance(error, commands.CommandInvokeError):
+            error = getattr(error, 'original', error)
+            print(
+                'Ignoring exception in command {}:'.format(
+                    ctx.command),
+                file=sys.stderr)
+            traceback.print_exception(
+                type(error),
+                error,
+                error.__traceback__,
+                file=sys.stderr)
+            error_content = f'error content: {error}\nmessage_content: {ctx.message.content}\nmessage_author : {ctx.message.author}\n{ctx.message.jump_url}'
 
-        logging.error(error_content, exc_info=True)
-        # 設定を変えてwarnまで出るようにするべし:ここで本番
+            logging.error(error_content, exc_info=True)
+            # 設定を変えてwarnまで出るようにするべし:ここで本番
 
     @commands.command(name='repeat', aliases=['mimic', 'copy'])
     async def do_repeat(self, ctx, *, inp: str):
