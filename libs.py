@@ -45,7 +45,7 @@ def scp_number(msg):
 
     brt = msg.replace(number, "")
 
-    if brt is "":
+    if brt == "":
         brt = "en"
 
     if brt not in BRANCHS:  # 要改良
