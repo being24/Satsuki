@@ -1,10 +1,10 @@
-  
 # !/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 
 import os
 import time
+import traceback
 import typing
 
 import discord
@@ -23,13 +23,17 @@ class Admin(commands.Cog):
     @commands.command(aliases=['re'], hidden=True)
     async def reload(self, ctx, cogname: typing.Optional[str] = "ALL"):
         if cogname == "ALL":
-            for cog in self.bot.INITIAL_COGS:
-                try:
-                    self.bot.unload_extension(f'cogs.{cog}')
-                    self.bot.load_extension(f'cogs.{cog}')
-                except Exception as e:
-                    print(e)
-            await ctx.send(f"{self.bot.INITIAL_COGS}をreloadしました")
+            reloaded_list = []
+            for cog in os.listdir(self.master_path + "/cogs"):
+                if cog.endswith(".py"):
+                    try:
+                        cog = cog[:-3]
+                        self.bot.unload_extension(f'cogs.{cog}')
+                        self.bot.load_extension(f'cogs.{cog}')
+                        reloaded_list.append(cog)
+                    except Exception:
+                        traceback.print_exc()
+            await ctx.send(f"{reloaded_list}をreloadしました")
         else:
             try:
                 self.bot.unload_extension(f'cogs.{cogname}')
