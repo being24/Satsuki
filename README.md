@@ -54,5 +54,5 @@ satsukiのリポジトリです．最近docker化しました．
 ## memo
 
 ```py
-sudo docker run -d -v satsuki-data:/opt --env-file .env --restart=always being241/satsuki^
+docker run -d -v satsuki-data:/opt/Satsuki/data/ --env-file .env --restart=always being241/satsuki
 ```
