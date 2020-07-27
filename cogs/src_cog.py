@@ -79,7 +79,7 @@ class SatsukiSRCCog(commands.Cog, name='検索コマンド'):  # コグとして
         embed.set_footer(text="タイトル、URLから検索しています")
         await ctx.send(embed=embed)
 
-    @commands.command(aliases=['gd'])
+    @commands.command(aliases=['gd', 'rtfm'])
     async def guide(self, ctx, word: str = None):
         if word is None:
             return await ctx.send('引数が必要です')
