@@ -38,7 +38,7 @@ class CommandErrorHandler(commands.Cog):
         elif isinstance(error, commands.BadArgument):
             return await ctx.send("無効な引数です")
 
-        elif isinstance(error, commands.CommandInvokeError):
+        else:
             error = getattr(error, 'original', error)
             print(
                 'Ignoring exception in command {}:'.format(
@@ -52,7 +52,6 @@ class CommandErrorHandler(commands.Cog):
             error_content = f'error content: {error}\nmessage_content: {ctx.message.content}\nmessage_author : {ctx.message.author}\n{ctx.message.jump_url}'
 
             logging.error(error_content, exc_info=True)
-            # 設定を変えてwarnまで出るようにするべし:ここで本番
 
 
 def setup(bot):
