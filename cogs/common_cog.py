@@ -149,7 +149,7 @@ class SatsukiCom(commands.Cog, name='皐月分類外コマンド'):
         else:
             await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
 
-    @commands.command()
+    @commands.command(aliases=['rtfm'])
     async def help(self, ctx):
         msg = discord.Embed(
             title='本BOTの使い方を説明させていただきます.',
