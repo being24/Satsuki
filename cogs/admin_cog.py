@@ -6,9 +6,11 @@ import os
 import time
 import traceback
 import typing
+from datetime import datetime
 
 import discord
-from discord.ext import commands
+import discosnow as ds
+from discord.ext import commands, tasks
 
 
 class Admin(commands.Cog):
@@ -16,6 +18,9 @@ class Admin(commands.Cog):
         self.bot = bot
         self.master_path = os.path.dirname(
             os.path.dirname(os.path.abspath(__file__)))
+
+        if not self.bot.loop.is_running():
+            self.auto_backup.start()
 
     async def cog_check(self, ctx):
         return ctx.guild and await self.bot.is_owner(ctx.author)
@@ -68,8 +73,8 @@ class Admin(commands.Cog):
     async def num_of_member(self, ctx):
         await ctx.send(f"{ctx.guild.member_count}")
 
-    @commands.command(aliases=['send'], hidden=True)
-    async def send_json(self, ctx):
+    @commands.command(hidden=True)
+    async def back_up(self, ctx):
         json_files = [
             filename for filename in os.listdir(self.master_path + "/data")
             if filename.endswith(".json")]
@@ -79,10 +84,39 @@ class Admin(commands.Cog):
 
         await ctx.send(files=my_files)
 
-    @commands.command(aliases=['receive'], hidden=True)
-    async def receive_json(self, ctx):
+    @commands.command(hidden=True)
+    async def restore_one(self, ctx):
         for attachment in ctx.message.attachments:
             await attachment.save(f"{self.master_path}/data/{attachment.filename}")
+
+    @commands.command(hidden=True)
+    async def restore(self, ctx):
+        async for message in ctx.channel.history(limit=100):
+            if message.author.id == self.bot.user.id:
+                if len(message.attachments) != 0:
+                    attachments_name = ' '.join([i.filename for i in message.attachments])
+                    msg_time = ds.snowflake2time(message.id).strftime('%H:%M')
+                    await ctx.send(f'{msg_time}の{attachments_name}を取り込みます')
+                    for attachment in message.attachments:
+                        await attachment.save(f"{self.master_path}/data/{attachment.filename}")
+                    break
+
+    @tasks.loop(minutes=1.0)
+    async def auto_backup(self):
+        await self.bot.wait_until_ready()
+
+        now = datetime.now()
+        now_HM = now.strftime('%H:%M')
+
+        print(now_HM)
+
+        if now_HM == '04:00':
+            channel = self.bot.get_channel(745128369170939965)
+
+            json_files = [filename for filename in os.listdir(self.master_path + "/data")if filename.endswith(".json")]
+            my_files = [discord.File(f'{self.master_path}/data/{i}')for i in json_files]
+
+            await channel.send(files=my_files)
 
 
 def setup(bot):
