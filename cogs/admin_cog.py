@@ -108,8 +108,6 @@ class Admin(commands.Cog):
         now = datetime.now()
         now_HM = now.strftime('%H:%M')
 
-        print(now_HM)
-
         if now_HM == '04:00':
             channel = self.bot.get_channel(745128369170939965)
 
