@@ -90,7 +90,7 @@ class Admin(commands.Cog):
                 continue
             if message.attachments:
                 attachments_name = ' '.join(i.filename for i in message.attachments)
-                msg_time = ds.snowflake2time(message.id).strftime('%H:%M')
+                msg_time = ds.snowflake2time(message.id).strftime('%m-%d %H:%M')
                 await ctx.send(f'{msg_time}の{attachments_name}を取り込みます')
                 for attachment in message.attachments:
                     await attachment.save(f"{self.master_path}/data/{attachment.filename}")
