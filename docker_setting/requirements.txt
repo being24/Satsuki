@@ -9,7 +9,7 @@ colorful==0.5.4
 discord-sentry-reporting==2.0.4
 discord.py==1.4.1
 discosnow==0.0.4
-feedparser==5.2.1
+feedparser==6.0.1
 future==0.18.2
 geoip2==4.0.2
 idna==2.10
@@ -26,7 +26,7 @@ python-dateutil==2.8.1
 python-dotenv==0.14.0
 pytz==2020.1
 requests==2.24.0
-sentry-sdk==0.16.2
+sentry-sdk==0.17.6
 six==1.15.0
 soupsieve==2.0.1
 timezones==2.0.7
