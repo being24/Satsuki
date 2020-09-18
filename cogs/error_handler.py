@@ -24,10 +24,9 @@ class CommandErrorHandler(commands.Cog):
 
         elif isinstance(error, commands.DisabledCommand):
             return await ctx.send(f'{ctx.command} has been disabled.')
-        elif isinstance(error, commands.CheckFailure):
 
-            await ctx.send(f'you have no permission to execute {ctx.command}.')
-            return
+        elif isinstance(error, commands.CheckFailure):
+            return await ctx.send(f'このコマンドを実行する権限がありません:{ctx.author.mention}\n{error}')
 
         elif isinstance(error, commands.NoPrivateMessage):
             try:
@@ -38,8 +37,11 @@ class CommandErrorHandler(commands.Cog):
         elif isinstance(error, commands.BadArgument):
             return await ctx.send("無効な引数です")
 
+        elif isinstance(error, commands.MissingRequiredArgument):
+            return await ctx.send("引数が足りません")
+
         elif isinstance(error, commands.MissingPermissions):
-            await ctx.send(f'このコマンドを実行する権限がありません:{ctx.author.mention}\n{error}')
+            return await ctx.send(f'このコマンドを実行する権限がありません:{ctx.author.mention}\n{error}')
 
         else:
             error = getattr(error, 'original', error)
