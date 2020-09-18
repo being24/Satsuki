@@ -33,16 +33,14 @@ class Admin(commands.Cog):
                 if cog.endswith(".py"):
                     try:
                         cog = cog[:-3]
-                        self.bot.unload_extension(f'cogs.{cog}')
-                        self.bot.load_extension(f'cogs.{cog}')
+                        self.bot.reload_extension(f'cogs.{cog}')
                         reloaded_list.append(cog)
                     except Exception:
                         traceback.print_exc()
             await ctx.send(f"{reloaded_list}をreloadしました")
         else:
             try:
-                self.bot.unload_extension(f'cogs.{cogname}')
-                self.bot.load_extension(f'cogs.{cogname}')
+                self.bot.reload_extension(f'cogs.{cogname}')
                 await ctx.send(f"{cogname}をreloadしました")
             except Exception as e:
                 print(e)
@@ -50,11 +48,8 @@ class Admin(commands.Cog):
 
     @commands.command(aliases=['st'], hidden=True)
     async def status(self, ctx, word: str):
-        try:
-            await self.bot.change_presence(activity=discord.Game(name=word))
-            await ctx.send(f"ステータスを{word}に変更しました")
-        except BaseException:
-            pass
+        await self.bot.change_presence(activity=discord.Game(name=word))
+        await ctx.send(f"ステータスを{word}に変更しました")
 
     @commands.command(aliases=['p'], hidden=True)
     async def ping(self, ctx):
@@ -65,9 +60,8 @@ class Admin(commands.Cog):
     @commands.command(aliases=['wh'], hidden=True)
     async def where(self, ctx):
         await ctx.send("現在入っているサーバーは以下です")
-        server_list = [i.name.replace('\u3000', ' ')
-                       for i in ctx.bot.guilds]
-        await ctx.send(f"{server_list}")
+        servers = ",".join(g.name.replace('\u3000', ' ') for g in ctx.bot.guilds)
+        await ctx.send(f"{servers}")
 
     @commands.command(aliases=['mem'], hidden=True)
     async def num_of_member(self, ctx):
@@ -92,14 +86,15 @@ class Admin(commands.Cog):
     @commands.command(hidden=True)
     async def restore(self, ctx):
         async for message in ctx.channel.history(limit=100):
-            if message.author.id == self.bot.user.id:
-                if len(message.attachments) != 0:
-                    attachments_name = ' '.join([i.filename for i in message.attachments])
-                    msg_time = ds.snowflake2time(message.id).strftime('%m-%d %H:%M')
-                    await ctx.send(f'{msg_time}の{attachments_name}を取り込みます')
-                    for attachment in message.attachments:
-                        await attachment.save(f"{self.master_path}/data/{attachment.filename}")
-                    break
+            if message.author.id != self.bot.user.id:
+                continue
+            if message.attachments:
+                attachments_name = ' '.join(i.filename for i in message.attachments)
+                msg_time = ds.snowflake2time(message.id).strftime('%m-%d %H:%M')
+                await ctx.send(f'{msg_time}の{attachments_name}を取り込みます')
+                for attachment in message.attachments:
+                    await attachment.save(f"{self.master_path}/data/{attachment.filename}")
+                break
 
     @tasks.loop(minutes=1.0)
     async def auto_backup(self):

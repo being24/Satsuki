@@ -38,6 +38,9 @@ class CommandErrorHandler(commands.Cog):
         elif isinstance(error, commands.BadArgument):
             return await ctx.send("無効な引数です")
 
+        elif isinstance(error, commands.MissingPermissions):
+            await ctx.send(f'このコマンドを実行する権限がありません:{ctx.author.mention}\n{error}')
+
         else:
             error = getattr(error, 'original', error)
             print(

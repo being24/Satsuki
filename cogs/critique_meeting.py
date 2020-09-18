@@ -176,13 +176,6 @@ class CritiqueCog(commands.Cog, name='批評定例会用コマンド'):
             embed.set_footer(text="受付時間外の予約は無効です!")
             await ctx.send(embed=embed)
 
-    @draft.error
-    async def draft_error(self, ctx, error):
-        if isinstance(error, commands.MissingPermissions):
-            await ctx.send(f'このコマンドを実行する権限がありません:{ctx.author.mention}')
-        else:
-            await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
-
     @commands.command(aliases=['mt'])
     @commands.has_permissions(kick_members=True)
     async def meeting(self, ctx, brt: typing.Optional[str] = 'all'):
@@ -207,13 +200,6 @@ class CritiqueCog(commands.Cog, name='批評定例会用コマンド'):
             inline=False)
 
         await ctx.send(embed=embed)
-
-    @meeting.error
-    async def unknown_error_handler(self, ctx, error):
-        if isinstance(error, commands.MissingPermissions):
-            await ctx.send(f'このコマンドを実行する権限がありません:{ctx.author.mention}')
-        else:
-            await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
 
     @commands.command(aliases=['sh'])
     @commands.has_permissions(kick_members=True)
@@ -280,13 +266,6 @@ class CritiqueCog(commands.Cog, name='批評定例会用コマンド'):
                         pass
                     else:
                         reaction_member.append(user.mention)
-
-    @shuffle.error
-    async def shuffle_error(self, ctx, error):
-        if isinstance(error, commands.MissingPermissions):
-            await ctx.send(f'このコマンドを実行する権限がありません:{ctx.author.mention}')
-        else:
-            await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
 
 
 def setup(bot):
