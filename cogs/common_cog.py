@@ -45,18 +45,12 @@ class SatsukiCom(commands.Cog, name='皐月分類外コマンド'):
 
     def dump_json(self, json_data):
         with open(self.json_name, "w") as f:
-            json.dump(
-                json_data,
-                f,
-                ensure_ascii=False,
-                indent=4,
-                separators=(
-                    ',',
-                    ': '))
+            json.dump(json_data, f, ensure_ascii=False, indent=4,
+                      separators=(',', ': '))
 
     @commands.command()
     async def url(self, ctx, call):
-        call = call.replace(" ", "").replace("　", "")
+        call = call.strip()
         if "http" in call:
             reply = f"外部サイトを貼らないでください.{ctx.author.mention}"
         elif "/" in call[0:1]:
@@ -64,8 +58,7 @@ class SatsukiCom(commands.Cog, name='皐月分類外コマンド'):
         else:
             reply = f"{self.SCP_JP}/{call}"
 
-        if reply is not None:
-            await ctx.send(reply)
+        await ctx.send(reply)
 
     @commands.command()
     async def dice(self, ctx, num1: int, num2: typing.Optional[int] = 0):
@@ -78,13 +71,11 @@ class SatsukiCom(commands.Cog, name='皐月分類外コマンド'):
 
         else:
             x = random.randint(num_list[0], num_list[1])
-            if x is not None:
-                await ctx.send("出目は " + str(x) + " です")
+            await ctx.send("出目は " + str(x) + " です")
 
     @commands.command(aliases=['lu'])
     async def last_updated(self, ctx):
-        last_update_utime = os.path.getmtime(
-            self.master_path + "/data/scps.csv")
+        last_update_utime = os.path.getmtime(f"{self.master_path}/data/scps.csv")
         last_update_UTC_nv = datetime.fromtimestamp(int(last_update_utime))
         last_update_JST = timezone('Asia/Tokyo').localize(last_update_UTC_nv)
         await ctx.send(f"データベースの最終更新日時は{last_update_JST}です")
@@ -98,6 +89,7 @@ class SatsukiCom(commands.Cog, name='皐月分類外コマンド'):
                 index_col=0)
         except FileNotFoundError as e:
             print(e)
+            return
 
         brt = brt.lower()
 
@@ -110,7 +102,7 @@ class SatsukiCom(commands.Cog, name='皐月分類外コマンド'):
         result = itertools.chain(*result)
         result = list(result)
 
-        await ctx.send(result[1] + "\n" + self.SCP_JP + result[0])
+        await ctx.send(f"{result[1]}\n{self.SCP_JP}{result[0]}")
 
     @commands.command(aliases=['tm'])
     # @commands.has_permissions(kick_members=True)
@@ -141,13 +133,6 @@ class SatsukiCom(commands.Cog, name='皐月分類外コマンド'):
         self.dump_json(self.timer_dict)
 
         await ctx.send(f"{ctx.author.mention} : {num}分のタイマーを開始します")
-
-    @timer.error
-    async def timer_error(self, ctx, error):
-        if isinstance(error, commands.MissingPermissions):
-            await ctx.send(f'このコマンドを実行する権限がありません:{ctx.author.mention}\n{error}')
-        else:
-            await ctx.send(f'to <@{self.bot.admin_id}> at {ctx.command.name} command\n{error}')
 
     @commands.command()
     async def help(self, ctx):
@@ -252,7 +237,7 @@ class SatsukiCom(commands.Cog, name='皐月分類外コマンド'):
             else:
                 print("error")
 
-        for key in list(self.timer_dict.keys()):
+        for key in self.timer_dict.keys():
             dict_time_just = datetime.strptime(
                 self.timer_dict[key]['just'], '%Y-%m-%d %H:%M:%S')
             dict_time_m5 = datetime.strptime(

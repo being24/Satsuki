@@ -22,7 +22,7 @@ class NijiruAlter(commands.Cog, name='煮汁代替定例会予約'):
     async def reservation(self, ctx, title, url=None):
         if url is None:
             await ctx.send("引数が不足しています.")
-            pass
+            return
         if url.startswith(self.SB_URL):
             # 空白でsplit、URLとそれ以外を分けそれ以外の最初をタイトルにする！
             await ctx.send(f"title : **{title}** {url} にて\n{ctx.message.created_at}に予約を受け付けました．")
