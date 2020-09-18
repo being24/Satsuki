@@ -30,7 +30,7 @@ sentry-sdk==0.16.2
 six==1.15.0
 soupsieve==2.0.1
 timezones==2.0.7
-typing-extensions==3.7.4.2
+typing-extensions==3.7.4.3
 urllib3==1.25.10
 websockets==8.1
 yarl==1.5.1
