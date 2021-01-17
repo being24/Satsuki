@@ -12,7 +12,7 @@ discosnow==0.0.4
 feedparser==6.0.1
 future==0.18.2
 geoip2==4.0.2
-idna==2.10
+idna==3.1
 idna-ssl==1.1.0
 lxml==4.5.2
 maxminddb==2.0.2
