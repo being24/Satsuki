@@ -26,7 +26,7 @@ python-dateutil==2.8.1
 python-dotenv==0.14.0
 pytz==2020.1
 requests==2.24.0
-sentry-sdk==0.17.6
+sentry-sdk==0.19.5
 six==1.15.0
 soupsieve==2.0.1
 timezones==2.0.7
