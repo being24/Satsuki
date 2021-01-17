@@ -9,7 +9,7 @@ colorful==0.5.4
 discord-sentry-reporting==2.0.4
 discord.py==1.4.1
 discosnow==0.0.4
-feedparser==6.0.1
+feedparser==6.0.2
 future==0.18.2
 geoip2==4.0.2
 idna==2.10
