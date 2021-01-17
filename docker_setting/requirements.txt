@@ -21,7 +21,7 @@ numpy==1.19.2
 pandas==1.1.2
 prettyprinter==0.18.0
 pycodestyle==2.6.0
-Pygments==2.7.0
+Pygments==2.7.4
 python-dateutil==2.8.1
 python-dotenv==0.14.0
 pytz==2020.1
