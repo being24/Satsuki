@@ -57,6 +57,8 @@ class Admin(commands.Cog):
 
     @commands.command(aliases=['re'], hidden=True)
     async def reload(self, ctx, cogname: typing.Optional[str] = "ALL"):
+        """Cogをリロードする関数
+        """
         if cogname == "ALL":
             reloaded_list = []
             for cog in os.listdir(self.master_path + "/cogs"):
@@ -105,6 +107,7 @@ class Admin(commands.Cog):
 
     @commands.command(aliases=['p'], hidden=True)
     async def ping(self, ctx):
+        """Pingによる疎通確認を行うコマンド"""
         start_time = time.time()
         mes = await ctx.send("Pinging....")
         await mes.edit(content="pong!\n" + str(round(time.time() - start_time, 3) * 1000) + "ms")
@@ -117,10 +120,13 @@ class Admin(commands.Cog):
 
     @commands.command(aliases=['mem'], hidden=True)
     async def num_of_member(self, ctx):
-        await ctx.send(f"{ctx.guild.member_count}")
+        """そのサーバーに何人いるかを確認する関数
+        """
 
     @commands.command(hidden=True)
     async def back_up(self, ctx):
+        """バックアップファイルを送信する関数
+        """
         json_files = [
             filename for filename in os.listdir(self.master_path + "/data")
             if filename.endswith(".json")]
@@ -132,11 +138,15 @@ class Admin(commands.Cog):
 
     @commands.command(hidden=True)
     async def restore_one(self, ctx):
+        """添付メッセージからファイルを取得する関数
+        """
         for attachment in ctx.message.attachments:
             await attachment.save(f"{self.master_path}/data/{attachment.filename}")
 
     @commands.command(hidden=True)
     async def restore(self, ctx):
+        """バックアップチャンネルからファイルを取得する関数
+        """
         async for message in ctx.channel.history(limit=100):
             if message.author.id != self.bot.user.id:
                 continue
