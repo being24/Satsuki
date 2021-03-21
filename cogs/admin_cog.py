@@ -93,7 +93,11 @@ class Admin(commands.Cog, name='管理用コマンド群'):
 
     @commands.command(aliases=['st'], hidden=True)
     async def status(self, ctx, word: str):
-        await self.bot.change_presence(activity=discord.Game(name=word))
+        try:
+            await self.bot.change_presence(activity=discord.Game(name=word))
+            await ctx.reply(f"ステータスを{word}に変更しました", mention_author=False)
+        except BaseException:
+            pass
 
     @commands.command(hidden=True)
     async def add_black_list(self, ctx, server_id: int):
