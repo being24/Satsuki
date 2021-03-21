@@ -129,7 +129,6 @@ dmypy.json
 .pyre/
 
 
-*.txt
 .vscode
 *.log
 *.csv
