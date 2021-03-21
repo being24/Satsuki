@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 
+import logging
 import os
 import time
 import traceback
@@ -25,6 +26,17 @@ class Admin(commands.Cog):
     async def cog_check(self, ctx):
         return ctx.guild and await self.bot.is_owner(ctx.author)
 
+    @staticmethod
+    def log_remove_guild(guild):
+        error_content = f'サーバーを退出しました\nreason: black list\ndetail : {guild}'
+        logging.error(error_content, exc_info=True)
+        if guild_setting := await self.setting_mng.get_guild(guild.id):
+            if guild_setting.black_server:
+                await guild.leave()
+                self.log_remove_guild(guild)
+                return
+        else:
+            await self.setting_mng.register_guild(guild_id=guild.id)
     @commands.command(aliases=['re'], hidden=True)
     async def reload(self, ctx, cogname: typing.Optional[str] = "ALL"):
         if cogname == "ALL":
@@ -49,7 +61,29 @@ class Admin(commands.Cog):
     @commands.command(aliases=['st'], hidden=True)
     async def status(self, ctx, word: str):
         await self.bot.change_presence(activity=discord.Game(name=word))
-        await ctx.send(f"ステータスを{word}に変更しました")
+
+    @commands.command(hidden=True)
+    async def add_black_list(self, ctx, server_id: int):
+        guild = self.bot.get_guild(ctx.guild.id)
+        if guild is None:
+            await ctx.reply(f'サーバーid : {server_id}を発見できませんでした')
+            return
+
+        await guild.leave()
+        self.log_remove_guild(guild)
+        if not await self.setting_mng.is_exist(server_id):
+            await ctx.reply(f'サーバーid : {server_id}をDB上に発見できませんでした')
+        else:
+            await self.setting_mng.set_black_list(server_id)
+            await ctx.reply(f'サーバー : {guild}を退出しました')
+
+    @commands.command(hidden=True)
+    async def remove_black_list(self, ctx, server_id: int):
+        if not await self.setting_mng.is_exist(server_id):
+            await ctx.reply(f'サーバーid : {server_id}をDB上に発見できませんでした')
+        else:
+            await self.setting_mng.remove_black_list(server_id)
+            await ctx.reply(f'サーバー : {server_id}をブラックリストから除去しました')
 
     @commands.command(aliases=['p'], hidden=True)
     async def ping(self, ctx):
