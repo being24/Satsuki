@@ -15,14 +15,20 @@ from discord.ext import commands, tasks
 
 from cogs.utils.setting_manager import SettingManager
 
-class Admin(commands.Cog):
+
+class Admin(commands.Cog, name='管理用コマンド群'):
+    """
+    管理用のコマンドです
+    """
+
     def __init__(self, bot):
         self.bot = bot
+
         self.master_path = os.path.dirname(
             os.path.dirname(os.path.abspath(__file__)))
 
-        if not self.bot.loop.is_running():
-            self.auto_backup.start()
+        self.auto_backup.stop()
+        self.auto_backup.start()
         self.setting_mng = SettingManager()
 
     async def cog_check(self, ctx):
@@ -38,6 +44,11 @@ class Admin(commands.Cog):
         await self.setting_mng.create_table()
         guild_ids = [guild.id for guild in self.bot.guilds]
         await self.setting_mng.init_guilds(guild_ids)
+
+    @commands.Cog.listener()
+    async def on_guild_join(self, guild):
+        """on_guild_join時に発火する関数
+        """
         if guild_setting := await self.setting_mng.get_guild(guild.id):
             if guild_setting.black_server:
                 await guild.leave()
