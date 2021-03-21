@@ -7,7 +7,7 @@ chardet==3.0.4
 colorama==0.4.3
 colorful==0.5.4
 discord-sentry-reporting==2.0.4
-discord.py==1.4.1
+discord.py==1.6.0
 discosnow==0.0.4
 feedparser==6.0.1
 future==0.18.2
