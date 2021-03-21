@@ -45,6 +45,16 @@ class Admin(commands.Cog):
                 return
         else:
             await self.setting_mng.register_guild(guild_id=guild.id)
+
+        embed = discord.Embed(
+            title="サーバーに参加しました",
+            description=f"SCP公式チャット用utility-bot {self.bot.user.display_name}",
+            color=0x2fe48d)
+        embed.set_author(
+            name=f"{self.bot.user.name}",
+            icon_url=f"{self.bot.user.avatar_url}")
+        await guild.system_channel.send(embed=embed)
+
     @commands.command(aliases=['re'], hidden=True)
     async def reload(self, ctx, cogname: typing.Optional[str] = "ALL"):
         if cogname == "ALL":
