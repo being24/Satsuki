@@ -27,7 +27,6 @@ class MyBot(commands.Bot):
         with open(currentpath + "/data/setting.json", encoding='utf-8') as f:
             self.json_data = json.load(f)
 
-        self.send_max = self.json_data['limit']
         self.admin_id = self.json_data['admin']["id"]
         self.status = self.json_data['status']
         self.meeting_addr = self.json_data['regular_meeting_addr']
