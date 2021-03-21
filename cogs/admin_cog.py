@@ -81,14 +81,15 @@ class Admin(commands.Cog, name='管理用コマンド群'):
                         reloaded_list.append(cog)
                     except Exception:
                         traceback.print_exc()
-            await ctx.send(f"{reloaded_list}をreloadしました")
+            await ctx.reply(f"{reloaded_list}をreloadしました", mention_author=False)
         else:
             try:
-                self.bot.reload_extension(f'cogs.{cogname}')
-                await ctx.send(f"{cogname}をreloadしました")
+                self.bot.unload_extension(f'cogs.{cogname}')
+                self.bot.load_extension(f'cogs.{cogname}')
+                await ctx.reply(f"{cogname}をreloadしました", mention_author=False)
             except Exception as e:
                 print(e)
-                await ctx.send(e)
+                await ctx.reply(e, mention_author=False)
 
     @commands.command(aliases=['st'], hidden=True)
     async def status(self, ctx, word: str):
