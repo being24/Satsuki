@@ -13,6 +13,7 @@ import discord
 import discosnow as ds
 from discord.ext import commands, tasks
 
+from cogs.utils.setting_manager import SettingManager
 
 class Admin(commands.Cog):
     def __init__(self, bot):
@@ -22,6 +23,7 @@ class Admin(commands.Cog):
 
         if not self.bot.loop.is_running():
             self.auto_backup.start()
+        self.setting_mng = SettingManager()
 
     async def cog_check(self, ctx):
         return ctx.guild and await self.bot.is_owner(ctx.author)
@@ -30,6 +32,12 @@ class Admin(commands.Cog):
     def log_remove_guild(guild):
         error_content = f'サーバーを退出しました\nreason: black list\ndetail : {guild}'
         logging.error(error_content, exc_info=True)
+
+    @commands.Cog.listener()
+    async def on_ready(self):
+        await self.setting_mng.create_table()
+        guild_ids = [guild.id for guild in self.bot.guilds]
+        await self.setting_mng.init_guilds(guild_ids)
         if guild_setting := await self.setting_mng.get_guild(guild.id):
             if guild_setting.black_server:
                 await guild.leave()
