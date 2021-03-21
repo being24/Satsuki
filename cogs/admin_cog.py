@@ -76,7 +76,8 @@ class Admin(commands.Cog, name='管理用コマンド群'):
                 if cog.endswith(".py"):
                     try:
                         cog = cog[:-3]
-                        self.bot.reload_extension(f'cogs.{cog}')
+                        self.bot.unload_extension(f'cogs.{cog}')
+                        self.bot.load_extension(f'cogs.{cog}')
                         reloaded_list.append(cog)
                     except Exception:
                         traceback.print_exc()
