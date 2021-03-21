@@ -122,23 +122,28 @@ class Admin(commands.Cog, name='管理用コマンド群'):
             await self.setting_mng.remove_black_list(server_id)
             await ctx.reply(f'サーバー : {server_id}をブラックリストから除去しました')
 
-    @commands.command(aliases=['p'], hidden=True)
+    @commands.command(aliases=['p'], hidden=False, description='疎通確認')
     async def ping(self, ctx):
         """Pingによる疎通確認を行うコマンド"""
         start_time = time.time()
-        mes = await ctx.send("Pinging....")
+        mes = await ctx.reply("Pinging....")
         await mes.edit(content="pong!\n" + str(round(time.time() - start_time, 3) * 1000) + "ms")
 
     @commands.command(aliases=['wh'], hidden=True)
     async def where(self, ctx):
-        await ctx.send("現在入っているサーバーは以下です")
-        servers = ",".join(g.name.replace('\u3000', ' ') for g in ctx.bot.guilds)
-        await ctx.send(f"{servers}")
+        """今どこにいるかを確認する関数
+        """
+        await ctx.reply("現在入っているサーバーは以下です", mention_author=False)
+        server_list = '\n'.join(
+            [i.name.replace('\u3000', ' ') + ' : ' + str(i.id) for i in ctx.bot.guilds])
+
+        await ctx.reply(f"{server_list}", mention_author=False)
 
     @commands.command(aliases=['mem'], hidden=True)
     async def num_of_member(self, ctx):
         """そのサーバーに何人いるかを確認する関数
         """
+        await ctx.reply(f"{ctx.guild.member_count}", mention_author=False)
 
     @commands.command(hidden=True)
     async def back_up(self, ctx):
@@ -147,6 +152,11 @@ class Admin(commands.Cog, name='管理用コマンド群'):
         json_files = [
             filename for filename in os.listdir(self.master_path + "/data")
             if filename.endswith(".json")]
+        sql_files = [
+            filename for filename in os.listdir(self.master_path + "/data")
+            if filename.endswith(".sqlite")]
+
+        json_files.extend(sql_files)
 
         my_files = [discord.File(f'{self.master_path}/data/{i}')
                     for i in json_files]
@@ -165,30 +175,45 @@ class Admin(commands.Cog, name='管理用コマンド群'):
         """バックアップチャンネルからファイルを取得する関数
         """
         async for message in ctx.channel.history(limit=100):
-            if message.author.id != self.bot.user.id:
-                continue
-            if message.attachments:
-                attachments_name = ' '.join(i.filename for i in message.attachments)
-                msg_time = ds.snowflake2time(message.id).strftime('%m-%d %H:%M')
-                await ctx.send(f'{msg_time}の{attachments_name}を取り込みます')
-                for attachment in message.attachments:
-                    await attachment.save(f"{self.master_path}/data/{attachment.filename}")
-                break
+            if message.author.id == self.bot.user.id:
+                if len(message.attachments) != 0:
+                    attachments_name = ' '.join(
+                        [i.filename for i in message.attachments])
+                    msg_time = ds.snowflake2time(
+                        message.id).strftime('%m-%d %H:%M')
+                    await ctx.send(f'{msg_time}の{attachments_name}を取り込みます')
+                    for attachment in message.attachments:
+                        await attachment.save(f"{self.master_path}/data/{attachment.filename}")
+                    break
 
     @tasks.loop(minutes=1.0)
     async def auto_backup(self):
-        await self.bot.wait_until_ready()
-
         now = datetime.now()
         now_HM = now.strftime('%H:%M')
 
         if now_HM == '04:00':
             channel = self.bot.get_channel(745128369170939965)
 
-            json_files = [filename for filename in os.listdir(self.master_path + "/data")if filename.endswith(".json")]
-            my_files = [discord.File(f'{self.master_path}/data/{i}')for i in json_files]
+            json_files = [
+                filename for filename in os.listdir(
+                    self.master_path +
+                    "/data")if filename.endswith(".json")]
+
+            sql_files = [
+                filename for filename in os.listdir(
+                    self.master_path +
+                    "/data")if filename.endswith(".sqlite3")]
+
+            json_files.extend(sql_files)
+            my_files = [
+                discord.File(f'{self.master_path}/data/{i}')for i in json_files]
 
             await channel.send(files=my_files)
+
+    @auto_backup.before_loop
+    async def before_printer(self):
+        print('admin waiting...')
+        await self.bot.wait_until_ready()
 
 
 def setup(bot):
