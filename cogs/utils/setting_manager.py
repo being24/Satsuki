@@ -10,14 +10,11 @@ from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.schema import Column
-from sqlalchemy.sql.expression import exists
-from sqlalchemy.sql.sqltypes import BOOLEAN, Boolean
+from sqlalchemy.sql.sqltypes import Boolean
 from sqlalchemy.types import BigInteger
 
 Base = declarative_base()
 
-
-# 鯖ごとに設定を変えられるようにする
 
 @dataclass
 class GuildSetting:
@@ -195,6 +192,39 @@ class SettingManager():
                 stmt = update(GuildSettingDB).where(
                     GuildSettingDB.guild_id == server_id).values(
                     black_server=False)
+                await session.execute(stmt)
+
+    async def is_dispand(self, guild_id: int) -> bool:
+        """dispand（メッセージ展開）が有効かを確認する関数
+
+        Args:
+            guild_id (int): サーバーID
+
+        Returns:
+            bool: DBに無い、もしくは許可されていなければFalse、許可されていればTrue
+        """
+        async with AsyncSession(self.engine) as session:
+            async with session.begin():
+                stmt = select(GuildSettingDB).where(
+                    GuildSettingDB.guild_id == guild_id)
+                result = await session.execute(stmt)
+                result = result.fetchone()
+                if result is None:
+                    return False
+
+                return result[0].dispander
+
+    async def set_dispand(self, guild_id: int, tf: bool) -> None:
+        """dispand（メッセージ展開）を設定する関数
+
+        Args:
+            guild_id (int): サーバーID
+            tf (bool): 有効/無効
+        """
+        async with AsyncSession(self.engine) as session:
+            async with session.begin():
+                stmt = update(GuildSettingDB).where(
+                    GuildSettingDB.guild_id == guild_id).values(dispander=tf)
                 await session.execute(stmt)
 
 
