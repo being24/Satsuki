@@ -44,7 +44,7 @@ class SettingManager():
         db_path = data_path
         db_path /= './data.sqlite3'
         self.engine = create_async_engine(
-            f'sqlite:///{db_path}', echo=True)
+            f'sqlite:///{db_path}')
 
     async def create_table(self) -> None:
         """テーブルを作成する関数
