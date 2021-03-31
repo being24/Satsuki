@@ -15,6 +15,7 @@ RUN set -x && \
     pip3 install -U setuptools && \
     git clone https://github.com/being24/Satsuki.git && \
     pip3 install -r ./Satsuki/docker_setting/requirements.txt && \
+    python -m pip install -U git+https://github.com/Rapptz/discord-ext-menus && \
     chmod 0755 ./Satsuki/*.sh && \
     chmod 0700 ./Satsuki/bot.py && \
     sh ./Satsuki/ayame.sh && \
