@@ -68,7 +68,7 @@ class Help(Cog):
         await ctx.send(embed=embed)
 
     @command(name="help", description='ヘルプコマンド')
-    async def help(self, ctx, cmd: Optional[str]):
+    async def ac_help(self, ctx, cmd: Optional[str]):
         """拡張版ヘルプコマンド"""
         show_commands = [
             my_command for my_command in self.bot.commands if not my_command.hidden]
