@@ -136,3 +136,5 @@ dmypy.json
 token
 satsuki
 .VSCodeCounter
+*.bak
+*.sqlite3
