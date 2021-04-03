@@ -37,6 +37,7 @@ class SatsukiCom(commands.Cog, name='皐月分類外コマンド'):
         with open(self.json_name, encoding='utf-8') as f:
             self.timer_dict = json.load(f)
 
+        self.multi_timer.stop()
         self.multi_timer.start()
 
     def cog_unload(self):
