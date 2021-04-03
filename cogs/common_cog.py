@@ -3,18 +3,13 @@
 
 
 import asyncio
-import itertools
 import json
 import os
 import random
-import subprocess
-import typing
 from datetime import datetime, timedelta
 
 import discord
-import pandas as pd
 from discord.ext import commands, tasks
-from pytz import timezone
 
 from cogs.utils.common import CommonUtil
 
