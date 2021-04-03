@@ -67,7 +67,7 @@ class Help(Cog):
         embed.add_field(name="Command description", value=command.help)
         await ctx.send(embed=embed)
 
-    @command(name="help", description='ヘルプコマンド')
+    @command(name="ac_help", description='ヘルプコマンド')
     async def ac_help(self, ctx, cmd: Optional[str]):
         """拡張版ヘルプコマンド"""
         show_commands = [
