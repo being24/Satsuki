@@ -16,10 +16,14 @@ import pandas as pd
 from discord.ext import commands, tasks
 from pytz import timezone
 
+from cogs.utils.common import CommonUtil
+
 
 class SatsukiCom(commands.Cog, name='皐月分類外コマンド'):
     def __init__(self, bot):
         self.bot = bot
+        self.c = CommonUtil()
+
         self.SCP_JP = "http://scp-jp.wikidot.com"
         self.master_path = os.path.dirname(
             os.path.dirname(os.path.abspath(__file__)))
