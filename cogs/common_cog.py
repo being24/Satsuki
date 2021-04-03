@@ -53,25 +53,31 @@ class SatsukiCom(commands.Cog, name='皐月分類外コマンド'):
         call = call.strip()
         if "http" in call:
             reply = f"外部サイトを貼らないでください.{ctx.author.mention}"
+            msg = await ctx.reply(reply)
+            await self.c.autodel_msg(msg)
+            return
         elif "/" in call[0:1]:
             reply = self.SCP_JP + call
         else:
             reply = f"{self.SCP_JP}/{call}"
 
-        await ctx.send(reply)
+        await ctx.reply(reply, mention_author=False)
 
     @commands.command()
     async def dice(self, ctx, num1: int, num2: typing.Optional[int] = 0):
         num_list = sorted([num1, num2])
 
         if any(x >= 10000 for x in num_list):
-            await ctx.send("入力値が大きすぎです")
+            msg = await ctx.reply("入力値が大きすぎです")
+            await self.c.autodel_msg(msg)
+
         elif any(x < 0 for x in num_list):
-            await ctx.send("正の値を入力してください")
+            msg = await ctx.reply("正の値を入力してください")
+            await self.c.autodel_msg(msg)
 
         else:
             x = random.randint(num_list[0], num_list[1])
-            await ctx.send("出目は " + str(x) + " です")
+            await ctx.reply(f"出目は {x} です")
 
     @commands.command(aliases=['lu'])
     async def last_updated(self, ctx):
@@ -132,7 +138,7 @@ class SatsukiCom(commands.Cog, name='皐月分類外コマンド'):
 
         self.dump_json(self.timer_dict)
 
-        await ctx.send(f"{ctx.author.mention} : {num}分のタイマーを開始します")
+        await ctx.reply(f"{ctx.author.mention} : {num}分のタイマーを開始します", mention_author=False)
 
     @commands.command()
     async def help(self, ctx):
@@ -198,7 +204,7 @@ class SatsukiCom(commands.Cog, name='皐月分類外コマンド'):
             value="バグ等を発見した場合は、然るべき場所にご報告ください.\n__**また、動作確認にはDMを使用することも可能です**__",
             inline=False)
 
-        await ctx.send(embed=msg)
+        await ctx.reply(embed=msg)
 
     @commands.Cog.listener()
     async def on_member_join(self, member):
