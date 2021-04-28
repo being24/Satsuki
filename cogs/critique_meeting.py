@@ -15,21 +15,13 @@ from typing import List
 import discord
 import feedparser
 import html2text
-# import numpy as np
 import requests
 from bs4 import BeautifulSoup
 from discord.ext import commands
 from more_itertools import divide
 
 from cogs.utils.common import CommonUtil
-
-
-@dataclass
-class ReserveData:
-    draft_title: str
-    draft_link: str
-    author_name: str
-    reserve_time: datetime
+from cogs.utils.meeting_manager import ReserveData, MeetingManager
 
 
 @dataclass
@@ -41,6 +33,7 @@ class RssData:
     content: str
 
 
+'''
 def shape_content_to_discord(content: str) -> str:
     content = content.replace("<p>", "\n")
     content = content.replace("</p>", "\n")
@@ -91,6 +84,7 @@ def shape_content_to_discord(content: str) -> str:
     # result.append(content)
 
     return content
+'''
 
 
 class CritiqueCog(commands.Cog, name='批評定例会用コマンド'):
@@ -100,6 +94,7 @@ class CritiqueCog(commands.Cog, name='批評定例会用コマンド'):
         self.master_path = os.path.dirname(
             os.path.dirname(os.path.abspath(__file__)))
         self.c = CommonUtil()
+        self.meeting_mng = MeetingManager()
 
     @staticmethod
     def from_struct_time_to_datetime(struct_time: str):
@@ -130,7 +125,7 @@ class CritiqueCog(commands.Cog, name='批評定例会用コマンド'):
         target_url = 'http://njr-sys.net/irc/draftReserve/'
 
         d_today = (datetime.now() + timedelta(hours=-3)).date()
-        d_today = '2019-10-12'
+        # d_today = '2019-10-12'
         response = requests.get(target_url + str(d_today))
 
         soup = BeautifulSoup(response.text, "html.parser")
@@ -167,14 +162,14 @@ class CritiqueCog(commands.Cog, name='批評定例会用コマンド'):
                         if author_name is None:
                             author_name = 'None'
                 else:
-                    draft_title = element.string
+                    draft_title = html.unescape(element.string)
                     if draft_title is None:
                         draft_title = 'None'
 
             if reserve_time >= limen_time:
                 data = ReserveData(
-                    author_name=author_name,
-                    draft_title=draft_title,
+                    author_name=author_name[:50],
+                    draft_title=draft_title[:50],
                     draft_link=draft_link,
                     reserve_time=reserve_time)
                 ReserveData_list.append(data)
