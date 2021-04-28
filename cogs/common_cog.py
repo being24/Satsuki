@@ -23,10 +23,23 @@ class SatsukiCom(commands.Cog, name='皐月分類外コマンド'):
         self.master_path = os.path.dirname(
             os.path.dirname(os.path.abspath(__file__)))
 
-        self.welcome_list = [609058923353341973, 286871252784775179]
+        self.welcome_list = [286871252784775179, 609058923353341973]
         self.BRANCHS = [
-            'jp', 'en', 'ru', 'ko', 'es', 'cn', 'cs', 'fr', 'pl', 'th', 'de', 'it', 'ua', 'pt', 'uo'
-        ]  # 外部に依存させたいな
+            'jp',
+            'en',
+            'ru',
+            'ko',
+            'es',
+            'cn',
+            'cs',
+            'fr',
+            'pl',
+            'th',
+            'de',
+            'it',
+            'ua',
+            'pt',
+            'uo']  # 外部に依存させたいな
 
         self.json_name = self.master_path + "/data/timer_dict.json"
 
@@ -64,8 +77,9 @@ class SatsukiCom(commands.Cog, name='皐月分類外コマンド'):
         await ctx.reply(reply, mention_author=False)
 
     @commands.command()
-    async def dice(self, ctx, num1: int, num2: typing.Optional[int] = 0):
-        num_list = sorted([num1, num2])
+    async def dice(self, ctx, num1: int, num2: int = 0):
+        num_list = [num1, num2]
+        num_list = sorted(num_list)
 
         if any(x >= 10000 for x in num_list):
             msg = await ctx.reply("入力値が大きすぎです")
@@ -79,13 +93,17 @@ class SatsukiCom(commands.Cog, name='皐月分類外コマンド'):
             x = random.randint(num_list[0], num_list[1])
             await ctx.reply(f"出目は {x} です")
 
+    '''
     @commands.command(aliases=['lu'])
     async def last_updated(self, ctx):
-        last_update_utime = os.path.getmtime(f"{self.master_path}/data/scps.csv")
+        last_update_utime = os.path.getmtime(
+            f"{self.master_path}/data/scps.csv")
         last_update_UTC_nv = datetime.fromtimestamp(int(last_update_utime))
         last_update_JST = timezone('Asia/Tokyo').localize(last_update_UTC_nv)
         await ctx.send(f"データベースの最終更新日時は{last_update_JST}です")
+    '''
 
+    '''
     @commands.command()
     async def rand(self, ctx, brt: typing.Optional[str] = 'all'):
         try:
@@ -109,10 +127,11 @@ class SatsukiCom(commands.Cog, name='皐月分類外コマンド'):
         result = list(result)
 
         await ctx.send(f"{result[1]}\n{self.SCP_JP}{result[0]}")
+    '''
 
     @commands.command(aliases=['tm'])
     # @commands.has_permissions(kick_members=True)
-    async def timer(self, ctx, num: typing.Optional[int] = 30):
+    async def timer(self, ctx, num: int = 30):
         today = datetime.today()
         before_five = today + timedelta(minutes=num - 5)
         just_now = today + timedelta(minutes=num)
@@ -191,14 +210,14 @@ class SatsukiCom(commands.Cog, name='皐月分類外コマンド'):
             name="/timer $minutes:default=30$",
             value="簡易的なタイマーです.5分以上の場合、残り5分でもお知らせします.予期せぬ再起動にも安心！",
             inline=False)
-        '''msg.add_field(
+        msg.add_field(
             name="/meeting(mt)",
             value="#scp-jp 定例会のお知らせスレッドから定例会のテーマを取得表示します.",
             inline=False)
         msg.add_field(
             name="/shuffle(sh) $num:default=2$",
-            value="定例会の下書き批評回における振り分けを行います.(試験運用)",
-            inline=False)'''
+            value="定例会の下書き批評回における振り分けを行います.",
+            inline=False)
         msg.add_field(
             name="追記",
             value="バグ等を発見した場合は、然るべき場所にご報告ください.\n__**また、動作確認にはDMを使用することも可能です**__",
@@ -206,35 +225,36 @@ class SatsukiCom(commands.Cog, name='皐月分類外コマンド'):
 
         await ctx.reply(embed=msg)
 
-    @commands.Cog.listener()
-    async def on_member_join(self, member):
-        if any([member.guild.id == i for i in self.welcome_list]):
-            channel = member.guild.system_channel
-            await asyncio.sleep(3)
-            embed = discord.Embed(
-                title=f"{member.guild.name}へようこそ",
-                colour=0x0080ff)
-            embed.add_field(
-                name=f"こんにちは,{member.name}.",
-                value="<#548544598826287116>の確認ののち,<#464055645935501312>でアイサツをお願いします.",
-                inline=True)
-            embed.add_field(
-                name=f"welcome {member.name}.",
-                value="please check and read <#569530661350932481> and then give a reaction to this msg.",
-                inline=True)
-            embed.set_footer(text='読了したら何らかのリアクションをつけてください')
-            try:
-                await channel.send(member.mention, embed=embed)
-            except BaseException:
-                pass
+    @commands.Cog.listener()  # 要修正
+    async def on_member_update(self, before: discord.Member, after: discord.Member):
+        if before.pending is True and after.pending is False:
+            if any([after.guild.id == i for i in self.welcome_list]):
+                channel = after.guild.system_channel
+                await asyncio.sleep(3)
+                embed = discord.Embed(
+                    title=f"{after.guild.name}へようこそ",
+                    colour=0x0080ff)
+                embed.add_field(
+                    name=f"こんにちは,{after.name}.",
+                    value="<#548544598826287116>の確認ののち,<#464055645935501312>でアイサツをお願いします.",
+                    inline=True)
+                embed.add_field(
+                    name=f"welcome {after.name}.",
+                    value="please check and read <#569530661350932481> and then give a reaction to this msg.",
+                    inline=True)
+                embed.set_footer(text='読了したら何らかのリアクションをつけてください')
+                try:
+                    await channel.send(after.mention, embed=embed)
+                except BaseException:
+                    pass
 
     @tasks.loop(minutes=1.0)
-    async def multi_timer(self):
-        await self.bot.wait_until_ready()
+    async def multi_timer(self):  # 要修正
         now = datetime.now()
         now_HM = now.strftime('%H:%M')
         if now_HM == '04:30':
             channel = self.bot.get_channel(638727598024687626)
+            '''
             if os.name == "nt":
                 await channel.send("windows上でこのコマンドは使用できません")
             elif os.name == "posix":
@@ -242,6 +262,7 @@ class SatsukiCom(commands.Cog, name='皐月分類外コマンド'):
                 await channel.send('菖蒲 : 更新しました')
             else:
                 print("error")
+            '''
 
         for key in self.timer_dict.keys():
             dict_time_just = datetime.strptime(
@@ -265,6 +286,11 @@ class SatsukiCom(commands.Cog, name='皐月分類外コマンド'):
                 await channel.send(f'残り5分です : {mention}')
 
                 self.dump_json(self.timer_dict)
+
+    @multi_timer.before_loop
+    async def before_timer(self):
+        print('common waiting...')
+        await self.bot.wait_until_ready()
 
 
 def setup(bot):
