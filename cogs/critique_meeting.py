@@ -243,6 +243,33 @@ class CritiqueCog(commands.Cog, name='批評定例会用コマンド'):
 
         await ctx.send(embed=embed)
 
+    @ commands.command(aliases=['res'])  # 設定でdfの先を変更できるようにする
+    # @ commands.dm_only()
+    async def reserve(self, ctx, title: str, url: str):
+        if not 'Saturday' == datetime.today().strftime('%A'):
+            msg = await ctx.reply('今日は土曜日では無いため、予約を受け付けません')
+            await self.c.autodel_msg(msg)
+            return
+
+        match_url = re.match(
+            r"https?://scp-jp-sandbox3\.wikidot\.com/[\w/:%#\$&\?\(\)~\.=\+\-]+", url)
+        if not match_url:
+            raise commands.BadArgument
+
+        pass
+
+    @ reserve.error
+    async def reserve_error(self, ctx, error):
+        if isinstance(error, commands.CheckFailure):
+            msg = await ctx.reply('このコマンドはDMで実行してください')
+            await self.c.autodel_msg(msg)
+        elif isinstance(error, commands.MissingRequiredArgument):
+            msg = await ctx.reply('引数が足りません')
+            await self.c.autodel_msg(msg)
+        elif isinstance(error, commands.BadArgument):
+            msg = await ctx.reply('第二引数に不正な文字列が入力されています、urlをそのまま張り付けてください')
+            await self.c.autodel_msg(msg)
+
     @ commands.command(aliases=['sh'])
     @ commands.has_permissions(kick_members=True)
     async def shuffle(self, ctx, num: int = 2):
