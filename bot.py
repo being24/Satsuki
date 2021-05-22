@@ -1,6 +1,7 @@
 # !/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import pathlib
 import discord
 import json
 import logging
@@ -17,14 +18,14 @@ class MyBot(commands.Bot):
     def __init__(self, command_prefix):
         super().__init__(command_prefix, help_command=None, intents=intents)
 
-        for cog in os.listdir(currentpath + "/cogs"):
+        for cog in os.listdir(root_path / "cogs"):
             if cog.endswith(".py"):
                 try:
                     self.load_extension(f'cogs.{cog[:-3]}')
                 except Exception:
                     traceback.print_exc()
 
-        with open(currentpath + "/data/setting.json", encoding='utf-8') as f:
+        with open(root_path / "data/setting.json", encoding='utf-8') as f:
             self.json_data = json.load(f)
 
         self.status = self.json_data['status']
@@ -41,7 +42,10 @@ class MyBot(commands.Bot):
 
 
 if __name__ == '__main__':
-    dotenv_path = os.path.join(os.path.dirname(__file__), '.env')  # 書き換え！！！！
+    root_path = pathlib.Path(__file__).parents[0]
+
+    dotenv_path = root_path / '.env'
+
     load_dotenv(dotenv_path)
 
     token = os.getenv('DISCORD_BOT_TOKEN')
@@ -61,8 +65,6 @@ if __name__ == '__main__':
         level=logging.INFO,        # Capture info and above as breadcrumbs
         event_level=logging.WARNING  # Send errors as events
     )
-
-    currentpath = os.path.dirname(os.path.abspath(__file__))  # 書き換え！！！！
 
     intents = discord.Intents.default()
     intents.members = True
