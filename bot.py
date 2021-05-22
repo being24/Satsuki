@@ -27,7 +27,6 @@ class MyBot(commands.Bot):
         with open(currentpath + "/data/setting.json", encoding='utf-8') as f:
             self.json_data = json.load(f)
 
-        self.admin_id = self.json_data['admin']["id"]
         self.status = self.json_data['status']
         self.meeting_addr = self.json_data['regular_meeting_addr']
 
@@ -42,7 +41,7 @@ class MyBot(commands.Bot):
 
 
 if __name__ == '__main__':
-    dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
+    dotenv_path = os.path.join(os.path.dirname(__file__), '.env')  # 書き換え！！！！
     load_dotenv(dotenv_path)
 
     token = os.getenv('DISCORD_BOT_TOKEN')
@@ -63,7 +62,7 @@ if __name__ == '__main__':
         event_level=logging.WARNING  # Send errors as events
     )
 
-    currentpath = os.path.dirname(os.path.abspath(__file__))
+    currentpath = os.path.dirname(os.path.abspath(__file__))  # 書き換え！！！！
 
     intents = discord.Intents.default()
     intents.members = True
