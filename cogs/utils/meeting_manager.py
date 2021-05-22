@@ -13,6 +13,8 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.schema import Column
 from sqlalchemy.types import BIGINT, DATETIME, INTEGER, VARCHAR
 
+from .create_SQLIte_engine import engine
+
 Base = declarative_base()
 
 
@@ -37,18 +39,12 @@ class ReserveDataDB(Base):
 
 class MeetingManager():
     def __init__(self):
-        data_path = pathlib.Path(__file__).parents[1]
-        data_path /= '../data'
-        data_path = data_path.resolve()
-        db_path = data_path
-        db_path /= './data.sqlite3'
-        self.engine = create_async_engine(
-            f'sqlite+aiosqlite:///{db_path}', echo=True)
+        pass
 
     async def create_table(self) -> None:
         """テーブルを作成する関数
         """
-        async with self.engine.begin() as conn:
+        async with engine.begin() as conn:
             await conn.run_sync(Base.metadata.create_all)
 
     @staticmethod
@@ -90,7 +86,7 @@ class MeetingManager():
 
 
 if __name__ == "__main__":
-    setting_mng = SettingManager()
+    setting_mng = MeetingManager()
     asyncio.run(setting_mng.create_table())
 
     # asyncio.run(setting_mng.register_setting())
