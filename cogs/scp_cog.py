@@ -190,13 +190,14 @@ class SatsukiSCPCog(commands.Cog, name='SCPコマンド'):
                 return
 
     # サブコマンドでtitile 著者 URL -d を作るべし
-    
+
     """
     複数→従来通り
     一個→シンプル
     -dオプション→複数個あったら提示して一個に絞って詳細版
                  一個ならそのまま詳細版
     """
+
 
 def setup(bot):
     bot.add_cog(SatsukiSCPCog(bot))
