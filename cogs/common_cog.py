@@ -160,7 +160,7 @@ class SatsukiCom(commands.Cog, name='皐月分類外コマンド'):
         await ctx.reply(f"{ctx.author.mention} : {num}分のタイマーを開始します", mention_author=False)
 
     @commands.command()
-    async def help(self, ctx):
+    async def help_old(self, ctx):
         msg = discord.Embed(
             title='本BOTの使い方を説明させていただきます.',
             description=f'よろしくお願いします.{ctx.author.mention}',
@@ -225,7 +225,7 @@ class SatsukiCom(commands.Cog, name='皐月分類外コマンド'):
 
         await ctx.reply(embed=msg)
 
-    @commands.Cog.listener()  # 要修正
+    @commands.Cog.listener()
     async def on_member_update(self, before: discord.Member, after: discord.Member):
         if before.pending is True and after.pending is False:
             if any([after.guild.id == i for i in self.welcome_list]):
