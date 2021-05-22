@@ -2,12 +2,11 @@
 # -*- coding: utf-8 -*-
 
 import asyncio
-import pathlib
 from dataclasses import dataclass
 from typing import List, Union
 
 from sqlalchemy import select, update
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.schema import Column
 from sqlalchemy.sql.sqltypes import Boolean
