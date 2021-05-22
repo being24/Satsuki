@@ -20,7 +20,7 @@ class SatsukiCom(commands.Cog, name='皐月分類外コマンド'):
         self.c = CommonUtil()
 
         self.SCP_JP = "http://scp-jp.wikidot.com"
-        self.master_path = os.path.dirname(
+        self.root_path = os.path.dirname(
             os.path.dirname(os.path.abspath(__file__)))
 
         self.welcome_list = [286871252784775179, 609058923353341973]
@@ -41,7 +41,7 @@ class SatsukiCom(commands.Cog, name='皐月分類外コマンド'):
             'pt',
             'uo']  # 外部に依存させたいな
 
-        self.json_name = self.master_path + "/data/timer_dict.json"
+        self.json_name = self.root_path + "/data/timer_dict.json"
 
         if not os.path.isfile(self.json_name):
             self.timer_dict = {}
@@ -97,7 +97,7 @@ class SatsukiCom(commands.Cog, name='皐月分類外コマンド'):
     @commands.command(aliases=['lu'])
     async def last_updated(self, ctx):
         last_update_utime = os.path.getmtime(
-            f"{self.master_path}/data/scps.csv")
+            f"{self.root_path}/data/scps.csv")
         last_update_UTC_nv = datetime.fromtimestamp(int(last_update_utime))
         last_update_JST = timezone('Asia/Tokyo').localize(last_update_UTC_nv)
         await ctx.send(f"データベースの最終更新日時は{last_update_JST}です")
@@ -108,7 +108,7 @@ class SatsukiCom(commands.Cog, name='皐月分類外コマンド'):
     async def rand(self, ctx, brt: typing.Optional[str] = 'all'):
         try:
             result = pd.read_csv(
-                self.master_path +
+                self.root_path +
                 "/data/scps.csv",
                 index_col=0)
         except FileNotFoundError as e:
@@ -258,7 +258,7 @@ class SatsukiCom(commands.Cog, name='皐月分類外コマンド'):
             if os.name == "nt":
                 await channel.send("windows上でこのコマンドは使用できません")
             elif os.name == "posix":
-                subprocess.Popen(self.master_path + "/ayame.sh")
+                subprocess.Popen(self.root_path + "/ayame.sh")
                 await channel.send('菖蒲 : 更新しました')
             else:
                 print("error")

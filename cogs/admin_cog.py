@@ -25,8 +25,8 @@ class Admin(commands.Cog, name='管理用コマンド群'):
     def __init__(self, bot):
         self.bot = bot
 
-        self.master_path = pathlib.Path(__file__).parents[1]
-        self.data_path = self.master_path / 'data'
+        self.root_path = pathlib.Path(__file__).parents[1]
+        self.data_path = self.root_path / 'data'
 
         self.auto_backup.stop()
         self.auto_backup.start()
@@ -71,7 +71,7 @@ class Admin(commands.Cog, name='管理用コマンド群'):
     async def reload(self, ctx, cogname: typing.Optional[str] = "ALL"):
         """Cogをリロードする関数
         """
-        cog_path = self.master_path / "cogs"
+        cog_path = self.root_path / "cogs"
         if cogname == "ALL":
             reloaded_list = []
             for cog in os.listdir(cog_path):

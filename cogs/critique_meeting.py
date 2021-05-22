@@ -91,7 +91,7 @@ class CritiqueCog(commands.Cog, name='批評定例会用コマンド'):
     def __init__(self, bot):
         self.bot = bot
         self.SCP_JP = "http://scp-jp.wikidot.com"
-        self.master_path = os.path.dirname(
+        self.root_path = os.path.dirname(
             os.path.dirname(os.path.abspath(__file__)))
         self.c = CommonUtil()
         self.meeting_mng = MeetingManager()
