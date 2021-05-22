@@ -26,6 +26,7 @@ class Admin(commands.Cog, name='管理用コマンド群'):
         self.bot = bot
 
         self.root_path = pathlib.Path(__file__).parents[1]
+
         self.data_path = self.root_path / 'data'
 
         self.auto_backup.stop()
