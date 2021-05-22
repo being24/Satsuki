@@ -2,23 +2,28 @@
 # -*- coding: utf-8 -*-
 
 import asyncio
-import pathlib
 from dataclasses import dataclass
 from datetime import datetime
 from typing import List, Union
 
-from sqlalchemy import select, update
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+from sqlalchemy import (Column, DateTime, Integer, String, and_, or_, select,
+                        update)
+from sqlalchemy.dialects.postgresql import ARRAY
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.schema import Column
-from sqlalchemy.types import BIGINT, DATETIME, INTEGER, VARCHAR
+
+try:
+    from .create_Postgre_engine import engine
+except BaseException:
+    import sys
+    sys.path.append("../utils")
+    from create_Postgre_engine import engine
 
 Base = declarative_base()
 
 
-
 @dataclass
-class ArticleData:
+class SCPArticleDatacls:
     article_id: int
     fullname: str
     title: str
@@ -44,227 +49,310 @@ class ArticleData:
     tags: List[str]
 
 
-class ArticleDataDB(Base):
+class SCPArticle(Base):
     __tablename__ = 'SCPArticle_infoBase'
 
-    article_id = Column(BIGINT, primary_key=True)
-    fullname = Column(VARCHAR, nullable=False, primary_key=True)
-    title = Column(VARCHAR, nullable=False)
-    metatitle = Column(VARCHAR, nullable=True)
-    created_at = Column(DATETIME, nullable=False)
-    created_by = Column(VARCHAR, nullable=False)
-    created_by_unix = Column(VARCHAR, nullable=False)
-    created_by_id = Column(BIGINT, nullable=False)
-    updated_at = Column(DATETIME, nullable=True)
-    updated_by = Column(VARCHAR, nullable=True)
-    updated_by_unix = Column(VARCHAR, nullable=True)
-    updated_by_id = Column(BIGINT, nullable=True)
-    commented_at = Column(DATETIME, nullable=True)
-    commented_by = Column(VARCHAR, nullable=True)
-    commented_by_unix = Column(VARCHAR, nullable=True)
-    commented_by_id = Column(BIGINT, nullable=True)
-    parent_fullname = Column(VARCHAR, nullable=True)
-    comments = Column(INTEGER, nullable=True)
-    size = Column(INTEGER, nullable=False)
-    rating = Column(INTEGER, default=0)
-    rating_votes = Column(INTEGER, default=0)
-    revisions = Column(INTEGER, default=0)
-    tags = Column(VARCHAR, default='')
+    article_id = Column(Integer, primary_key=True)
+    fullname = Column(String, nullable=False, primary_key=True)
+    title = Column(String, nullable=False)
+    metatitle = Column(String, nullable=True)
+    created_at = Column(DateTime, nullable=False)
+    created_by = Column(String, nullable=False)
+    created_by_unix = Column(String, nullable=False)
+    created_by_id = Column(Integer, nullable=True)
+    updated_at = Column(DateTime, nullable=True)
+    updated_by = Column(String, nullable=True)
+    updated_by_unix = Column(String, nullable=True)
+    updated_by_id = Column(Integer, nullable=True)
+    commented_at = Column(DateTime, nullable=True)
+    commented_by = Column(String, nullable=True)
+    commented_by_unix = Column(String, nullable=True)
+    commented_by_id = Column(Integer, nullable=True)
+    parent_fullname = Column(String, nullable=True)
+    comments = Column(Integer, default=0)
+    size = Column(Integer, nullable=False)
+    rating = Column(Integer, nullable=False)
+    rating_votes = Column(Integer, nullable=False)
+    revisions = Column(Integer, nullable=False)
+    tags = Column(ARRAY(String), nullable=True)
 
 
-class SettingManager():
-    def __init__(self):
-        data_path = pathlib.Path(__file__).parents[1]
-        data_path /= '../data'
-        data_path = data_path.resolve()
-        db_path = data_path
-        db_path /= './data.sqlite3'
-        self.engine = create_async_engine(
-            f'sqlite+aiosqlite:///{db_path}', echo=True)
+class ArticleManager():
+    def __init__(self) -> None:
+        pass
 
     async def create_table(self) -> None:
         """テーブルを作成する関数
         """
-        async with self.engine.begin() as conn:
-            await conn.run_sync(Base.metadata.create_all)
+        async with engine.begin() as conn:
+            await conn.run_sync(SCPArticle.metadata.create_all)
 
     @staticmethod
-    def return_dataclass(data: ArticleDataDB) -> ArticleData:
-        """DBからの情報をデータクラスに変換する関数、もうちょっとなんとかならんか？？？
+    def return_dataclass(data: SCPArticle) -> SCPArticleDatacls:
+        """SCPArticleからSCPArticleDataclsを生成する関数
 
         Args:
-            data (ArticleDataDB): DBから持ってきたデータ
+            data (SCPArticle)
+
         Returns:
-            ArticleData: dataclass
+            SCPArticleDatacls
         """
-        tag_list = [
-            str(tags) for tags in data['tags'].split(' ') if id != '']
-        db_data_raw = ArticleData(
-            article_id=data.article_id,
-            fullname=data.fullname,
-            title=data.title,
-            metatitle=data.metatitle,
-            created_at=data.created_at,
-            created_by=data.created_by,
-            created_by_unix=data.created_by_unix,
-            created_by_id=data.created_by_id,
-            updated_at=data.updated_at,
-            updated_by=data.updated_by,
-            updated_by_unix=data.updated_by_unix,
-            updated_by_id=data.updated_by_id,
-            commented_at=data.commented_at,
-            commented_by=data.commented_by,
-            commented_by_unix=data.commented_by_unix,
-            commented_by_id=data.commented_by_id,
-            parent_fullname=data.parent_fullname,
-            comments=data.comments,
-            size=data.size,
-            rating=data.rating,
-            rating_votes=data.rating_votes,
-            revisions=data.revisions,
-            tags=tag_list)
-        return db_data_raw
+        db_data = data[0]
+        processed_data = SCPArticleDatacls(
+            article_id=db_data.article_id,
+            fullname=db_data.fullname,
+            title=db_data.title,
+            metatitle=db_data.metatitle,
+            created_at=db_data.created_at,
+            created_by=db_data.created_by,
+            created_by_unix=db_data.created_by_unix,
+            created_by_id=db_data.created_by_id,
+            updated_at=db_data.updated_at,
+            updated_by=db_data.updated_by,
+            updated_by_unix=db_data.updated_by_unix,
+            updated_by_id=db_data.updated_by_id,
+            commented_at=db_data.commented_at,
+            commented_by=db_data.commented_by,
+            commented_by_unix=db_data.commented_by_unix,
+            commented_by_id=db_data.commented_by_id,
+            parent_fullname=db_data.parent_fullname,
+            comments=db_data.comments,
+            size=db_data.size,
+            rating=db_data.rating,
+            rating_votes=db_data.rating_votes,
+            revisions=db_data.revisions,
+            tags=db_data.tags
+        )
+
+        return processed_data
 
     @staticmethod
-    def return_DB_obj(data: ArticleData) -> ArticleDataDB:
-        """dataclassからDBのデータを作成する関数
+    def return_DBClass(data: SCPArticleDatacls) -> SCPArticle:
+        """SCPArticleDataclsからSCPArticleを作成する関数
 
         Args:
-            data (ArticleData): dataclassからArticleDataDBを返す関数
+            data (SCPArticleDatacls):
 
         Returns:
-            ArticleDataDB: DB型
+            SCPArticle:
         """
-        tags = (' ').join(data.tags)
-        new_article = ArticleDataDB(
-            article_id=data.article_id,
-            fullname=data.fullname,
-            title=data.title,
-            metatitle=data.metatitle,
-            created_at=data.created_at,
-            created_by=data.created_by,
-            created_by_unix=data.created_by_unix,
-            created_by_id=data.created_by_id,
-            updated_at=data.updated_at,
-            updated_by=data.updated_by,
-            updated_by_unix=data.updated_by_unix,
-            updated_by_id=data.updated_by_id,
-            commented_at=data.commented_at,
-            commented_by=data.commented_by,
-            commented_by_unix=data.commented_by_unix,
-            commented_by_id=data.commented_by_id,
-            parent_fullname=data.parent_fullname,
-            comments=data.comments,
-            size=data.size,
-            rating=data.rating,
-            rating_votes=data.rating_votes,
-            revisions=data.revisions,
-            tags=tags)
+        db_data = data
+        processed_data = SCPArticle(
+            article_id=db_data.article_id,
+            fullname=db_data.fullname,
+            title=db_data.title,
+            metatitle=db_data.metatitle,
+            created_at=db_data.created_at,
+            created_by=db_data.created_by,
+            created_by_unix=db_data.created_by_unix,
+            created_by_id=db_data.created_by_id,
+            updated_at=db_data.updated_at,
+            updated_by=db_data.updated_by,
+            updated_by_unix=db_data.updated_by_unix,
+            updated_by_id=db_data.updated_by_id,
+            commented_at=db_data.commented_at,
+            commented_by=db_data.commented_by,
+            commented_by_unix=db_data.commented_by_unix,
+            commented_by_id=db_data.commented_by_id,
+            parent_fullname=db_data.parent_fullname,
+            comments=db_data.comments,
+            size=db_data.size,
+            rating=db_data.rating,
+            rating_votes=db_data.rating_votes,
+            revisions=db_data.revisions,
+            tags=db_data.tags
+        )
 
-        return new_article
+        return processed_data
 
-    '''
-    async def is_exist(self, guild_id: int) -> bool:
-        """主キーであるギルドIDが存在するかを判定する関数
+    async def get_data_from_fullname(
+            self, fullname: str) -> Union[SCPArticleDatacls, None]:
+        """完全一致検索でDBからSCPArticleDataclsで１つ取り出す取り出す関数
 
-       Args:
-            guild_id(int): サーバーID
+        Args:
+            fullname (str): カラムの値
 
         Returns:
-            bool: あったらTrue、なかったらFalse
+            Union[SCPArticleDatacls, None]: あればSCPArticleDataclsなければNone
         """
-        async with AsyncSession(self.engine) as session:
+        async with AsyncSession(engine) as session:
             async with session.begin():
-                stmt = select(GuildSettingDB).where(
-                    GuildSettingDB.guild_id == guild_id)
-                result = await session.execute(stmt)
-                result = result.fetchone()
-                if result is not None:
-                    return True
-                else:
-                    return False
-    '''
-
-    async def get_guild(self, guild_id: int) -> Union[GuildSetting, None]:
-        async with AsyncSession(self.engine, expire_on_commit=True) as session:
-            async with session.begin():
-                stmt = select(GuildSettingDB).where(
-                    GuildSettingDB.guild_id == guild_id)
-                result = await session.execute(stmt)
-                result = result.fetchone()
+                stmt = select(SCPArticle).filter_by(fullname=f"{fullname}")
+                result = await session.execute(stmt).first()
 
                 if result is None:
                     return None
 
-                guildsetting = GuildSetting(
-                    result[0].guild_id,
-                    result[0].dispander,
-                    result[0].welcome_msg,
-                    result[0].black_server)
+                data = self.return_dataclass(result[0])
+                return data
 
-        return guildsetting
+    async def get_data_from_fullname_ilike(
+            self, fullname: str) -> Union[List[SCPArticleDatacls], None]:
+        """部分一致検索でDBからSCPArticleDataclsのリストを取り出す関数
 
-    async def get_guild_ids(self) -> Union[None, List[int]]:
-        """DBに存在する全てのサーバーのidを取得する関数
+
+        Args:
+            fullname (str): 探す文字列
 
         Returns:
-            Union[None, List[int]]: なければNone、あればintのlist
+            Union[List[SCPArticleDatacls], None]: あればlistなければNone
         """
-        async with AsyncSession(self.engine, expire_on_commit=True) as session:
+        async with AsyncSession(engine) as session:
             async with session.begin():
-                stmt = select(GuildSettingDB)
+                stmt = select(SCPArticle).filter(
+                    SCPArticle.fullname.ilike(f'%{fullname}%'))
                 result = await session.execute(stmt)
-                result = result.all()
+                result = result.fetchall()
 
-                if result is None:
+                if len(result) == 0:
                     return None
-                else:
-                    ids = [guild[0].guild_id for guild in result]
-                    return ids
 
-    async def init_guilds(self, guild_ids: List[int]):
-        """起動時にサーバごとの設定を補完する関数
+                data_list = [self.return_dataclass(data) for data in result]
+                return data_list
 
-        Args:
-            guild_ids (List[int]): 現在参加しているサーバーのリスト
-        """
-        exists_ids = await self.get_guild_ids()
-        for guild_id in guild_ids:
-            if guild_id not in exists_ids:
-                await self.register_guild(guild_id)
-
-    async def set_black_list(self, server_id: int):
-        """ブラックリストのサーバーを追加する関数
+    async def get_data_from_tags_and(
+            self, tags: List[str]) -> Union[List[SCPArticleDatacls], None]:
+        """タグが含まれるデータをDBからSCPArticleDataclsのリストを取り出す関数
 
         Args:
-            server_id (int): ブラックリストのサーバーのID
+            tags (List[str]): タグのリスト
+
+        Returns:
+            Union[List[SCPArticleDatacls], None]: あればlistなければNone
         """
-        async with AsyncSession(self.engine) as session:
+        async with AsyncSession(engine) as session:
             async with session.begin():
-                stmt = update(GuildSettingDB).where(
-                    GuildSettingDB.guild_id == server_id).values(
-                    black_server=True)
-                await session.execute(stmt)
+                stmt = select(SCPArticle).filter(
+                    SCPArticle.tags.contains(tags))
+                result = await session.execute(stmt)
+                result = result.fetchall()
 
-    async def remove_black_list(self, server_id: int):
-        """ブラックリストのサーバーを削除する関数
+                if len(result) == 0:
+                    return None
+
+                data_list = [self.return_dataclass(data) for data in result]
+                return data_list
+
+    async def get_data_from_fullname_and_tag(self, fullname: str, tags: List[str]) -> Union[List[SCPArticleDatacls], None]:
+        """tagとfullnameから該当するデータのリストを作成する関数
 
         Args:
-            server_id (int): ブラックリストのサーバーのID
+            fullname (str): Url(部分一致)
+            tags (List[str]): Tag(一致検索)
+
+        Returns:
+            Union[List[SCPArticleDatacls], None]: あればlistなければNone
         """
-        async with AsyncSession(self.engine) as session:
+        async with AsyncSession(engine) as session:
             async with session.begin():
-                stmt = update(GuildSettingDB).where(
-                    GuildSettingDB.guild_id == server_id).values(
-                    black_server=False)
-                await session.execute(stmt)
+                stmt = select(SCPArticle).filter(
+                    and_(
+                        SCPArticle.tags.contains(tags),
+                        SCPArticle.fullname.ilike(f'%{fullname}%')))
+                result = await session.execute(stmt)
+                result = result.fetchall()
+
+                if len(result) == 0:
+                    return None
+
+                data_list = [self.return_dataclass(data) for data in result]
+                return data_list
+
+    async def get_data_from_title_and_tag(self, title: str, tags: List[str]) -> Union[List[SCPArticleDatacls], None]:
+        """tagとtitleから該当するデータのリストを作成する関数
+
+        Args:
+            title (str): Url(部分一致)
+            tags (List[str]): Tag(一致検索)
+
+        Returns:
+            Union[List[SCPArticleDatacls], None]: あればlistなければNone
+        """
+        async with AsyncSession(engine) as session:
+            async with session.begin():
+                stmt = select(SCPArticle).filter(
+                    and_(
+                        SCPArticle.tags.contains(tags),
+                        SCPArticle.title.ilike(f'%{title}%')))
+                result = await session.execute(stmt)
+                result = result.fetchall()
+
+                if len(result) == 0:
+                    return None
+
+                data_list = [self.return_dataclass(data) for data in result]
+                return data_list
+
+    async def get_data_from_author_and_tag(self, author: str, tags: List[str]) -> Union[List[SCPArticleDatacls], None]:
+        """tagと著者から該当するデータのリストを作成する関数
+
+        Args:
+            author (str): Created_by_unix(部分一致)
+            tags (List[str]): Tag(一致検索)
+
+        Returns:
+            Union[List[SCPArticleDatacls], None]: あればlistなければNone
+        """
+        author = author.casefold()
+        async with AsyncSession(engine) as session:
+            async with session.begin():
+                stmt = select(SCPArticle).filter(
+                    and_(
+                        SCPArticle.tags.contains(tags),
+                        SCPArticle.created_by_unix.ilike(f'%{author}%')))
+                result = await session.execute(stmt)
+                result = result.fetchall()
+
+                if len(result) == 0:
+                    return None
+
+                data_list = [self.return_dataclass(data) for data in result]
+                return data_list
+
+    async def get_data_from_all_and_tag(self, all: str, tags: List[str]) -> Union[List[SCPArticleDatacls], None]:
+        """tagとurl・タイトル・著者から該当するデータのリストを作成する関数
+
+        Args:
+            author (str): Created_by_unix(部分一致)
+            tags (List[str]): Tag(一致検索)
+
+        Returns:
+            Union[List[SCPArticleDatacls], None]: あればlistなければNone
+        """
+        author = all.casefold()
+        async with AsyncSession(engine) as session:
+            async with session.begin():
+                stmt = select(SCPArticle).filter(
+                    and_(
+                        SCPArticle.tags.contains(tags),
+                        or_(
+                            SCPArticle.created_by_unix.ilike(f'%{author}%'),
+                            SCPArticle.created_by_unix.ilike(f'%{all}%'),
+                            SCPArticle.title.ilike(f'%{all}%'),
+                            SCPArticle.fullname.ilike(f'%{all}%'))))
+                result = await session.execute(stmt)
+                result = result.fetchall()
+
+                if len(result) == 0:
+                    return None
+
+                data_list = [self.return_dataclass(data) for data in result]
+                return data_list
 
 
 if __name__ == "__main__":
-    setting_mng = SettingManager()
-    asyncio.run(setting_mng.create_table())
+    article_mng = ArticleManager()
 
-    # asyncio.run(setting_mng.register_setting())
+    loop = asyncio.get_event_loop()
 
-    result = asyncio.run(setting_mng.get_guild_ids())
-    print((result))
+    conn = loop.run_until_complete(engine.connect())
+    result = loop.run_until_complete(
+        article_mng.get_data_from_fullname_and_tag(
+            fullname='173', tags=['jp', 'tale']))
+    loop.close()
+    # asyncio.run(article_mng.create_table())
+    if result is not None:
+        for data in result:
+            print(data.fullname)
+
+    # print(asyncio.run(article_mng.get_data_from_tags_and(['メタデータ'])))
