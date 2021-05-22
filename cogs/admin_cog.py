@@ -4,6 +4,7 @@
 
 import logging
 import os
+import pathlib
 import time
 import traceback
 import typing
@@ -24,8 +25,8 @@ class Admin(commands.Cog, name='管理用コマンド群'):
     def __init__(self, bot):
         self.bot = bot
 
-        self.master_path = os.path.dirname(
-            os.path.dirname(os.path.abspath(__file__)))
+        self.master_path = pathlib.Path(__file__).parents[1]
+        self.data_path = self.master_path / 'data'
 
         self.auto_backup.stop()
         self.auto_backup.start()
@@ -37,7 +38,7 @@ class Admin(commands.Cog, name='管理用コマンド群'):
     @staticmethod
     def log_remove_guild(guild):
         error_content = f'サーバーを退出しました\nreason: black list\ndetail : {guild}'
-        logging.error(error_content, exc_info=True)
+        logging.error(error_content)
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -70,9 +71,10 @@ class Admin(commands.Cog, name='管理用コマンド群'):
     async def reload(self, ctx, cogname: typing.Optional[str] = "ALL"):
         """Cogをリロードする関数
         """
+        cog_path = self.master_path / "cogs"
         if cogname == "ALL":
             reloaded_list = []
-            for cog in os.listdir(self.master_path + "/cogs"):
+            for cog in os.listdir(cog_path):
                 if cog.endswith(".py"):
                     try:
                         cog = cog[:-3]
@@ -149,26 +151,27 @@ class Admin(commands.Cog, name='管理用コマンド群'):
     async def back_up(self, ctx):
         """バックアップファイルを送信する関数
         """
-        json_files = [
-            filename for filename in os.listdir(self.master_path + "/data")
-            if filename.endswith(".json")]
-        sql_files = [
-            filename for filename in os.listdir(self.master_path + "/data")
-            if filename.endswith(".sqlite")]
+        json_files = [filename for filename in os.listdir(
+            self.data_path) if filename.endswith(".json")]
+        sql_files = [filename for filename in os.listdir(
+            self.data_path) if filename.endswith(".sqlite3")]
 
         json_files.extend(sql_files)
 
-        my_files = [discord.File(f'{self.master_path}/data/{i}')
-                    for i in json_files]
+        my_files = [discord.File(f'{self.data_path / i}') for i in json_files]
 
-        await ctx.send(files=my_files)
+        try:
+            await ctx.send(files=my_files)
+        except discord.HTTPException:
+            await ctx.reply('ファイルサイズが大きすぎます')
 
     @commands.command(hidden=True)
     async def restore_one(self, ctx):
         """添付メッセージからファイルを取得する関数
         """
         for attachment in ctx.message.attachments:
-            await attachment.save(f"{self.master_path}/data/{attachment.filename}")
+            await attachment.save(f"{self.data_path / attachment.filename}")
+            await ctx.send(f'{attachment.filename}を保存しました')
 
     @commands.command(hidden=True)
     async def restore(self, ctx):
@@ -183,7 +186,7 @@ class Admin(commands.Cog, name='管理用コマンド群'):
                         message.id).strftime('%m-%d %H:%M')
                     await ctx.send(f'{msg_time}の{attachments_name}を取り込みます')
                     for attachment in message.attachments:
-                        await attachment.save(f"{self.master_path}/data/{attachment.filename}")
+                        await attachment.save(f"{self.data_path / attachment.filename}")
                     break
 
     @tasks.loop(minutes=1.0)
@@ -194,19 +197,14 @@ class Admin(commands.Cog, name='管理用コマンド群'):
         if now_HM == '04:00':
             channel = self.bot.get_channel(745128369170939965)
 
-            json_files = [
-                filename for filename in os.listdir(
-                    self.master_path +
-                    "/data")if filename.endswith(".json")]
-
-            sql_files = [
-                filename for filename in os.listdir(
-                    self.master_path +
-                    "/data")if filename.endswith(".sqlite3")]
+            json_files = [filename for filename in os.listdir(
+                self.data_path) if filename.endswith(".json")]
+            sql_files = [filename for filename in os.listdir(
+                self.data_path) if filename.endswith(".sqlite3")]
 
             json_files.extend(sql_files)
             my_files = [
-                discord.File(f'{self.master_path}/data/{i}')for i in json_files]
+                discord.File(f'{self.data_path / i}')for i in json_files]
 
             await channel.send(files=my_files)
 
