@@ -16,7 +16,6 @@ class CommonUtil():
         self.local_timezone = tzlocal.get_localzone()
         self.root_url = 'http://scp-jp.wikidot.com/'
 
-
     @staticmethod
     async def autodel_msg(msg: discord.Message, second: int = 5):
         """渡されたメッセージを指定秒数後に削除する関数
@@ -62,10 +61,9 @@ class CommonUtil():
         tags = (' ').join(data.tags)
 
         created_at_jst = self.convert_utc_into_jst(data.created_at)
-        if data.metatitle is None:
-            title = self.reap_metatitle_to_limit(data.title)
-        else:
-            title = self.reap_metatitle_to_limit(data.metatitle)
+
+        title = self.select_title(data)
+        title = self.reap_metatitle_to_limit(title)
 
         embed = discord.Embed(
             title=f"{title}",
@@ -84,13 +82,44 @@ class CommonUtil():
 
         return embed
 
+    def select_title(self, data: SCPArticleDatacls) -> str:
+        """メタタイトルをがあればそちらを、そうでなければtitleを返す関数
+
+        Args:
+            data (SCPArticleDatacls)
+
+        Returns:
+            str
+        """
+        if data.metatitle is None:
+            title = data.title
+        else:
+            title = data.metatitle
+        return title
+
     def convert_utc_into_jst(self, created_at: datetime) -> datetime:
+        """naiveなUTCをawareなJSTにする関数
+
+        Args:
+            created_at (datetime): naiveなUTC
+
+        Returns:
+            datetime: awareなJST
+        """
         created_at = pytz.utc.localize(created_at)
         created_at_jst = created_at.astimezone(
             pytz.timezone(self.local_timezone.zone))
         return created_at_jst
 
     def reap_metatitle_to_limit(self, metatitle: str) -> str:
+        """embedのタイトルの文字数制限に合わせるために短くする関数
+
+        Args:
+            metatitle (str)
+
+        Returns:
+            str
+        """
         if len(metatitle) > 250:
             metatitle = f"{metatitle[:250]}{'...'}"
         else:

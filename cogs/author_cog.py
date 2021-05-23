@@ -17,6 +17,7 @@ class AuthorPager(ListPageSource):
         self.ctx = ctx
         super().__init__(data, per_page=10)
         self.root_url = 'http://scp-jp.wikidot.com/'
+        self.c = CommonUtil()
 
     async def write_page(self, menu, fields: List[SCPArticleDatacls] = []) -> discord.Embed:
         offset = (menu.current_page * self.per_page) + 1
@@ -32,7 +33,7 @@ class AuthorPager(ListPageSource):
 
         for data in fields:
             embed.add_field(
-                name=data.title,
+                name=self.c.select_title(data),
                 value=f'{self.root_url}{data.fullname}\nAuthor : {data.created_by}',
                 inline=False)
 
