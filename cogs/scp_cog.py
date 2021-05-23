@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 
-from cogs.utils.meeting_manager import ReserveData
 import re
+import typing
 from typing import List, Tuple, Union
 
 import discord
@@ -11,6 +11,7 @@ import mojimoji
 import pytz
 import tzlocal
 from discord.ext import commands
+from discord.ext.menus import ListPageSource, MenuPages
 
 from .utils.article_manager import ArticleManager, SCPArticleDatacls
 from .utils.common import CommonUtil
