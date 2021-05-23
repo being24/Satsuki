@@ -4,7 +4,8 @@
 import asyncio
 from dataclasses import dataclass
 from datetime import datetime
-from typing import List, Union
+from typing import List, Tuple, Union
+import typing
 
 from sqlalchemy import (Column, DateTime, Integer, String, and_, or_, select,
                         update)
@@ -197,6 +198,7 @@ class ArticleManager():
         Returns:
             Union[List[SCPArticleDatacls], None]: あればlistなければNone
         """
+        fullname = fullname.casefold()
         async with AsyncSession(engine) as session:
             async with session.begin():
                 stmt = select(SCPArticle).filter(
@@ -238,7 +240,7 @@ class ArticleManager():
                 return data_list
 
     async def get_data_from_tags_and(
-            self, tags: List[str]) -> Union[List[SCPArticleDatacls], None]:
+            self, tags: Union[List[str], typing.Tuple[str, ...]]) -> Union[List[SCPArticleDatacls], None]:
         """タグが含まれるデータをDBからSCPArticleDataclsのリストを取り出す関数
 
         Args:
@@ -260,7 +262,7 @@ class ArticleManager():
                 data_list = [self.return_dataclass(data) for data in result]
                 return data_list
 
-    async def get_data_from_fullname_and_tag(self, fullname: str, tags: List[str]) -> Union[List[SCPArticleDatacls], None]:
+    async def get_data_from_fullname_and_tag(self, fullname: str, tags: Union[List[str], typing.Tuple[str, ...]]) -> Union[List[SCPArticleDatacls], None]:
         """tagとfullnameから該当するデータのリストを作成する関数
 
         Args:
@@ -270,6 +272,7 @@ class ArticleManager():
         Returns:
             Union[List[SCPArticleDatacls], None]: あればlistなければNone
         """
+        fullname = fullname.casefold()
         async with AsyncSession(engine) as session:
             async with session.begin():
                 stmt = select(SCPArticle).filter(
@@ -285,7 +288,7 @@ class ArticleManager():
                 data_list = [self.return_dataclass(data) for data in result]
                 return data_list
 
-    async def get_data_from_title_and_tag(self, title: str, tags: List[str]) -> Union[List[SCPArticleDatacls], None]:
+    async def get_data_from_title_and_tag(self, title: str, tags: Union[List[str], typing.Tuple[str, ...]]) -> Union[List[SCPArticleDatacls], None]:
         """tagとtitleから該当するデータのリストを作成する関数
 
         Args:
@@ -310,7 +313,7 @@ class ArticleManager():
                 data_list = [self.return_dataclass(data) for data in result]
                 return data_list
 
-    async def get_data_from_author_and_tag(self, author: str, tags: List[str]) -> Union[List[SCPArticleDatacls], None]:
+    async def get_data_from_author_and_tag(self, author: str, tags: Union[List[str], typing.Tuple[str, ...]]) -> Union[List[SCPArticleDatacls], None]:
         """tagと著者から該当するデータのリストを作成する関数
 
         Args:
@@ -338,7 +341,7 @@ class ArticleManager():
                 data_list = [self.return_dataclass(data) for data in result]
                 return data_list
 
-    async def get_data_from_all_and_tag(self, all_: str, tags: List[str]) -> Union[List[SCPArticleDatacls], None]:
+    async def get_data_from_all_and_tag(self, all_: str, tags: Union[List[str], typing.Tuple[str, ...]]) -> Union[List[SCPArticleDatacls], None]:
         """tagとurl・タイトル・著者から該当するデータのリストを作成する関数
 
         Args:
@@ -348,17 +351,17 @@ class ArticleManager():
         Returns:
             Union[List[SCPArticleDatacls], None]: あればlistなければNone
         """
-        author = all_.casefold()
+        all_small = all_.casefold()
         async with AsyncSession(engine) as session:
             async with session.begin():
                 stmt = select(SCPArticle).filter(
                     and_(
                         SCPArticle.tags.contains(tags),
                         or_(
-                            SCPArticle.created_by_unix.ilike(f'%{author}%'),
+                            SCPArticle.created_by_unix.ilike(f'%{all_small}%'),
                             SCPArticle.created_by.ilike(f'%{all_}%'),
                             SCPArticle.title.ilike(f'%{all_}%'),
-                            SCPArticle.fullname.ilike(f'%{all_}%'))))
+                            SCPArticle.fullname.ilike(f'%{all_small}%'))))
                 result = await session.execute(stmt)
                 result = result.fetchall()
 
@@ -368,7 +371,7 @@ class ArticleManager():
                 data_list = [self.return_dataclass(data) for data in result]
                 return data_list
 
-    async def get_data_from_url_and_tag(self, url: str, tags: List[str]) -> Union[List[SCPArticleDatacls], None]:
+    async def get_data_from_url_and_tag(self, url: str, tags: Union[List[str], typing.Tuple[str, ...]]) -> Union[List[SCPArticleDatacls], None]:
         """tagと著者から該当するデータのリストを作成する関数
 
         Args:
