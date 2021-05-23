@@ -31,6 +31,8 @@ class MyBot(commands.Bot):
         self.status = self.json_data['status']
         self.meeting_addr = self.json_data['regular_meeting_addr']
 
+        self.root_url = 'http://scp-jp.wikidot.com/'
+
     async def on_ready(self):
         print('-----')
         print('Logged in as')
