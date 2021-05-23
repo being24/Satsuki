@@ -43,7 +43,7 @@ class TalePager(ListPageSource):
         return await self.write_page(menu, entries)
 
 
-class TaleArticleCog(commands.Cog, name='SCPコマンド'):
+class TaleArticleCog(commands.Cog, name='TALEコマンド'):
     def __init__(self, bot):
         self.bot = bot
         self.article_mng = ArticleManager()
