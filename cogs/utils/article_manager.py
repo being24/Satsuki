@@ -229,6 +229,7 @@ class ArticleManager():
                         SCPArticle.created_by_unix.ilike(f'%{all_small}%'),
                         SCPArticle.created_by.ilike(f'%{all_}%'),
                         SCPArticle.title.ilike(f'%{all_}%'),
+                        SCPArticle.metatitle.ilike(f'%{all_}%'),
                         SCPArticle.fullname.ilike(f'%{all_small}%')))
                 result = await session.execute(stmt)
                 result = result.fetchall()
@@ -302,8 +303,9 @@ class ArticleManager():
             async with session.begin():
                 stmt = select(SCPArticle).filter(
                     and_(
-                        SCPArticle.tags.contains(tags),
-                        SCPArticle.title.ilike(f'%{title}%')))
+                        SCPArticle.tags.contains(tags), or_(
+                            SCPArticle.title.ilike(f'%{title}%'),
+                            SCPArticle.metatitle.ilike(f'%{title}%'),)))
                 result = await session.execute(stmt)
                 result = result.fetchall()
 
@@ -329,7 +331,8 @@ class ArticleManager():
                 stmt = select(SCPArticle).filter(
                     and_(
                         SCPArticle.tags.contains(tags), or_(
-                            SCPArticle.created_by_unix.ilike(f'%{author_small}%'),
+                            SCPArticle.created_by_unix.ilike(
+                                f'%{author_small}%'),
                             SCPArticle.created_by.ilike(f'%{author}%'))
                     ))
                 result = await session.execute(stmt)
@@ -361,6 +364,7 @@ class ArticleManager():
                             SCPArticle.created_by_unix.ilike(f'%{all_small}%'),
                             SCPArticle.created_by.ilike(f'%{all_}%'),
                             SCPArticle.title.ilike(f'%{all_}%'),
+                            SCPArticle.metatitle.ilike(f'%{all_}%'),
                             SCPArticle.fullname.ilike(f'%{all_small}%'))))
                 result = await session.execute(stmt)
                 result = result.fetchall()
