@@ -210,6 +210,33 @@ class ArticleManager():
                 data_list = [self.return_dataclass(data) for data in result]
                 return data_list
 
+    async def get_data_from_all_ilike(self, all_: str) -> Union[List[SCPArticleDatacls], None]:
+        """url・タイトル・著者から該当するデータのリストを作成する関数
+
+        Args:
+            all_ (str): Created_by_unixとcreated_byとtitleとfullname(部分一致)
+
+        Returns:
+            Union[List[SCPArticleDatacls], None]: あればlistなければNone
+        """
+        all_small = all_.casefold()
+        async with AsyncSession(engine) as session:
+            async with session.begin():
+                stmt = select(SCPArticle).filter(
+                    or_(
+                        SCPArticle.created_by_unix.ilike(f'%{all_small}%'),
+                        SCPArticle.created_by.ilike(f'%{all_}%'),
+                        SCPArticle.title.ilike(f'%{all_}%'),
+                        SCPArticle.fullname.ilike(f'%{all_small}%')))
+                result = await session.execute(stmt)
+                result = result.fetchall()
+
+                if len(result) == 0:
+                    return None
+
+                data_list = [self.return_dataclass(data) for data in result]
+                return data_list
+
     async def get_data_from_tags_and(
             self, tags: List[str]) -> Union[List[SCPArticleDatacls], None]:
         """タグが含まれるデータをDBからSCPArticleDataclsのリストを取り出す関数
