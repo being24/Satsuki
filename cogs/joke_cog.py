@@ -101,7 +101,7 @@ class JokeArticleCog(commands.Cog, name='JOKEコマンド'):
         data_list = await self.article_mng.get_data_from_title_and_tag(title=title, tags=['ジョーク'])
         await self.send_message(ctx, data_list)
 
-    @joke.command(description='JOKE記事の詳細版を作成するコマンド', aliases=['-d'])
+    @joke.command(description='JOKE記事の詳細版を表示するコマンド', aliases=['-d'])
     async def detail(self, ctx, all_: str):
         """jokeの詳細版を検索するコマンド\n複数ヒットした場合は通常の一覧表示を行います"""
 

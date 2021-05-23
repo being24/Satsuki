@@ -101,7 +101,7 @@ class ProposalArticleCog(commands.Cog, name='提言コマンド'):
         data_list = await self.article_mng.get_data_from_title_and_tag(title=title, tags=['001提言'])
         await self.send_message(ctx, data_list)
 
-    @proposal.command(description='提言記事の詳細版を作成するコマンド', aliases=['-d'])
+    @proposal.command(description='提言記事の詳細版を表示するコマンド', aliases=['-d'])
     async def detail(self, ctx, all_: str):
         """提言の詳細版を検索するコマンド\n複数ヒットした場合は通常の一覧表示を行います"""
 
