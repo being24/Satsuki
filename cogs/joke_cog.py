@@ -12,7 +12,7 @@ from .utils.article_manager import ArticleManager, SCPArticleDatacls
 from .utils.common import CommonUtil
 
 
-class TalePager(ListPageSource):
+class JokePager(ListPageSource):
     def __init__(self, ctx, data):
         self.ctx = ctx
         super().__init__(data, per_page=10)
@@ -23,7 +23,7 @@ class TalePager(ListPageSource):
         len_data = len(self.entries)
 
         embed = discord.Embed(
-            title="該当するTaleは以下の通りです",
+            title="該当するJokeは以下の通りです",
             description=f"{len_data}件ヒット",
             color=discord.Color.darker_grey())
 
@@ -43,14 +43,14 @@ class TalePager(ListPageSource):
         return await self.write_page(menu, entries)
 
 
-class TaleArticleCog(commands.Cog, name='SCPコマンド'):
+class JokeArticleCog(commands.Cog, name='JOKEコマンド'):
     def __init__(self, bot):
         self.bot = bot
         self.article_mng = ArticleManager()
         self.c = CommonUtil()
 
     async def start_paginating(self, ctx, data_list: List[SCPArticleDatacls]):
-        menu = MenuPages(source=TalePager(ctx, data_list),
+        menu = MenuPages(source=JokePager(ctx, data_list),
                          delete_message_after=False,
                          clear_reactions_after=True,
                          timeout=60.0)
@@ -58,7 +58,7 @@ class TaleArticleCog(commands.Cog, name='SCPコマンド'):
 
     async def send_message(self, ctx, data_list: Union[List[SCPArticleDatacls], None]) -> None:
         if data_list is None:
-            msg = await ctx.reply("該当するtaleは見つかりませんでした")
+            msg = await ctx.reply("該当するjokeは見つかりませんでした")
             await self.c.autodel_msg(msg=msg)
             return
 
@@ -71,43 +71,43 @@ class TaleArticleCog(commands.Cog, name='SCPコマンド'):
             await self.start_paginating(ctx, data_list)
             return
 
-    @commands.group(invoke_without_command=True, description='TALE記事を検索するコマンド')
-    async def tale(self, ctx, word: str):
-        """引数からtaleを検索するコマンド"""
+    @commands.group(invoke_without_command=True, description='JOKE記事を検索するコマンド')
+    async def joke(self, ctx, word: str):
+        """引数からjokeを検索するコマンド"""
         if ctx.invoked_subcommand is None:
-            data_list = await self.article_mng.get_data_from_all_and_tag(all_=word, tags=['tale'])
+            data_list = await self.article_mng.get_data_from_all_and_tag(all_=word, tags=['ジョーク'])
 
             await self.send_message(ctx, data_list)
     # サブコマンドでtitile URL -d を作るべし
 
-    @tale.command(description='TALE記事をurlから検索するコマンド', aliases=['-u'])
+    @joke.command(description='JOKE記事をurlから検索するコマンド', aliases=['-u'])
     async def url_(self, ctx, url: str):
-        """urlからtaleを検索するコマンド"""
+        """urlからjokeを検索するコマンド"""
 
-        data_list = await self.article_mng.get_data_from_url_and_tag(url=url, tags=['tale'])
+        data_list = await self.article_mng.get_data_from_url_and_tag(url=url, tags=['ジョーク'])
         await self.send_message(ctx, data_list)
 
-    @tale.command(description='TALE記事を著者から検索するコマンド', aliases=['-a'])
+    @joke.command(description='JOKE記事を著者から検索するコマンド', aliases=['-a'])
     async def author(self, ctx, author: str):
-        """著者からtaleを検索するコマンド"""
+        """著者からjokeを検索するコマンド"""
 
-        data_list = await self.article_mng.get_data_from_author_and_tag(author=author, tags=['tale'])
+        data_list = await self.article_mng.get_data_from_author_and_tag(author=author, tags=['ジョーク'])
         await self.send_message(ctx, data_list)
 
-    @tale.command(description='TALE記事をタイトルから検索するコマンド', aliases=['-t'])
+    @joke.command(description='JOKE記事をタイトルから検索するコマンド', aliases=['-t'])
     async def title(self, ctx, title: str):
-        """タイトルからtaleを検索するコマンド"""
+        """タイトルからjokeを検索するコマンド"""
 
-        data_list = await self.article_mng.get_data_from_title_and_tag(title=title, tags=['tale'])
+        data_list = await self.article_mng.get_data_from_title_and_tag(title=title, tags=['ジョーク'])
         await self.send_message(ctx, data_list)
 
-    @tale.command(description='TALE記事の詳細版を作成するコマンド', aliases=['-d'])
+    @joke.command(description='JOKE記事の詳細版を作成するコマンド', aliases=['-d'])
     async def detail(self, ctx, all_: str):
-        """taleの詳細版を検索するコマンド\n複数ヒットした場合は通常の一覧表示を行います"""
+        """jokeの詳細版を検索するコマンド\n複数ヒットした場合は通常の一覧表示を行います"""
 
-        data_list = await self.article_mng.get_data_from_all_and_tag(all_=all_, tags=['tale'])
+        data_list = await self.article_mng.get_data_from_all_and_tag(all_=all_, tags=['ジョーク'])
         if data_list is None:
-            msg = await ctx.reply("該当するtaleは見つかりませんでした")
+            msg = await ctx.reply("該当するjokeは見つかりませんでした")
             await self.c.autodel_msg(msg=msg)
 
         elif len(data_list) > 1:
@@ -121,4 +121,4 @@ class TaleArticleCog(commands.Cog, name='SCPコマンド'):
 
 
 def setup(bot):
-    bot.add_cog(TaleArticleCog(bot))
+    bot.add_cog(JokeArticleCog(bot))
