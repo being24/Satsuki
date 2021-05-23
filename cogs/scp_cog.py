@@ -19,15 +19,13 @@ from .utils.common import CommonUtil
 number_match = re.compile(r'(?<![0-9])\d{3,4}(?![0-9])')  # 3か4桁のものだけマッチ
 
 
-class SatsukiSCPCog(commands.Cog, name='SCPコマンド'):
+class SCPArticleCog(commands.Cog, name='SCPコマンド'):
     def __init__(self, bot):
         self.bot = bot
         self.article_mng = ArticleManager()
         self.c = CommonUtil()
 
         self.root_url = 'http://scp-jp.wikidot.com/'
-
-        self.local_timezone = tzlocal.get_localzone()
 
     def prosess_arg(self, num_brt: str) -> tuple:
         """引数を処理して、数字とbrtに分離する関数
@@ -147,7 +145,7 @@ class SatsukiSCPCog(commands.Cog, name='SCPコマンド'):
             await self.c.autodel_msg(msg=msg)
             return
         else:
-            embed = self.create_detail_embed(data)
+            embed = self.c.create_detail_embed(data)
             await ctx.send(embed=embed)
 
         return
@@ -201,4 +199,4 @@ class SatsukiSCPCog(commands.Cog, name='SCPコマンド'):
 
 
 def setup(bot):
-    bot.add_cog(SatsukiSCPCog(bot))
+    bot.add_cog(SCPArticleCog(bot))
