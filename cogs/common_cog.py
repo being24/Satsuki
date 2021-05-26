@@ -4,7 +4,7 @@
 
 import asyncio
 import json
-import os
+import pathlib
 import random
 from datetime import datetime, timedelta
 
@@ -20,9 +20,9 @@ class SatsukiCom(commands.Cog, name='皐月分類外コマンド'):
         self.bot = bot
         self.c = CommonUtil()
 
-        self.SCP_JP = "http://scp-jp.wikidot.com"
-        self.root_path = os.path.dirname(
-            os.path.dirname(os.path.abspath(__file__)))
+        root_path = pathlib.Path(__file__).parents[1]
+
+        self.timer_json_path = root_path / 'data' / 'timer_dict.json'
 
         self.welcome_list = [286871252784775179, 609058923353341973]
         self.BRANCHS = [
@@ -42,13 +42,11 @@ class SatsukiCom(commands.Cog, name='皐月分類外コマンド'):
             'pt',
             'uo']  # 外部に依存させたいな
 
-        self.json_name = self.root_path + "/data/timer_dict.json"
-
-        if not os.path.isfile(self.json_name):
+        if self.timer_json_path.exists():
             self.timer_dict = {}
             self.dump_json(self.timer_dict)
 
-        with open(self.json_name, encoding='utf-8') as f:
+        with open(self.timer_json_path, encoding='utf-8') as f:
             self.timer_dict = json.load(f)
 
         self.multi_timer.stop()
@@ -60,7 +58,7 @@ class SatsukiCom(commands.Cog, name='皐月分類外コマンド'):
         Args:
             json_data (dict): 辞書
         """
-        with open(self.json_name, "w") as f:
+        with open(self.timer_json_path, "w") as f:
             json.dump(json_data, f, ensure_ascii=False, indent=4,
                       separators=(',', ': '))
 
@@ -70,7 +68,7 @@ class SatsukiCom(commands.Cog, name='皐月分類外コマンド'):
         Args:
             json_data (dict): 辞書
         """
-        async with aiofiles.open(self.json_name, "w") as f:
+        async with aiofiles.open(self.timer_json_path, "w") as f:
             dict_string = json.dumps(json_data, ensure_ascii=False, indent=4,
                                      separators=(',', ': '))
             await f.write(dict_string)
