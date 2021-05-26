@@ -255,6 +255,7 @@ class SatsukiCom(commands.Cog, name='皐月分類外コマンド'):
     @tasks.loop(minutes=1.0)
     async def multi_timer(self):  # 要修正
         now = datetime.now()
+        del_list = []
 
         for key in self.timer_dict.keys():
             dict_time_just = datetime.strptime(
@@ -267,7 +268,7 @@ class SatsukiCom(commands.Cog, name='皐月分類外コマンド'):
                 channel = self.bot.get_channel(self.timer_dict[key]['channel'])
                 await channel.send(f'時間です : {mention}')
 
-                self.timer_dict.pop(key, None)
+                del_list.append(key)
 
                 await self.aio_dump_json(self.timer_dict)
 
@@ -278,6 +279,11 @@ class SatsukiCom(commands.Cog, name='皐月分類外コマンド'):
                 await channel.send(f'残り5分です : {mention}')
 
                 await self.aio_dump_json(self.timer_dict)
+
+        if len(del_list) > 0:
+            for key in del_list:
+                del self.timer_dict[key]
+            await self.aio_dump_json(self.timer_dict)
 
     @multi_timer.before_loop
     async def before_timer(self):
