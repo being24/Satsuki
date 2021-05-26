@@ -263,7 +263,10 @@ class SatsukiCom(commands.Cog, name='皐月分類外コマンド'):
             dict_time_m5 = datetime.strptime(
                 self.timer_dict[key]['-5'], '%Y-%m-%d %H:%M:%S')
 
-            if dict_time_just < now:
+            if (now - dict_time_just).days > 1:
+                del_list.append(key)
+
+            elif dict_time_just < now:
                 mention = self.timer_dict[key]['author']
                 channel = self.bot.get_channel(self.timer_dict[key]['channel'])
                 await channel.send(f'時間です : {mention}')
