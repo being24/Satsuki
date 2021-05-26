@@ -254,7 +254,7 @@ class SatsukiCom(commands.Cog, name='皐月分類外コマンド'):
                     pass
 
     @tasks.loop(minutes=1.0)
-    async def multi_timer(self):  # 要修正
+    async def multi_timer(self):
         now = datetime.now()
         del_list = []
 
