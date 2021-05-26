@@ -136,28 +136,31 @@ class SatsukiCom(commands.Cog, name='皐月分類外コマンド'):
     @commands.command(aliases=['tm'])
     # @commands.has_permissions(kick_members=True)
     async def timer(self, ctx, num: int = 30):
-        today = datetime.today()
-        before_five = today + timedelta(minutes=num - 5)
-        just_now = today + timedelta(minutes=num)
+        if num >= 180:
+            await ctx.reply(f'{ctx.author.mention}\n{num}分のタイマは設定できません\n最大時間は180分です')
+            return
 
-        for key in list(self.timer_dict.keys()):
-            dict_time = datetime.strptime(
-                self.timer_dict[key]['just'], '%Y-%m-%d %H:%M:%S')
-            if today > dict_time - timedelta(minutes=5):
-                self.timer_dict.pop(key, None)
+        dt_now = datetime.now()
+        before_five = dt_now + timedelta(minutes=num - 5)
+        just_now = dt_now + timedelta(minutes=num)
 
-        before_five = (today + timedelta(minutes=num - 5)
+        if num <= 5:
+            flag = 1
+        else:
+            flag = 0
+
+        before_five = (dt_now + timedelta(minutes=num - 5)
                        ).strftime('%Y-%m-%d %H:%M:%S')
-        just_now = (today + timedelta(minutes=num)
+        just_now = (dt_now + timedelta(minutes=num)
                     ).strftime('%Y-%m-%d %H:%M:%S')
-        today = today.strftime('%Y-%m-%d %H:%M:%S')
+        dt_now = dt_now.strftime('%Y-%m-%d %H:%M:%S')
 
-        self.timer_dict[today] = {
+        self.timer_dict[dt_now] = {
             "-5": f"{before_five}",
             "just": f"{just_now}",
             "author": ctx.author.mention,
             "channel": ctx.channel.id,
-            "flag": 0}
+            "flag": flag}
 
         await self.aio_dump_json(self.timer_dict)
 
