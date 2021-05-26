@@ -128,7 +128,7 @@ class SatsukiCom(commands.Cog, name='皐月分類外コマンド'):
         result = itertools.chain(*result)
         result = list(result)
 
-        await ctx.send(f"{result[1]}\n{self.SCP_JP}{result[0]}")
+        await ctx.send(f"{result[1]}\n{self.bot.root_url}{result[0]}")
     '''
 
     @commands.command(aliases=['tm'])
