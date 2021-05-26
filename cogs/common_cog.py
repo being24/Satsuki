@@ -54,10 +54,12 @@ class SatsukiCom(commands.Cog, name='皐月分類外コマンド'):
         self.multi_timer.stop()
         self.multi_timer.start()
 
-    def cog_unload(self):
-        self.multi_timer.cancel()
+    def dump_json(self, json_data: dict) -> None:
+        """同期的にjsonを書き込む関数
 
-    def dump_json(self, json_data):
+        Args:
+            json_data (dict): 辞書
+        """
         with open(self.json_name, "w") as f:
             json.dump(json_data, f, ensure_ascii=False, indent=4,
                       separators=(',', ': '))
