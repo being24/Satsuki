@@ -8,6 +8,7 @@ import os
 import random
 from datetime import datetime, timedelta
 
+import aiofiles
 import discord
 from discord.ext import commands, tasks
 
@@ -60,6 +61,17 @@ class SatsukiCom(commands.Cog, name='皐月分類外コマンド'):
         with open(self.json_name, "w") as f:
             json.dump(json_data, f, ensure_ascii=False, indent=4,
                       separators=(',', ': '))
+
+    async def aio_dump_json(self, json_data: dict) -> None:
+        """非同期的にjsonを書き込む関数
+
+        Args:
+            json_data (dict): 辞書
+        """
+        async with aiofiles.open(self.json_name, "w") as f:
+            dict_string = json.dumps(json_data, ensure_ascii=False, indent=4,
+                                     separators=(',', ': '))
+            await f.write(dict_string)
 
     @commands.command()
     async def url(self, ctx, call):
@@ -145,7 +157,7 @@ class SatsukiCom(commands.Cog, name='皐月分類外コマンド'):
             "channel": ctx.channel.id,
             "flag": 0}
 
-        self.dump_json(self.timer_dict)
+        await self.aio_dump_json(self.timer_dict)
 
         await ctx.reply(f"{ctx.author.mention} : {num}分のタイマーを開始します", mention_author=False)
 
@@ -255,7 +267,7 @@ class SatsukiCom(commands.Cog, name='皐月分類外コマンド'):
 
                 self.timer_dict.pop(key, None)
 
-                self.dump_json(self.timer_dict)
+                await self.aio_dump_json(self.timer_dict)
 
             elif dict_time_m5 < now and self.timer_dict[key]['flag'] == 0:
                 mention = self.timer_dict[key]['author']
@@ -263,7 +275,7 @@ class SatsukiCom(commands.Cog, name='皐月分類外コマンド'):
                 self.timer_dict[key]['flag'] = 1
                 await channel.send(f'残り5分です : {mention}')
 
-                self.dump_json(self.timer_dict)
+                await self.aio_dump_json(self.timer_dict)
 
     @multi_timer.before_loop
     async def before_timer(self):
