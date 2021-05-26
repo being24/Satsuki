@@ -94,16 +94,6 @@ class SatsukiCom(commands.Cog, name='皐月分類外コマンド'):
             await ctx.reply(f"出目は {x} です")
 
     '''
-    @commands.command(aliases=['lu'])
-    async def last_updated(self, ctx):
-        last_update_utime = os.path.getmtime(
-            f"{self.root_path}/data/scps.csv")
-        last_update_UTC_nv = datetime.fromtimestamp(int(last_update_utime))
-        last_update_JST = timezone('Asia/Tokyo').localize(last_update_UTC_nv)
-        await ctx.send(f"データベースの最終更新日時は{last_update_JST}です")
-    '''
-
-    '''
     @commands.command()
     async def rand(self, ctx, brt: typing.Optional[str] = 'all'):
         try:
@@ -251,18 +241,6 @@ class SatsukiCom(commands.Cog, name='皐月分類外コマンド'):
     @tasks.loop(minutes=1.0)
     async def multi_timer(self):  # 要修正
         now = datetime.now()
-        now_HM = now.strftime('%H:%M')
-        if now_HM == '04:30':
-            channel = self.bot.get_channel(638727598024687626)
-            '''
-            if os.name == "nt":
-                await channel.send("windows上でこのコマンドは使用できません")
-            elif os.name == "posix":
-                subprocess.Popen(self.root_path + "/ayame.sh")
-                await channel.send('菖蒲 : 更新しました')
-            else:
-                print("error")
-            '''
 
         for key in self.timer_dict.keys():
             dict_time_just = datetime.strptime(
