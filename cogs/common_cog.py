@@ -81,10 +81,10 @@ class SatsukiCom(commands.Cog, name='皐月分類外コマンド'):
             msg = await ctx.reply(reply)
             await self.c.autodel_msg(msg)
             return
-        elif "/" in call[0:1]:
-            reply = self.SCP_JP + call
+        elif "/" in call[0]:
+            reply = f'{self.bot.root_url}{call[1:]}'
         else:
-            reply = f"{self.SCP_JP}/{call}"
+            reply = f"{self.bot.root_url}{call}"
 
         await ctx.reply(reply, mention_author=False)
 
