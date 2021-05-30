@@ -75,9 +75,8 @@ class SCPArticleCog(commands.Cog, name='SCPコマンド'):
 
         return data
 
- 
     @commands.group(invoke_without_command=True, description='SCP記事を検索するコマンド')
-    async def scp(self, ctx, num_brt: str):
+    async def scp(self, ctx, *, num_brt: str):
         """引数からscpを検索するコマンド-シンプル版"""
         if ctx.invoked_subcommand is None:
             number, brt = self.prosess_arg(num_brt)
@@ -97,7 +96,7 @@ class SCPArticleCog(commands.Cog, name='SCPコマンド'):
             return
 
     @scp.command(description='SCP記事を検索するコマンド', aliases=['-d'])
-    async def detail(self, ctx, num_brt):
+    async def detail(self, ctx, *, num_brt: str):
         """引数からscpを検索するコマンド-複雑版"""
         number, brt = self.prosess_arg(num_brt)
         if (number and brt) is None:
