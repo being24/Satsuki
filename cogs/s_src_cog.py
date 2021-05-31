@@ -83,7 +83,7 @@ class SearchCog(commands.Cog, name='SRCコマンド'):
 
     @search.command(description='タグとその他検索', aliases=['-c'], rest_is_raw=True)
     async def complex(self, ctx, *args):
-        """ワードとタグで検索するコマンド\n/src -c オリジナル scp en と入れるとオリジナルと言う文字列を持つscpとenタグが有るページを検索します"""
+        """ワードとタグで検索するコマンド\n`/src -c オリジナル scp en` と入れるとオリジナルと言う文字列を持つscpとenタグが有るページを検索します"""
         data_list = await self.article_mng.get_data_from_all_and_tag(all_=args[0], tags=args[1:])
         await self.send_message(ctx, data_list)
 
