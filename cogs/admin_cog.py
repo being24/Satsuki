@@ -125,7 +125,7 @@ class Admin(commands.Cog, name='管理用コマンド群'):
             await self.setting_mng.remove_black_list(server_id)
             await ctx.reply(f'サーバー : {server_id}をブラックリストから除去しました')
 
-    @commands.command(aliases=['p'], hidden=False, description='疎通確認')
+    @commands.command(aliases=['p'], hidden=True, description='疎通確認')
     async def ping(self, ctx):
         """Pingによる疎通確認を行うコマンド"""
         start_time = time.time()
