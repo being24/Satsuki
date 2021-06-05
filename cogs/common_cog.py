@@ -73,8 +73,9 @@ class SatsukiCom(commands.Cog, name='皐月分類外コマンド'):
                                      separators=(',', ': '))
             await f.write(dict_string)
 
-    @commands.command()
+    @commands.command(description="urlを貼るためのコマンド")
     async def url(self, ctx, call):
+        """多分もう必要ない"""
         call = call.strip()
         if "http" in call:
             reply = f"外部サイトを貼らないでください.{ctx.author.mention}"
@@ -88,8 +89,9 @@ class SatsukiCom(commands.Cog, name='皐月分類外コマンド'):
 
         await ctx.reply(reply, mention_author=False)
 
-    @commands.command()
+    @commands.command(description="入力された数字の範囲内をランダムに返す関数")
     async def dice(self, ctx, num1: int, num2: int = 0):
+        """`/rand {num1} {num2}`\nnum1~num2の間の数字を返します。num2は省略すると0になります。"""
         num_list = [num1, num2]
         num_list = sorted(num_list)
 
@@ -131,9 +133,10 @@ class SatsukiCom(commands.Cog, name='皐月分類外コマンド'):
         await ctx.send(f"{result[1]}\n{self.bot.root_url}{result[0]}")
     '''
 
-    @commands.command(aliases=['tm'])
+    @commands.command(aliases=['tm'], description="タイマーコマンド")
     # @commands.has_permissions(kick_members=True)
     async def timer(self, ctx, num: int = 30):
+        """`/timer {num}`\n分刻みのタイマーです。精度はそこまで高くないです。"""
         if num >= 180:
             await ctx.reply(f'{ctx.author.mention}\n{num}分のタイマは設定できません\n最大時間は180分です')
             return
