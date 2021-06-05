@@ -88,7 +88,7 @@ class Help(Cog):
         embed.add_field(name="Command description", value=command.help)
         await ctx.send(embed=embed)
 
-    @ command(name="help", description='ヘルプコマンド')
+    @ command(name="help", description='リアクション式ヘルプコマンド')
     async def help(self, ctx, *args: str):
         """拡張版ヘルプコマンド"""
 
