@@ -141,7 +141,7 @@ class SatsukiCom(commands.Cog, name='皐月分類外コマンド'):
             await ctx.reply(f'{ctx.author.mention}\n{num}分のタイマは設定できません\n最大時間は180分です')
             return
 
-        dt_now = datetime.now()
+        dt_now = datetime.now().astimezone()
         before_five = dt_now + timedelta(minutes=num - 5)
         just_now = dt_now + timedelta(minutes=num)
 
