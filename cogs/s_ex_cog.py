@@ -75,7 +75,7 @@ class ExplainedArticleCog(commands.Cog, name='EXコマンド'):
     @commands.group(invoke_without_command=True,
                     description='EX記事を検索するコマンド', aliases=['ex'])
     async def explained(self, ctx, word: str):
-        """引数からexplainedを検索するコマンド"""
+        """引数からexplainedを検索するコマンド\n`/ex 単語`で、その単語を含むEX記事を検索します"""
         if ctx.invoked_subcommand is None:
             data_list = await self.article_mng.get_data_from_all_and_tag(all_=word, tags=['explained'])
 
@@ -83,28 +83,28 @@ class ExplainedArticleCog(commands.Cog, name='EXコマンド'):
 
     @explained.command(description='EX記事をurlから検索するコマンド', aliases=['-u'])
     async def url_(self, ctx, url: str):
-        """urlからexplainedを検索するコマンド"""
+        """urlからexplainedを検索するコマンド\n`/ex -u URL`で、そのURLを持つエッセイを表示します。"""
 
         data_list = await self.article_mng.get_data_from_url_and_tag(url=url, tags=['explained'])
         await self.send_message(ctx, data_list)
 
     @explained.command(description='EX記事を著者から検索するコマンド', aliases=['-a'])
     async def author(self, ctx, author: str):
-        """著者からexplainedを検索するコマンド"""
+        """著者からexplainedを検索するコマンド\n`/ex -a 著者名`で、その人が著者のエッセイを表示します。"""
 
         data_list = await self.article_mng.get_data_from_author_and_tag(author=author, tags=['explained'])
         await self.send_message(ctx, data_list)
 
     @explained.command(description='EX記事をタイトルから検索するコマンド', aliases=['-t'])
     async def title(self, ctx, title: str):
-        """タイトルからexplainedを検索するコマンド"""
+        """タイトルからexplainedを検索するコマンド\n`/ex -t タイトル`で、そのタイトルを持つエッセイを表示します。"""
 
         data_list = await self.article_mng.get_data_from_title_and_tag(title=title, tags=['explained'])
         await self.send_message(ctx, data_list)
 
     @explained.command(description='EX記事の詳細版を表示するコマンド', aliases=['-d'])
     async def detail(self, ctx, all_: str):
-        """explainedの詳細版を検索するコマンド\n複数ヒットした場合は通常の一覧表示を行います"""
+        """explainedの詳細版を検索するコマンド\n`/ex -d 単語`で、その単語を持つエッセイの詳細版を表示します。\n複数ヒットした場合は通常の一覧表示を行います"""
 
         data_list = await self.article_mng.get_data_from_all_and_tag(all_=all_, tags=['explained'])
         if data_list is None:

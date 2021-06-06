@@ -74,7 +74,7 @@ class GoIArticleCog(commands.Cog, name='GoIフォーマットコマンド'):
 
     @commands.group(invoke_without_command=True, description='GoIフォーマットを検索するコマンド', aliases=['goi'])
     async def goi_format(self, ctx, word: str):
-        """引数からGoIフォーマットを検索するコマンド"""
+        """引数からGoIフォーマットを検索するコマンド\n`/goi 単語`で、その単語を含む著者ページを検索します"""
         if ctx.invoked_subcommand is None:
             data_list = await self.article_mng.get_data_from_all_and_tag(all_=word, tags=['goi-format'])
 
@@ -82,7 +82,7 @@ class GoIArticleCog(commands.Cog, name='GoIフォーマットコマンド'):
 
     @goi_format.command(description='GoIフォーマットの詳細版を表示するコマンド', aliases=['-d'])
     async def detail(self, ctx, all_: str):
-        """GoIフォーマットの詳細版を検索するコマンド\n複数ヒットした場合は通常の一覧表示を行います"""
+        """GoIフォーマットの詳細版を検索するコマンド\n`/goi -d 単語`で、その単語を含むGoI フォーマットの記事の詳細を表示します\n複数ヒットした場合は通常の一覧表示を行います"""
 
         data_list = await self.article_mng.get_data_from_all_and_tag(all_=all_, tags=['goi-format'])
         if data_list is None:

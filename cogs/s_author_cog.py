@@ -75,7 +75,7 @@ class AuthorArticleCog(commands.Cog, name='著者ページコマンド'):
     @commands.group(invoke_without_command=True,
                     description='著者ページを検索するコマンド', aliases=['auth'])
     async def author(self, ctx, word: str):
-        """引数から著者ページを検索するコマンド"""
+        """引数から著者ページを検索するコマンド\n`/auth 単語`で、その単語を含む著者ページを検索します"""
         if ctx.invoked_subcommand is None:
             data_list = await self.article_mng.get_data_from_all_and_tag(all_=word, tags=['著者ページ'])
 
@@ -83,7 +83,7 @@ class AuthorArticleCog(commands.Cog, name='著者ページコマンド'):
 
     @author.command(description='著者ページの詳細版を表示するコマンド', aliases=['-d'])
     async def detail(self, ctx, all_: str):
-        """著者ページの詳細版を検索するコマンド\n複数ヒットした場合は通常の一覧表示を行います"""
+        """著者ページの詳細版を検索するコマンド\n`/auth -d 単語`で、その単語を含む著者ページの詳細を表示します\n複数ヒットした場合は通常の一覧表示を行います"""
 
         data_list = await self.article_mng.get_data_from_all_and_tag(all_=all_, tags=['著者ページ'])
         if data_list is None:

@@ -75,7 +75,7 @@ class ProposalArticleCog(commands.Cog, name='提言コマンド'):
     @commands.group(invoke_without_command=True,
                     description='提言記事を検索するコマンド', aliases=['prop'])
     async def proposal(self, ctx, word: str):
-        """引数から提言を検索するコマンド"""
+        """引数から提言を検索するコマンド\n`/prop 単語`で、その単語を含む提言記事を検索します"""
         if ctx.invoked_subcommand is None:
             data_list = await self.article_mng.get_data_from_all_and_tag(all_=word, tags=['001提言'])
 
@@ -83,28 +83,28 @@ class ProposalArticleCog(commands.Cog, name='提言コマンド'):
 
     @proposal.command(description='提言記事をurlから検索するコマンド', aliases=['-u'])
     async def url_(self, ctx, url: str):
-        """urlから提言を検索するコマンド"""
+        """urlから提言を検索するコマンド\n`/prop -u URL`で、そのURLを持つ提言記事を表示します。"""
 
         data_list = await self.article_mng.get_data_from_url_and_tag(url=url, tags=['001提言'])
         await self.send_message(ctx, data_list)
 
     @proposal.command(description='提言記事を著者から検索するコマンド', aliases=['-a'])
     async def author(self, ctx, author: str):
-        """著者から提言を検索するコマンド"""
+        """著者から提言を検索するコマンド\n`/prop -a 著者名`で、その人が著者の提言記事を表示します。"""
 
         data_list = await self.article_mng.get_data_from_author_and_tag(author=author, tags=['001提言'])
         await self.send_message(ctx, data_list)
 
     @proposal.command(description='提言記事をタイトルから検索するコマンド', aliases=['-t'])
     async def title(self, ctx, title: str):
-        """タイトルから提言を検索するコマンド"""
+        """タイトルから提言を検索するコマンド\n`/prop -t タイトル`で、そのタイトルを持つ提言記事を表示します。"""
 
         data_list = await self.article_mng.get_data_from_title_and_tag(title=title, tags=['001提言'])
         await self.send_message(ctx, data_list)
 
     @proposal.command(description='提言記事の詳細版を表示するコマンド', aliases=['-d'])
     async def detail(self, ctx, all_: str):
-        """提言の詳細版を検索するコマンド\n複数ヒットした場合は通常の一覧表示を行います"""
+        """提言の詳細版を検索するコマンド\n\n`/ex -d 単語`で、その単語を持つエッセイの詳細版を表示します。\n複数ヒットした場合は通常の一覧表示を行います"""
 
         data_list = await self.article_mng.get_data_from_all_and_tag(all_=all_, tags=['001提言'])
         if data_list is None:

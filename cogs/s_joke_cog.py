@@ -74,16 +74,15 @@ class JokeArticleCog(commands.Cog, name='JOKEコマンド'):
 
     @commands.group(invoke_without_command=True, description='JOKE記事を検索するコマンド')
     async def joke(self, ctx, word: str):
-        """引数からjokeを検索するコマンド"""
+        """引数からjokeを検索するコマンド\n`/joke 単語`で、その単語を含むジョークを検索します"""
         if ctx.invoked_subcommand is None:
             data_list = await self.article_mng.get_data_from_all_and_tag(all_=word, tags=['ジョーク'])
 
             await self.send_message(ctx, data_list)
 
-
     @joke.command(description='JOKE記事をurlから検索するコマンド', aliases=['-u'])
     async def url_(self, ctx, url: str):
-        """urlからjokeを検索するコマンド"""
+        """urlからjokeを検索するコマンド`/joke -u URL`で、そのURLを含むjokeを検索します\n複数ヒットした場合は通常の一覧表示を行います"""
 
         data_list = await self.article_mng.get_data_from_url_and_tag(url=url, tags=['ジョーク'])
         await self.send_message(ctx, data_list)
@@ -97,14 +96,14 @@ class JokeArticleCog(commands.Cog, name='JOKEコマンド'):
 
     @joke.command(description='JOKE記事をタイトルから検索するコマンド', aliases=['-t'])
     async def title(self, ctx, title: str):
-        """タイトルからjokeを検索するコマンド"""
+        """タイトルからjokeを検索するコマンド\n`/joke -u タイトル`で、そのタイトルを持つjokeを表示します。"""
 
         data_list = await self.article_mng.get_data_from_title_and_tag(title=title, tags=['ジョーク'])
         await self.send_message(ctx, data_list)
 
     @joke.command(description='JOKE記事の詳細版を表示するコマンド', aliases=['-d'])
     async def detail(self, ctx, all_: str):
-        """jokeの詳細版を検索するコマンド\n複数ヒットした場合は通常の一覧表示を行います"""
+        """jokeの詳細版を検索するコマンド\n`/joke -d タイトル`で、そのタイトルを持つjokeの詳細版を表示します\n複数ヒットした場合は通常の一覧表示を行います"""
 
         data_list = await self.article_mng.get_data_from_all_and_tag(all_=all_, tags=['ジョーク'])
         if data_list is None:

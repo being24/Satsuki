@@ -74,7 +74,7 @@ class EssayArticleCog(commands.Cog, name='ESSAYコマンド'):
 
     @commands.group(invoke_without_command=True, description='ESSAYを検索するコマンド', aliases=['es'])
     async def essay(self, ctx, word: str):
-        """引数からエッセイを検索するコマンド"""
+        """引数からエッセイを検索するコマンド\n`/es 単語`で、その単語を含むエッセイを検索します"""
         if ctx.invoked_subcommand is None:
             data_list = await self.article_mng.get_data_from_all_and_tag(all_=word, tags=['エッセイ'])
 
@@ -82,7 +82,7 @@ class EssayArticleCog(commands.Cog, name='ESSAYコマンド'):
 
     @essay.command(description='ESSAYの詳細版を表示するコマンド', aliases=['-d'])
     async def detail(self, ctx, all_: str):
-        """エッセイの詳細版を検索するコマンド\n複数ヒットした場合は通常の一覧表示を行います"""
+        """エッセイの詳細版を検索するコマンド\n`/es -d 単語`で、その単語を含むエッセイの詳細を表示します\n複数ヒットした場合は通常の一覧表示を行います"""
 
         data_list = await self.article_mng.get_data_from_all_and_tag(all_=all_, tags=['エッセイ'])
         if data_list is None:

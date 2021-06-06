@@ -40,7 +40,7 @@ class SCPArticleCog(commands.Cog, name='SCPコマンド'):
         num_brt = mojimoji.zen_to_han(num_brt)
         num_brt = num_brt.replace(" ", "").replace("-", "").replace("scp", "")
 
-        if matched_num := number_match.match(num_brt):
+        if matched_num := number_match.search(num_brt):
             number = matched_num.group()
             brt = num_brt.replace(number, "")
             if brt == '':

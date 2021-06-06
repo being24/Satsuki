@@ -73,9 +73,9 @@ class GuideArticleCog(commands.Cog, name='GUIDEコマンド'):
             return
 
     @commands.group(invoke_without_command=True,
-                    description='ガイラインを検索するコマンド', aliases=['gd'])
+                    description='ガイラインを検索するコマンド', aliases=['gd', 'rtfm'])
     async def guide(self, ctx, word: str):
-        """引数からガイドを検索するコマンド"""
+        """引数からガイドを検索するコマンド\n`/gd 単語`で、その単語を含むガイドを検索します"""
         if ctx.invoked_subcommand is None:
             data_list = await self.article_mng.get_data_from_all_and_tag(all_=word, tags=['ガイド'])
 
@@ -83,7 +83,7 @@ class GuideArticleCog(commands.Cog, name='GUIDEコマンド'):
 
     @guide.command(description='ガイラインの詳細版を表示するコマンド', aliases=['-d'])
     async def detail(self, ctx, all_: str):
-        """ガイドの詳細版を検索するコマンド\n複数ヒットした場合は通常の一覧表示を行います"""
+        """ガイドの詳細版を検索するコマンド\n`/gd -d 単語`で、その単語を含むガイドの詳細版を表示します\n複数ヒットした場合は通常の一覧表示を行います"""
 
         data_list = await self.article_mng.get_data_from_all_and_tag(all_=all_, tags=['ガイド'])
         if data_list is None:

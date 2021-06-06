@@ -74,7 +74,7 @@ class TaleArticleCog(commands.Cog, name='TALEコマンド'):
 
     @commands.group(invoke_without_command=True, description='TALE記事を検索するコマンド')
     async def tale(self, ctx, word: str):
-        """引数からtaleを検索するコマンド"""
+        """引数からtaleを検索するコマンド\n`/tale 単語`で、その単語を含むTALE記事を検索します"""
         if ctx.invoked_subcommand is None:
             data_list = await self.article_mng.get_data_from_all_and_tag(all_=word, tags=['tale'])
 
@@ -82,28 +82,28 @@ class TaleArticleCog(commands.Cog, name='TALEコマンド'):
 
     @tale.command(description='TALE記事をurlから検索するコマンド', aliases=['-u'])
     async def url_(self, ctx, url: str):
-        """urlからtaleを検索するコマンド"""
+        """urlからtaleを検索するコマンド\n`/tale -u URL`で、そのURLを持つTALE記事を表示します。"""
 
         data_list = await self.article_mng.get_data_from_url_and_tag(url=url, tags=['tale'])
         await self.send_message(ctx, data_list)
 
     @tale.command(description='TALE記事を著者から検索するコマンド', aliases=['-a'])
     async def author(self, ctx, author: str):
-        """著者からtaleを検索するコマンド"""
+        """著者からtaleを検索するコマンド\n`/tale -a 著者名`で、その人が著者のTALE記事を表示します。"""
 
         data_list = await self.article_mng.get_data_from_author_and_tag(author=author, tags=['tale'])
         await self.send_message(ctx, data_list)
 
     @tale.command(description='TALE記事をタイトルから検索するコマンド', aliases=['-t'])
     async def title(self, ctx, title: str):
-        """タイトルからtaleを検索するコマンド"""
+        """タイトルからtaleを検索するコマンド\n`/tale -t タイトル`で、そのタイトルを持つTALE記事を表示します。"""
 
         data_list = await self.article_mng.get_data_from_title_and_tag(title=title, tags=['tale'])
         await self.send_message(ctx, data_list)
 
     @tale.command(description='TALE記事の詳細版を表示するコマンド', aliases=['-d'])
     async def detail(self, ctx, all_: str):
-        """taleの詳細版を検索するコマンド\n複数ヒットした場合は通常の一覧表示を行います"""
+        """taleの詳細版を検索するコマンド\n`/tale -d 単語`で、その単語を持つTALE記事の詳細版を表示します。\n複数ヒットした場合は通常の一覧表示を行います"""
 
         data_list = await self.article_mng.get_data_from_all_and_tag(all_=all_, tags=['tale'])
         if data_list is None:

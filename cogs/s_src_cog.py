@@ -75,7 +75,7 @@ class SearchCog(commands.Cog, name='SRCコマンド'):
     @commands.group(invoke_without_command=True,
                     description='全ページを検索するコマンド', aliases=['src'])
     async def search(self, ctx, word: str):
-        """引数から全ページを検索するコマンド"""
+        """引数から全ページを検索するコマンド\n`/src 単語`でその単語を含むページを検索します。"""
         if ctx.invoked_subcommand is None:
             data_list = await self.article_mng.get_data_from_all_ilike(all_=word)
 
@@ -91,7 +91,7 @@ class SearchCog(commands.Cog, name='SRCコマンド'):
 
     @search.command(description='皐月版複数タグ検索', aliases=['-t'])
     async def tags(self, ctx, *tags):
-        """複数のタグで検索するコマンド"""
+        """複数のタグで検索するコマンド`/src -t tag1 tag2`でtag1とtag2両方を持つ記事を検索します。\ntag数の上限はありません。"""
 
         data_list = await self.article_mng.get_data_from_tags_and(tags=tags)
         await self.send_message(ctx, data_list)
