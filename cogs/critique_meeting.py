@@ -314,29 +314,30 @@ class CritiqueCog(commands.Cog, name='批評定例会用コマンド'):
     # @ commands.dm_only()
     async def reserve(self, ctx, title: str, url: str):
         """煮汁の不具合に備えて実装"""
-        time = datetime.utcnow()
-        time_jst = self.c.convert_utc_into_jst(time)
+        if ctx.invoked_subcommand is None:
+            time = datetime.utcnow()
+            time_jst = self.c.convert_utc_into_jst(time)
 
-        match_url = re.match(
-            r"https?://scp-jp-sandbox3\.wikidot\.com/[\w/:%#\$&\?\(\)~\.=\+\-]+", url)
-        if not match_url:
-            raise commands.BadArgument
+            match_url = re.match(
+                r"https?://scp-jp-sandbox3\.wikidot\.com/[\w/:%#\$&\?\(\)~\.=\+\-]+", url)
+            if not match_url:
+                raise commands.BadArgument
 
-        name = ctx.message.author.nick
-        if name is None:
-            name = ctx.message.author.name
+            name = ctx.message.author.nick
+            if name is None:
+                name = ctx.message.author.name
 
-        data = ReserveData(
-            msg_id=ctx.message.id,
-            author_name=name[:50],
-            draft_title=title[:50],
-            draft_link=url[:100],
-            reserve_time=ctx.message.created_at)
+            data = ReserveData(
+                msg_id=ctx.message.id,
+                author_name=name[:50],
+                draft_title=title[:50],
+                draft_link=url[:100],
+                reserve_time=ctx.message.created_at)
 
-        await self.meeting_mng.add_reserve_data(data)
-        time_jst = self.c.convert_utc_into_jst(ctx.message.created_at)
-        time_jst = time_jst.strftime('%Y-%m-%d %H:%M:%S')
-        await ctx.reply(f'{time_jst}に{data.draft_title}ついての予約を受け付けました')
+            await self.meeting_mng.add_reserve_data(data)
+            time_jst = self.c.convert_utc_into_jst(ctx.message.created_at)
+            time_jst = time_jst.strftime('%Y-%m-%d %H:%M:%S')
+            await ctx.reply(f'{time_jst}に{data.draft_title}ついての予約を受け付けました')
 
     @ reserve.error
     async def reserve_error(self, ctx, error):
