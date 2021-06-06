@@ -55,6 +55,7 @@ class ExpandDiscordMessageUrl(commands.Cog):
                 await self.c.autodel_msg(msg=msg)
                 return []
 
+            """
             if message.guild.id == url_guild_id:  # 同一サーバー内ならOK
                 pass
             else:  # 同一サーバー内でなくて、どちらかがFalseならFalse(NAND)
@@ -62,6 +63,7 @@ class ExpandDiscordMessageUrl(commands.Cog):
                     msg = await message.channel.send("送信が許可されていません")
                     await self.c.autodel_msg(msg=msg)
                     return []
+            """
 
             fetched_message = await self.fetch_message_from_id(
                 guild=msg_guild,
