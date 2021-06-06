@@ -26,7 +26,6 @@ def syntax(command):
     if isinstance(command, Group):
         for sub_command in command.commands:
             sub_command_str = f'{sub_command.name.ljust(7)} | {" ".join(sub_command.aliases)}'
-            print(sub_command_str)
             for key, value in sub_command.params.items():
                 if key not in ("self", "ctx"):
                     sub_command_arg = f"[{key}]" if "NoneType" in str(value) else f"<{key}>"
@@ -55,7 +54,7 @@ class HelpMenu(ListPageSource):
         len_data = len(self.entries)
 
         embed = Embed(title="コマンド一覧",
-                      description="使用可能なコマンド",
+                      description=f"使用可能なコマンド : {self.ctx.author.mention}",
                       colour=self.ctx.author.colour)
         embed.set_thumbnail(url=self.ctx.guild.me.avatar_url)
         embed.set_footer(
@@ -82,7 +81,7 @@ class Help(Cog):
         self.bot.remove_command("help")
 
     async def cmd_help(self, ctx, command):
-        embed = Embed(title=f"Help with `{command}`",
+        embed = Embed(title=f"Help with `{command}` : {ctx.author.name}",
                       description=syntax(command),
                       colour=ctx.author.colour)
         embed.add_field(name="Command description", value=command.help)
