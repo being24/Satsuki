@@ -25,22 +25,6 @@ class SatsukiCom(commands.Cog, name='皐月分類外コマンド'):
         self.timer_json_path = root_path / 'data' / 'timer_dict.json'
 
         self.welcome_list = [286871252784775179, 609058923353341973]
-        self.BRANCHS = [
-            'jp',
-            'en',
-            'ru',
-            'ko',
-            'es',
-            'cn',
-            'cs',
-            'fr',
-            'pl',
-            'th',
-            'de',
-            'it',
-            'ua',
-            'pt',
-            'uo']  # 外部に依存させたいな
 
         if self.timer_json_path.exists():
             self.timer_dict = {}
@@ -106,32 +90,6 @@ class SatsukiCom(commands.Cog, name='皐月分類外コマンド'):
         else:
             x = random.randint(num_list[0], num_list[1])
             await ctx.reply(f"出目は {x} です")
-
-    '''
-    @commands.command()
-    async def rand(self, ctx, brt: typing.Optional[str] = 'all'):
-        try:
-            result = pd.read_csv(
-                self.root_path +
-                "/data/scps.csv",
-                index_col=0)
-        except FileNotFoundError as e:
-            print(e)
-            return
-
-        brt = brt.lower()
-
-        if brt in self.BRANCHS:
-            result = result.query('branches in @brt')
-
-        result = result.sample()
-
-        result = result[0:1].values.tolist()
-        result = itertools.chain(*result)
-        result = list(result)
-
-        await ctx.send(f"{result[1]}\n{self.bot.root_url}{result[0]}")
-    '''
 
     @commands.command(aliases=['tm'], description="タイマーコマンド")
     # @commands.has_permissions(kick_members=True)

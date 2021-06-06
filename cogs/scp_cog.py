@@ -116,6 +116,20 @@ class SCPArticleCog(commands.Cog, name='SCPコマンド'):
 
         return
 
+    @commands.command(description='ランダムにSCPタグつき記事を表示するコマンド')
+    async def rand(self, ctx, brt: str = 'all'):
+        """`/rand 支部タグ`でそのタグのついているSCPからランダムに表示します。引数無しで全支部指定です\n工夫すると別の使い方もできるかも"""
+        brt = brt.lower()
+
+        data = await self.article_mng.get_scp_random(brt)
+
+        if data is None:
+            msg = await ctx.reply(f'{brt}タグは存在しません')
+            await self.c.autodel_msg(msg=msg)
+        else:
+            embed = self.c.create_detail_embed(data)
+            await ctx.send(embed=embed)
+
 
 def setup(bot):
     bot.add_cog(SCPArticleCog(bot))

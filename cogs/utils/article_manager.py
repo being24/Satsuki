@@ -2,16 +2,17 @@
 # -*- coding: utf-8 -*-
 
 import asyncio
+import typing
 from dataclasses import dataclass
 from datetime import datetime
-from typing import List, Tuple, Union
-import typing
+from typing import List, Optional, Tuple, Union
 
 from sqlalchemy import (Column, DateTime, Integer, String, and_, or_, select,
                         update)
 from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.sql.expression import func
 
 try:
     from .create_Postgre_engine import engine
@@ -402,6 +403,33 @@ class ArticleManager():
                 data_list = [self.return_dataclass(data) for data in result]
                 return data_list
 
+    async def get_scp_random(self, tag: str) -> Optional[SCPArticleDatacls]:
+        """scpタグ付きの記事をランダムで返す関数
+
+        Args:
+            tag (str): [支部タグを想定
+
+        Returns:
+            Optional[SCPArticleDatacls]: ランダムで一個
+        """
+
+        tags = ['scp']
+        if tag != 'all':
+            tags.append(tag)
+
+        async with AsyncSession(engine) as session:
+            async with session.begin():
+                stmt = select(SCPArticle).filter(
+                    SCPArticle.tags.contains(tags)).order_by(
+                    func.random()).limit(1)
+                result = await session.execute(stmt)
+                result = result.fetchone()
+
+                if result is not None:
+                    data = self.return_dataclass(result)
+
+                    return data
+
 
 if __name__ == "__main__":
     article_mng = ArticleManager()
@@ -410,8 +438,7 @@ if __name__ == "__main__":
 
     conn = loop.run_until_complete(engine.connect())
     result = loop.run_until_complete(
-        article_mng.get_data_from_fullname_and_tag(
-            fullname='173', tags=['jp', 'tale']))
+        article_mng.get_scp_random())
     loop.close()
     # asyncio.run(article_mng.create_table())
     if result is not None:
