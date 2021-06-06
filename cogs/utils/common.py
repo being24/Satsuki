@@ -97,7 +97,7 @@ class CommonUtil():
             title = data.metatitle
         return title
 
-    def convert_utc_into_jst(self, created_at: datetime) -> datetime:
+    def convert_utc_into_jst(self, time: datetime) -> datetime:
         """naiveなUTCをawareなJSTにする関数
 
         Args:
@@ -106,8 +106,8 @@ class CommonUtil():
         Returns:
             datetime: awareなJST
         """
-        created_at = pytz.utc.localize(created_at)
-        created_at_jst = created_at.astimezone(
+        time = pytz.utc.localize(time)
+        created_at_jst = time.astimezone(
             pytz.timezone(self.local_timezone.zone))
         return created_at_jst
 
