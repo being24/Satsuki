@@ -8,7 +8,7 @@ import random
 import re
 from dataclasses import dataclass
 from datetime import datetime, timedelta
-from typing import List
+from typing import List, Optional
 
 import aiohttp
 import discord
@@ -44,18 +44,23 @@ class CritiqueCog(commands.Cog, name='批評定例会用コマンド'):
         self.meeting_mng = MeetingManager()
 
     @staticmethod
-    def from_struct_time_to_datetime(struct_time: str) -> datetime:
+    def from_struct_time_to_datetime(struct_time: str) -> Optional[datetime]:
         """wikidot-RSSの文字列をdatetimeに変換する
 
         Args:
             struct_time (str): RSSの文字列
 
         Returns:
-            datetime: awareなdatetime
+            Optional[datetime]: awareなdatetime
         """
-        postdate = datetime.strptime(struct_time, "%a, %d %b %Y %H:%M:%S %z")
-        postdate = postdate.astimezone()
-        return postdate
+
+        try:
+            postdate = datetime.strptime(
+                struct_time, "%a, %d %b %Y %H:%M:%S %z")
+            postdate = postdate.astimezone(pytz.utc)
+            return postdate
+        except ValueError:
+            return None
 
     async def get_content_from_rss(self, target: str) -> List[RssData]:
         """RSSのデータをパース、RssDataに変換して返す関数
@@ -81,10 +86,16 @@ class CritiqueCog(commands.Cog, name='批評定例会用コマンド'):
             content = html2text.html2text(str(entry["content"][0]['value']))
             content = content.replace(')', ') ')
             content = content.replace('-\n', '-')
+
+            published_time = self.from_struct_time_to_datetime(str(entry['published']))
+
+            if published_time is None:
+                published_time = datetime.fromtimestamp(0)
+
             data = RssData(
                 title=str(entry['title']),
                 link=str(entry['link']),
-                published_time=self.from_struct_time_to_datetime(str(entry['published'])),
+                published_time=published_time,
                 author=str(entry['wikidot_authorname']),
                 content=content)
             scp_rss.append(data)
@@ -380,7 +391,7 @@ class CritiqueCog(commands.Cog, name='批評定例会用コマンド'):
 
         await ctx.send(embed=embed)
 
-    @ commands.command(aliases=['sh'],description="リアクションをつけた人を均等に分割するコマンド")
+    @ commands.command(aliases=['sh'], description="リアクションをつけた人を均等に分割するコマンド")
     @ commands.has_permissions(kick_members=True)
     async def shuffle(self, ctx, num: int = 2):
         """あんまり使ってるところを見たことはない"""
