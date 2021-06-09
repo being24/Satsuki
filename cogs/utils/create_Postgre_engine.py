@@ -2,17 +2,24 @@
 # -*- coding: utf-8 -*-
 
 
-import asyncio
-
+import os
+import pathlib
+from dotenv import load_dotenv
 from sqlalchemy.ext.asyncio import create_async_engine
+
+root_path = pathlib.Path(__file__).parents[2]
+
+dotenv_path = root_path / '.env'
+
+load_dotenv(dotenv_path)
 
 DATABASE = 'postgresql'
 DBAPI = 'asyncpg'
-USER = 'postgres'
-PASSWORD = 'example'
-HOST = '192.168.0.7'
-PORT = '5432'
-DB_NAME = 'ScpData'
+USER = os.getenv('POSTGRES_USER')
+PASSWORD = os.getenv('POSTGRES_PASSWORD')
+HOST = os.getenv('HOST')
+PORT = os.getenv('PORT')
+DB_NAME = os.getenv('POSTGRES_DB')
 
 CONNECT_STR = f'{DATABASE}+{DBAPI}://{USER}:{PASSWORD}@{HOST}:{PORT}/{DB_NAME}'
 
