@@ -10,6 +10,7 @@ from datetime import datetime, timedelta
 
 import aiofiles
 import discord
+import pytz
 from discord.ext import commands, tasks
 
 from cogs.utils.common import CommonUtil
@@ -99,7 +100,9 @@ class SatsukiCom(commands.Cog, name='皐月分類外コマンド'):
             await ctx.reply(f'{ctx.author.mention}\n{num}分のタイマは設定できません\n最大時間は180分です')
             return
 
-        dt_now = datetime.now().astimezone()
+        dt_now = datetime.utcnow()
+        dt_now = self.c.convert_utc_into_jst(dt_now)
+
         before_five = dt_now + timedelta(minutes=num - 5)
         just_now = dt_now + timedelta(minutes=num)
 
@@ -150,7 +153,10 @@ class SatsukiCom(commands.Cog, name='皐月分類外コマンド'):
 
     @tasks.loop(minutes=1.0)
     async def multi_timer(self):
-        now = datetime.now()
+        now = pytz.utc.localize(datetime.utcnow())
+
+        now = self.c.convert_utc_into_jst(now)
+
         del_list = []
 
         for key in self.timer_dict.keys():

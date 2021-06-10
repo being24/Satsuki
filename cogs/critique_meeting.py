@@ -57,7 +57,7 @@ class CritiqueCog(commands.Cog, name='批評定例会用コマンド'):
         try:
             postdate = datetime.strptime(
                 struct_time, "%a, %d %b %Y %H:%M:%S %z")
-            postdate = postdate.astimezone(pytz.utc)
+            postdate = postdate.utcnow()
             return postdate
         except ValueError:
             return None
@@ -228,9 +228,8 @@ class CritiqueCog(commands.Cog, name='批評定例会用コマンド'):
         """本日の下書き予約を表示します.引数に数字を与えるとその下書き予約を表示します."""
 
         utc_time = datetime.utcnow()
-        utc_time = utc_time.astimezone(pytz.utc)
 
-        jst_time = datetime.utcnow().astimezone(self.local_timezone)
+        jst_time = self.c.convert_utc_into_jst(utc_time)
 
         d_today = (jst_time + timedelta(hours=-3)
                    ).strftime('%Y-%m-%d')  # 日付をまたぐときがあるのでその対策
@@ -281,9 +280,8 @@ class CritiqueCog(commands.Cog, name='批評定例会用コマンド'):
     async def all(self, ctx, num: int = 0):
         """対象外であっても表示します、一応作成"""
         utc_time = datetime.utcnow()
-        utc_time = utc_time.astimezone(pytz.utc)
 
-        jst_time = datetime.utcnow().astimezone(self.local_timezone)
+        jst_time = self.c.convert_utc_into_jst(utc_time)
 
         d_today = (jst_time + timedelta(hours=-3)
                    ).strftime('%Y-%m-%d')   # 日付をまたぐときがあるのでその対策
@@ -327,6 +325,7 @@ class CritiqueCog(commands.Cog, name='批評定例会用コマンド'):
         """煮汁の不具合に備えて実装"""
         if ctx.invoked_subcommand is None:
             time = datetime.utcnow()
+
             time_jst = self.c.convert_utc_into_jst(time)
 
             match_url = re.match(

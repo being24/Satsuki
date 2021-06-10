@@ -14,6 +14,7 @@ import discord
 import discosnow as ds
 from discord.ext import commands, tasks
 
+from cogs.utils.common import CommonUtil
 from cogs.utils.setting_manager import SettingManager
 
 
@@ -32,6 +33,7 @@ class Admin(commands.Cog, name='管理用コマンド群'):
         self.auto_backup.stop()
         self.auto_backup.start()
         self.setting_mng = SettingManager()
+        self.c = CommonUtil()
 
     async def cog_check(self, ctx):
         return ctx.guild and await self.bot.is_owner(ctx.author)
@@ -65,7 +67,7 @@ class Admin(commands.Cog, name='管理用コマンド群'):
             color=0x2fe48d)
         embed.set_author(
             name=f"{self.bot.user.name}",
-            icon_url=f"{self.bot.user.avatar_url}")
+            icon_url=f"{self.bot.user.avatar.url}")
         await guild.system_channel.send(embed=embed)
 
     @commands.command(aliases=['re'], hidden=True)
@@ -192,8 +194,10 @@ class Admin(commands.Cog, name='管理用コマンド群'):
 
     @tasks.loop(minutes=1.0)
     async def auto_backup(self):
-        now = datetime.now()
-        now_HM = now.strftime('%H:%M')
+        now = datetime.utcnow()
+
+        now_jst = self.c.convert_utc_into_jst(now)
+        now_HM = now_jst.strftime('%H:%M')
 
         if now_HM == '04:00':
             channel = self.bot.get_channel(745128369170939965)

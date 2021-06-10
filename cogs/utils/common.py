@@ -107,9 +107,9 @@ class CommonUtil():
             datetime: awareなJST
         """
         time = pytz.utc.localize(time)
-        created_at_jst = time.astimezone(
+        time_jst = time.astimezone(
             pytz.timezone(self.local_timezone.zone))
-        return created_at_jst
+        return time_jst
 
     def reap_metatitle_to_limit(self, metatitle: str) -> str:
         """embedのタイトルの文字数制限に合わせるために短くする関数
