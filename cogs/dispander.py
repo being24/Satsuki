@@ -40,8 +40,8 @@ class ExpandDiscordMessageUrl(commands.Cog):
                     await message.channel.send(embed=self.compose_embed(m))
                 for embed in m.embeds:
                     await message.channel.send(embed=embed)
-            except BaseException:
-                pass
+            except BaseException as e:
+                raise
 
     async def extract_messsages(self, message):
         messages = []
@@ -93,11 +93,11 @@ class ExpandDiscordMessageUrl(commands.Cog):
         )
         embed.set_author(
             name=message.author.display_name,
-            icon_url=message.author.avatar_url,
+            icon_url=message.author.avatar.url,
         )
         embed.set_footer(
             text=message.channel.name,
-            icon_url=message.guild.icon_url,
+            icon_url=message.guild.icon.url,
         )
         if message.attachments and message.attachments[0].proxy_url:
             embed.set_image(
