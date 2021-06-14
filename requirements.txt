@@ -4,7 +4,7 @@ asyncpg==0.23.0
 beautifulsoup4==4.9.3
 demoji==0.4.0
 discord-sentry-reporting==2.0.4
-discord.py==1.7.2
+discord.py==1.7.3
 discosnow==0.0.4
 html2text==2020.1.16
 mojimoji==0.0.11
