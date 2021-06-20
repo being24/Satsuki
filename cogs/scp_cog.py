@@ -19,6 +19,38 @@ from .utils.common import CommonUtil
 number_match = re.compile(r'(?<![0-9])\d{3,4}(?![0-9])')  # 3か4桁のものだけマッチ
 
 
+class SearchPager(ListPageSource):
+    def __init__(self, ctx, data):
+        self.ctx = ctx
+        super().__init__(data, per_page=10)
+        self.root_url = 'http://scp-jp.wikidot.com/'
+        self.c = CommonUtil()
+
+    async def write_page(self, menu, fields: List[SCPArticleDatacls] = []) -> discord.Embed:
+        offset = (menu.current_page * self.per_page) + 1
+        len_data = len(self.entries)
+
+        embed = discord.Embed(
+            title="検索結果は以下の通りです",
+            description=f"{len_data}件ヒット",
+            color=discord.Color.darker_grey())
+
+        embed.set_footer(
+            text=f"{offset:,} - {min(len_data, offset+self.per_page-1):,} of {len_data:,} records.")
+
+        for data in fields:
+            embed.add_field(
+                name=self.c.select_title(data),
+                value=f'{self.root_url}{data.fullname}\nAuthor : {data.created_by}',
+                inline=False)
+
+        return embed
+
+    async def format_page(self, menu, entries):
+
+        return await self.write_page(menu, entries)
+
+
 class SCPArticleCog(commands.Cog, name='SCPコマンド'):
     def __init__(self, bot):
         self.bot = bot
@@ -26,6 +58,28 @@ class SCPArticleCog(commands.Cog, name='SCPコマンド'):
         self.c = CommonUtil()
 
         self.root_url = 'http://scp-jp.wikidot.com/'
+
+    async def start_paginating(self, ctx, data_list: List[SCPArticleDatacls]):
+        menu = MenuPages(source=SearchPager(ctx, data_list),
+                         delete_message_after=False,
+                         clear_reactions_after=True,
+                         timeout=60.0)
+        await menu.start(ctx)
+
+    async def send_message(self, ctx, data_list: Union[List[SCPArticleDatacls], None]) -> None:
+        if data_list is None:
+            msg = await ctx.reply("該当するページは見つかりませんでした")
+            await self.c.autodel_msg(msg=msg)
+            return
+
+        elif len(data_list) == 1:
+            data = data_list[0]
+            await ctx.send(f'{data.title}\n{self.bot.root_url}{data.fullname}')
+            return
+
+        else:
+            await self.start_paginating(ctx, data_list)
+            return
 
     def prosess_arg(self, num_brt: str) -> tuple:
         """引数を処理して、数字とbrtに分離する関数
@@ -94,6 +148,27 @@ class SCPArticleCog(commands.Cog, name='SCPコマンド'):
             else:
                 await ctx.send(f'{data.metatitle}\n{self.root_url}{data.fullname}')
             return
+
+    @scp.command(description='SCP記事をurlから検索するコマンド', aliases=['-u'])
+    async def url_(self, ctx, url: str):
+        """urlからtaleを検索するコマンド\n`/scp -u URL`で、そのURLを持つSCP記事を表示します。"""
+
+        data_list = await self.article_mng.get_data_from_url_and_tag(url=url, tags=['scp'])
+        await self.send_message(ctx, data_list)
+
+    @scp.command(description='SCP記事を著者から検索するコマンド', aliases=['-a'])
+    async def author(self, ctx, author: str):
+        """著者からtaleを検索するコマンド\n`/scp -a 著者名`で、その人が著者のSCP記事を表示します。"""
+
+        data_list = await self.article_mng.get_data_from_author_and_tag(author=author, tags=['scp'])
+        await self.send_message(ctx, data_list)
+
+    @scp.command(description='SCP記事をタイトルから検索するコマンド', aliases=['-t'])
+    async def title(self, ctx, title: str):
+        """タイトルからtaleを検索するコマンド\n`/scp -t タイトル`で、そのタイトルを持つSCP記事を表示します。"""
+
+        data_list = await self.article_mng.get_data_from_title_and_tag(title=title, tags=['scp'])
+        await self.send_message(ctx, data_list)
 
     @scp.command(description='SCP記事を検索するコマンド', aliases=['-d'])
     async def detail(self, ctx, *, num_brt: str):
