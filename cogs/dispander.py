@@ -40,8 +40,8 @@ class ExpandDiscordMessageUrl(commands.Cog):
                     await message.channel.send(embed=self.compose_embed(m))
                 for embed in m.embeds:
                     await message.channel.send(embed=embed)
-            except BaseException:
-                pass
+            except BaseException as e:
+                raise
 
     async def extract_messsages(self, message):
         messages = []
@@ -55,6 +55,7 @@ class ExpandDiscordMessageUrl(commands.Cog):
                 await self.c.autodel_msg(msg=msg)
                 return []
 
+            """
             if message.guild.id == url_guild_id:  # 同一サーバー内ならOK
                 pass
             else:  # 同一サーバー内でなくて、どちらかがFalseならFalse(NAND)
@@ -62,6 +63,7 @@ class ExpandDiscordMessageUrl(commands.Cog):
                     msg = await message.channel.send("送信が許可されていません")
                     await self.c.autodel_msg(msg=msg)
                     return []
+            """
 
             fetched_message = await self.fetch_message_from_id(
                 guild=msg_guild,
@@ -91,11 +93,11 @@ class ExpandDiscordMessageUrl(commands.Cog):
         )
         embed.set_author(
             name=message.author.display_name,
-            icon_url=message.author.avatar_url,
+            icon_url=message.author.avatar.url,
         )
         embed.set_footer(
             text=message.channel.name,
-            icon_url=message.guild.icon_url,
+            icon_url=message.guild.icon.url,
         )
         if message.attachments and message.attachments[0].proxy_url:
             embed.set_image(

@@ -1,0 +1,53 @@
+name: Build and Publish Docker
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build_and_push:
+    runs-on: ubuntu-latest
+    env:
+      IMAGE_NAME: satsuki
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.CR_PAT }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:latest
+
+      - name: create secret_key
+        env:
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+        run: |
+          mkdir -p -m 700 ~/.ssh
+          echo "$SECRET_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+
+      - name: deploy
+        env:
+          SSH_USER: ${{ secrets.USER_NAME }}
+          SSH_ADDR: ${{ secrets.LIGHTSAIL_IP_ADDR }}
+        run: |
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+          ssh-keygen -y -f ~/.ssh/id_rsa > ~/.ssh/authorized_keys
+          chmod 600 ~/.ssh/authorized_keys
+          eval "$(ssh-agent -s)"
+          ssh-add ~/.ssh/id_rsa
+          ssh -A -oStrictHostKeyChecking=no ${SSH_USER}@${SSH_ADDR} "cd /home/ubuntu/satuki && bash update.sh"

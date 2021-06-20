@@ -2,16 +2,17 @@
 # -*- coding: utf-8 -*-
 
 import asyncio
-import pathlib
 from dataclasses import dataclass
 from typing import List, Union
 
 from sqlalchemy import select, update
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.schema import Column
 from sqlalchemy.sql.sqltypes import Boolean
 from sqlalchemy.types import BigInteger
+
+from .create_SQLIte_engine import engine
 
 Base = declarative_base()
 
@@ -35,18 +36,12 @@ class GuildSettingDB(Base):
 
 class SettingManager():
     def __init__(self):
-        data_path = pathlib.Path(__file__).parents[1]
-        data_path /= '../data'
-        data_path = data_path.resolve()
-        db_path = data_path
-        db_path /= './data.sqlite3'
-        self.engine = create_async_engine(
-            f'sqlite+aiosqlite:///{db_path}', echo=True)
+        pass
 
     async def create_table(self) -> None:
         """テーブルを作成する関数
         """
-        async with self.engine.begin() as conn:
+        async with engine.begin() as conn:
             await conn.run_sync(Base.metadata.create_all)
             try:
                 await self._init_setting()
@@ -54,7 +49,7 @@ class SettingManager():
                 pass
 
     async def _init_setting(self) -> None:
-        async with AsyncSession(self.engine, expire_on_commit=True) as session:
+        async with AsyncSession(engine, expire_on_commit=True) as session:
             async with session.begin():
                 new_setting = GuildSettingDB(index=True)
                 session.add(new_setting)
@@ -67,7 +62,7 @@ class SettingManager():
             bot_manager_id (int): BOT管理者役職のID
             bot_user_id (int): BOT使用者役職のID
         """
-        async with AsyncSession(self.engine) as session:
+        async with AsyncSession(engine) as session:
             async with session.begin():
                 new_guild = GuildSettingDB(
                     guild_id=guild_id)
@@ -83,7 +78,7 @@ class SettingManager():
             bot_manager_id (int): bot管理者のID
             bot_user_id (int): bot操作者のID
         """
-        async with AsyncSession(self.engine) as session:
+        async with AsyncSession(engine) as session:
             async with session.begin():
                 stmt = update(GuildSettingDB).where(
                     GuildSettingDB.guild_id == guild_id).values(
@@ -101,7 +96,7 @@ class SettingManager():
         Returns:
             bool: あったらTrue、なかったらFalse
         """
-        async with AsyncSession(self.engine) as session:
+        async with AsyncSession(engine) as session:
             async with session.begin():
                 stmt = select(GuildSettingDB).where(
                     GuildSettingDB.guild_id == guild_id)
@@ -121,7 +116,7 @@ class SettingManager():
         Returns:
             GuildSetting: サーバの設定のデータクラス
         """
-        async with AsyncSession(self.engine, expire_on_commit=True) as session:
+        async with AsyncSession(engine, expire_on_commit=True) as session:
             async with session.begin():
                 stmt = select(GuildSettingDB).where(
                     GuildSettingDB.guild_id == guild_id)
@@ -145,7 +140,7 @@ class SettingManager():
         Returns:
             Union[None, List[int]]: なければNone、あればintのlist
         """
-        async with AsyncSession(self.engine, expire_on_commit=True) as session:
+        async with AsyncSession(engine, expire_on_commit=True) as session:
             async with session.begin():
                 stmt = select(GuildSettingDB)
                 result = await session.execute(stmt)
@@ -174,7 +169,7 @@ class SettingManager():
         Args:
             server_id (int): ブラックリストのサーバーのID
         """
-        async with AsyncSession(self.engine) as session:
+        async with AsyncSession(engine) as session:
             async with session.begin():
                 stmt = update(GuildSettingDB).where(
                     GuildSettingDB.guild_id == server_id).values(
@@ -187,7 +182,7 @@ class SettingManager():
         Args:
             server_id (int): ブラックリストのサーバーのID
         """
-        async with AsyncSession(self.engine) as session:
+        async with AsyncSession(engine) as session:
             async with session.begin():
                 stmt = update(GuildSettingDB).where(
                     GuildSettingDB.guild_id == server_id).values(
@@ -203,7 +198,7 @@ class SettingManager():
         Returns:
             bool: DBに無い、もしくは許可されていなければFalse、許可されていればTrue
         """
-        async with AsyncSession(self.engine) as session:
+        async with AsyncSession(engine) as session:
             async with session.begin():
                 stmt = select(GuildSettingDB).where(
                     GuildSettingDB.guild_id == guild_id)
@@ -221,7 +216,7 @@ class SettingManager():
             guild_id (int): サーバーID
             tf (bool): 有効/無効
         """
-        async with AsyncSession(self.engine) as session:
+        async with AsyncSession(engine) as session:
             async with session.begin():
                 stmt = update(GuildSettingDB).where(
                     GuildSettingDB.guild_id == guild_id).values(dispander=tf)
