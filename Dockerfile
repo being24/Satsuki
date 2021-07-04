@@ -7,7 +7,7 @@ ENV TZ='Asia/Tokyo'
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN set -x && \
-    apk add --no-cache build-base nano git tzdata ncdu && \
+    apk add --no-cache build-base nano git tzdata ncdu libstdc++ && \
     cp /usr/share/zoneinfo/Asia/Tokyo /etc/localtime && \
     python3 -m pip install -U setuptools && \
     git clone https://github.com/being24/Satsuki.git && \
