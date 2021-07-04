@@ -100,6 +100,24 @@ class SearchCog(commands.Cog, name='SRCコマンド'):
         data_list = await self.article_mng.get_data_from_tags_and(tags=tags)
         await self.send_message(ctx, data_list)
 
+    @search.command(description='ページの詳細版を表示するコマンド', aliases=['-d'])
+    async def detail(self, ctx, word: str):
+        """ページの詳細版を検索するコマンド\n`/src -d 単語`で、その単語を含むページの詳細を表示します\n複数ヒットした場合は通常の一覧表示を行います"""
+
+        data_list = await self.article_mng.get_data_from_all_ilike(all_=word)
+        if data_list is None:
+            msg = await ctx.reply("該当するページは見つかりませんでした")
+            await self.c.autodel_msg(msg=msg)
+
+        elif len(data_list) > 1:
+            await self.send_message(ctx, data_list)
+            msg = await ctx.reply('複数ヒットしたため、一覧を表示します')
+            await self.c.autodel_msg(msg=msg)
+
+        else:
+            embed = self.c.create_detail_embed(data_list[0])
+            await ctx.send(embed=embed)
+
 
 def setup(bot):
     bot.add_cog(SearchCog(bot))
