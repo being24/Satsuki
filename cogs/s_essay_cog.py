@@ -65,7 +65,11 @@ class EssayArticleCog(commands.Cog, name='ESSAYコマンド'):
 
         elif len(data_list) == 1:
             data = data_list[0]
-            await ctx.send(f'{data.title}\n{self.bot.root_url}{data.fullname}')
+            if data.metatitle is None:
+                title = data.title
+            else:
+                title = data.metatitle
+            await ctx.send(f'{title}\n{self.bot.root_url}{data.fullname}')
             return
 
         else:
