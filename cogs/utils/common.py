@@ -91,10 +91,13 @@ class CommonUtil():
         Returns:
             str
         """
-        if data.metatitle is None:
+        if data.metatitle is not None:
+            title = data.metatitle
+        elif data.title != '':
             title = data.title
         else:
-            title = data.metatitle
+            title = 'None'
+
         return title
 
     def convert_utc_into_jst(self, time: datetime) -> datetime:
