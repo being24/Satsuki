@@ -98,6 +98,8 @@ class CommonUtil():
         else:
             title = 'None'
 
+        title = self.reap_metatitle_to_limit(title)
+
         return title
 
     def convert_utc_into_jst(self, time: datetime) -> datetime:
