@@ -74,10 +74,7 @@ class SCPArticleCog(commands.Cog, name='SCPコマンド'):
 
         elif len(data_list) == 1:
             data = data_list[0]
-            if data.metatitle is None:
-                title = data.title
-            else:
-                title = data.metatitle
+            title = self.c.select_title(data)
             await ctx.send(f'{title}\n{self.bot.root_url}{data.fullname}')
             return
 
@@ -108,7 +105,7 @@ class SCPArticleCog(commands.Cog, name='SCPコマンド'):
             return None, None
 
     async def get_one_SCParticle_data_by_fullname(self, number: str, brt: str) -> Union[None, SCPArticleDatacls]:
-        """数字と支部tagから該当する記事のデータを返す関数。複数ヒット時は数字が一致するものを返す
+        """数字と支部tagから該当する記事のデータを返す関数。複数ヒット時は数字が一致し、より新しいものを返す
 
         Args:
             number (str): fullnameの数字
@@ -125,7 +122,7 @@ class SCPArticleCog(commands.Cog, name='SCPコマンド'):
         if result is None:
             return None
         elif len(result) >= 2:
-            for i in result:
+            for i in reversed(result):
                 if number == re.sub(r'\D', '', i.fullname):
                     data = i
         else:
@@ -150,7 +147,8 @@ class SCPArticleCog(commands.Cog, name='SCPコマンド'):
                 await self.c.autodel_msg(msg=msg)
                 return
             else:
-                await ctx.send(f'{data.metatitle}\n{self.root_url}{data.fullname}')
+                title = self.c.select_title(data)
+                await ctx.send(f'{title}\n{self.root_url}{data.fullname}')
             return
 
     @scp.command(description='SCP記事をurlから検索するコマンド', aliases=['-u'])
