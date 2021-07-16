@@ -74,10 +74,7 @@ class SCPArticleCog(commands.Cog, name='SCPコマンド'):
 
         elif len(data_list) == 1:
             data = data_list[0]
-            if data.metatitle is None:
-                title = data.title
-            else:
-                title = data.metatitle
+            title = self.c.select_title(data)
             await ctx.send(f'{title}\n{self.bot.root_url}{data.fullname}')
             return
 
@@ -150,7 +147,8 @@ class SCPArticleCog(commands.Cog, name='SCPコマンド'):
                 await self.c.autodel_msg(msg=msg)
                 return
             else:
-                await ctx.send(f'{data.metatitle}\n{self.root_url}{data.fullname}')
+                title = self.c.select_title(data)
+                await ctx.send(f'{title}\n{self.root_url}{data.fullname}')
             return
 
     @scp.command(description='SCP記事をurlから検索するコマンド', aliases=['-u'])
