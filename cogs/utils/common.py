@@ -102,6 +102,21 @@ class CommonUtil():
 
         return title
 
+    def reap_metatitle_to_limit(self, metatitle: str) -> str:
+        """embedのタイトルの文字数制限に合わせるために短くする関数
+
+        Args:
+            metatitle (str)
+
+        Returns:
+            str
+        """
+        if len(metatitle) > 250:
+            metatitle = f"{metatitle[:250]}{'...'}"
+        else:
+            metatitle = metatitle
+        return metatitle
+
     def convert_utc_into_jst(self, time: datetime) -> datetime:
         """naive/awareなUTCをawareなJSTにする関数
 
@@ -118,17 +133,18 @@ class CommonUtil():
             pytz.timezone(self.local_timezone.zone))
         return time_jst
 
-    def reap_metatitle_to_limit(self, metatitle: str) -> str:
-        """embedのタイトルの文字数制限に合わせるために短くする関数
+    def convert_native_jst_into_aware_jst(self, time: datetime) -> datetime:
+        """naiveなJSTをawareなJSTにする関数
 
         Args:
-            metatitle (str)
+            created_at (datetime): naiveなUTC
 
         Returns:
-            str
+            datetime: awareなJST
         """
-        if len(metatitle) > 250:
-            metatitle = f"{metatitle[:250]}{'...'}"
-        else:
-            metatitle = metatitle
-        return metatitle
+        if time.tzinfo is None:
+            time = self.local_timezone.localize(time)
+
+        time_jst = time.astimezone(
+            pytz.timezone(self.local_timezone.zone))
+        return time_jst

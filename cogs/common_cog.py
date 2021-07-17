@@ -162,8 +162,13 @@ class SatsukiCom(commands.Cog, name='皐月分類外コマンド'):
         for key in self.timer_dict.keys():
             dict_time_just = datetime.strptime(
                 self.timer_dict[key]['just'], '%Y-%m-%d %H:%M:%S')
+            dict_time_just = self.c.convert_native_jst_into_aware_jst(
+                dict_time_just)
+
             dict_time_m5 = datetime.strptime(
                 self.timer_dict[key]['-5'], '%Y-%m-%d %H:%M:%S')
+            dict_time_m5 = self.c.convert_native_jst_into_aware_jst(
+                dict_time_m5)
 
             if (days := (now - dict_time_just).days) > 1:
                 del_list.append(key)
