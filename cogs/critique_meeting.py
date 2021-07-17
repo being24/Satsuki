@@ -200,7 +200,7 @@ class CritiqueCog(commands.Cog, name='批評定例会用コマンド'):
             await ctx.send(embed=embed)
 
         else:
-            if list_len := len(list_reservation_available) < num:
+            if (list_len := len(list_reservation_available)) < num:
                 msg = await ctx.reply('指定された数字が大きすぎます')
                 await self.c.autodel_msg(msg=msg)
                 return
