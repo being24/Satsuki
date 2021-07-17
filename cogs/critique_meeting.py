@@ -131,6 +131,8 @@ class CritiqueCog(commands.Cog, name='批評定例会用コマンド'):
             draft_link = 'None'
             reserve_time = zero_time
             for element in elements:
+                if element.string is None:
+                    continue
                 if len(element.string) == 1:
                     pass
                 elif '[link]' in element.string:
