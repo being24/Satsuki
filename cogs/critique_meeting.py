@@ -87,7 +87,8 @@ class CritiqueCog(commands.Cog, name='批評定例会用コマンド'):
             content = content.replace(')', ') ')
             content = content.replace('-\n', '-')
 
-            published_time = self.from_struct_time_to_datetime(str(entry['published']))
+            published_time = self.from_struct_time_to_datetime(
+                str(entry['published']))
 
             if published_time is None:
                 published_time = datetime.fromtimestamp(0)
@@ -232,9 +233,9 @@ class CritiqueCog(commands.Cog, name='批評定例会用コマンド'):
         utc_time = datetime.utcnow()
 
         jst_time = self.c.convert_utc_into_jst(utc_time)
+        jst_time = jst_time + timedelta(hours=-3)  # 日付をまたぐときがあるのでその対策
 
-        d_today = (jst_time + timedelta(hours=-3)
-                   ).strftime('%Y-%m-%d')  # 日付をまたぐときがあるのでその対策
+        d_today = (jst_time).strftime('%Y-%m-%d')
 
         """
         d_today = '2019-10-12'  # debug
@@ -264,6 +265,10 @@ class CritiqueCog(commands.Cog, name='批評定例会用コマンド'):
 
         else:
             full_reserve_data = await self.meeting_mng.get_reserve_data_from_date(jst_time)
+
+        if full_reserve_data is None:
+            await ctx.send("本日の予約はありません")
+            return
 
         list_reservation_available = []
         for data in full_reserve_data:
