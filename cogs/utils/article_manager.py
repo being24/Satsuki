@@ -280,7 +280,8 @@ class ArticleManager():
                 stmt = select(SCPArticle).filter(
                     and_(
                         SCPArticle.tags.contains(tags),
-                        SCPArticle.fullname.ilike(f'%{fullname}%')))
+                        SCPArticle.fullname.ilike(f'%{fullname}%'))
+                )
                 result = await session.execute(stmt)
                 result = result.fetchall()
 

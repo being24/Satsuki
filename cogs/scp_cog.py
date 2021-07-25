@@ -115,6 +115,7 @@ class SCPArticleCog(commands.Cog, name='SCPコマンド'):
             Union[None, SCPArticleDatacls]: あればSCPArticleDatacls 無ければNone
         """
         data = None
+        exclusion_list = ['ジョーク', '001提言']  # この実装嫌
 
         result = await self.article_mng.get_data_from_fullname_and_tag(
             fullname=number, tags=[brt, 'scp'])
@@ -124,7 +125,11 @@ class SCPArticleCog(commands.Cog, name='SCPコマンド'):
         elif len(result) >= 2:
             for i in reversed(result):
                 if number == re.sub(r'\D', '', i.fullname):
-                    data = i
+                    if any(
+                            exclusion in i.tags for exclusion in exclusion_list):
+                        continue
+                    else:
+                        data = i
         else:
             data = result[0]
 
