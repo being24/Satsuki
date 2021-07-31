@@ -76,7 +76,7 @@ class SatsukiCom(commands.Cog, name='皐月分類外コマンド'):
 
     @commands.command(description="入力された数字の範囲内をランダムに返す関数")
     async def dice(self, ctx, num1: int, num2: int = 0):
-        """`/rand {num1} {num2}`\nnum1~num2の間の数字を返します。num2は省略すると0になります。"""
+        """`/dice {num1} {num2}`\nnum1~num2の間の数字を返します。num2は省略すると0になります。"""
         num_list = [num1, num2]
         num_list = sorted(num_list)
 

@@ -75,7 +75,7 @@ class GoIArticleCog(commands.Cog, name='GoIフォーマットコマンド'):
 
     @commands.group(invoke_without_command=True, description='GoIフォーマットを検索するコマンド', aliases=['goi'])
     async def goi_format(self, ctx, word: str):
-        """引数からGoIフォーマットを検索するコマンド\n`/goi 単語`で、その単語を含む著者ページを検索します"""
+        """引数からGoIフォーマットを検索するコマンド\n`/goi 単語`で、その単語を含むGOIフォーマットを検索します"""
         if ctx.invoked_subcommand is None:
             data_list = await self.article_mng.get_data_from_all_and_tag(all_=word, tags=['goi-format'])
 
