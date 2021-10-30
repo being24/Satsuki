@@ -246,7 +246,7 @@ class CritiqueCog(commands.Cog, name='批評定例会用コマンド'):
 
         limen_time = datetime.strptime(
             f'{d_today}-20:45:00', '%Y-%m-%d-%H:%M:%S')
-        limen_time = self.local_timezone.localize(limen_time)
+        limen_time = limen_time.astimezone(self.local_timezone)
 
         if num == 0:
             target_url = 'http://njr-sys.net/irc/draftReserve/'

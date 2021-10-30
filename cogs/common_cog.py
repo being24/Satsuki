@@ -27,7 +27,7 @@ class SatsukiCom(commands.Cog, name='皐月分類外コマンド'):
 
         self.welcome_list = [286871252784775179, 609058923353341973]
 
-        if self.timer_json_path.exists():
+        if not self.timer_json_path.exists():
             self.timer_dict = {}
             self.dump_json(self.timer_dict)
 
