@@ -28,7 +28,7 @@ class MyBot(commands.Bot):
         with open(root_path / "data/setting.json", encoding='utf-8') as f:
             self.json_data = json.load(f)
 
-        self.status = self.json_data['status']
+        self.status_message = self.json_data['status']
         self.meeting_addr = self.json_data['regular_meeting_addr']
 
         self.root_url = 'http://scp-jp.wikidot.com/'
@@ -40,7 +40,7 @@ class MyBot(commands.Bot):
         print(self.user.id)
         print('------')
         logging.warning('rebooted')
-        await bot.change_presence(activity=discord.Game(name=self.status))
+        await bot.change_presence(activity=discord.Game(name=self.status_message))
 
 
 if __name__ == '__main__':
