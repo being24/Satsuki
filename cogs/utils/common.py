@@ -129,8 +129,7 @@ class CommonUtil():
         if time.tzinfo is None:
             time = pytz.utc.localize(time)
 
-        time_jst = time.astimezone(
-            pytz.timezone(self.local_timezone.zone))
+        time_jst = time.astimezone(self.local_timezone)
         return time_jst
 
     def convert_native_jst_into_aware_jst(self, time: datetime) -> datetime:
@@ -142,9 +141,6 @@ class CommonUtil():
         Returns:
             datetime: awareなJST
         """
-        if time.tzinfo is None:
-            time = self.local_timezone.localize(time)
 
-        time_jst = time.astimezone(
-            pytz.timezone(self.local_timezone.zone))
+        time_jst = time.astimezone(self.local_timezone)
         return time_jst
