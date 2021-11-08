@@ -91,9 +91,15 @@ class ExpandDiscordMessageUrl(commands.Cog):
             description=message.content,
             timestamp=message.created_at,
         )
+
+        if message.author.avatar is None:
+            avatar_url = 'https://cdn.discordapp.com/embed/avatars/0.png'
+        else:
+            avatar_url = message.author.avatar.replace(format="png").url
+
         embed.set_author(
             name=message.author.display_name,
-            icon_url=message.author.avatar.url,
+            icon_url=avatar_url,
         )
         embed.set_footer(
             text=message.channel.name,

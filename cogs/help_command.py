@@ -28,7 +28,8 @@ def syntax(command):
             sub_command_str = f'{sub_command.name.ljust(7)} | {" ".join(sub_command.aliases)}'
             for key, value in sub_command.params.items():
                 if key not in ("self", "ctx"):
-                    sub_command_arg = f"[{key}]" if "NoneType" in str(value) else f"<{key}>"
+                    sub_command_arg = f"[{key}]" if "NoneType" in str(
+                        value) else f"<{key}>"
                     sub_command_str = f'{sub_command_str} {sub_command_arg}'
 
             sub_commands.append(sub_command_str)
@@ -56,7 +57,13 @@ class HelpMenu(ListPageSource):
         embed = Embed(title="コマンド一覧",
                       description=f"使用可能なコマンド : {self.ctx.author.mention}",
                       colour=self.ctx.author.colour)
-        embed.set_thumbnail(url=self.ctx.author.avatar.url)
+
+        if self.ctx.author.avatar is None:
+            avatar_url = 'https://cdn.discordapp.com/embed/avatars/0.png'
+        else:
+            avatar_url = self.ctx.author.avatar.replace(format="png").url
+
+        embed.set_thumbnail(url=avatar_url)
         embed.set_footer(
             text=f"{offset:,} - {min(len_data, offset+self.per_page-1):,} of {len_data:,} commands.")
 
