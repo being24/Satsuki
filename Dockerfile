@@ -18,6 +18,6 @@ RUN set -x && \
     chmod 0700 ./Satsuki/bot.py && \
     apk del build-base  && \
     rm -rf /var/cache/apk/*  && \
-    echo "Hello, satsuki ready!" 
+    echo "Hello, satsuki ready!"
 
 CMD ["/opt/Satsuki/bot.sh"]

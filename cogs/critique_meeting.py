@@ -190,11 +190,11 @@ class CritiqueCog(commands.Cog, name='批評定例会用コマンド'):
                 reserve_time_jst = self.c.convert_utc_into_jst(
                     data.reserve_time)
 
-                reserve_time_jst = reserve_time_jst.strftime(
-                    '%Y-%m-%d %H:%M:%S')
+                reserve_time_stamp = f'<t:{int(reserve_time_jst.timestamp())}:f>'
+
                 embed.add_field(
                     name=data.author_name,
-                    value=f'{num+1} : [{data.draft_title}]({data.draft_link})\tat: {reserve_time_jst}',
+                    value=f'{num+1} : [{data.draft_title}]({data.draft_link})\tat: {reserve_time_stamp}',
                     inline=False)
 
             embed.set_footer(text="受付時間外の予約は無効です!")
@@ -212,9 +212,13 @@ class CritiqueCog(commands.Cog, name='批評定例会用コマンド'):
                 color=0xff0080)
             num = num - 1
             data = list_reservation_available[num]
+            reserve_time_jst = self.c.convert_utc_into_jst(
+                data.reserve_time)
+
+            reserve_time_stamp = f'<t:{int(reserve_time_jst.timestamp())}:f>'
             embed.add_field(
                 name=data.author_name,
-                value=f'{num+1} : [{data.draft_title}]({data.draft_link})\tat: {data.reserve_time}',
+                value=f'{num+1} : [{data.draft_title}]({data.draft_link})\tat: {reserve_time_stamp}',
                 inline=False)
 
             embed.set_footer(text="受付時間外の予約は無効です!")
