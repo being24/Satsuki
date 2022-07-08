@@ -1,6 +1,6 @@
 aiofiles==0.7.0
 aiosqlite==0.17.0
-asyncpg==0.24.0
+asyncpg==0.26.0
 beautifulsoup4==4.9.3
 demoji==1.1.0
 discord-sentry-reporting==2.0.4
