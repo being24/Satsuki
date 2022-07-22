@@ -12,8 +12,8 @@ RUN set -x && \
     python3 -m pip install -U setuptools && \
     git clone https://github.com/being24/Satsuki.git && \
     python3 -m pip install -r ./Satsuki/requirements.txt && \
-    python -m pip install -U git+https://github.com/Rapptz/discord-ext-menus@fbb8803779373357e274e1540b368365fd9d8074 && \
-    python -m pip install -U git+https://github.com/Rapptz/discord.py@45d498c1b76deaf3b394d17ccf56112fa691d160 && \
+    python -m pip install -U git+https://github.com/Rapptz/discord-ext-menus && \
+    python -m pip install -U git+https://github.com/Rapptz/discord.py && \
     chmod 0700 ./Satsuki/*.sh && \
     chmod 0700 ./Satsuki/bot.py && \
     apk del build-base  && \
