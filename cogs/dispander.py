@@ -16,7 +16,7 @@ from cogs.utils.common import CommonUtil
 
 regex_discord_message_url = (
     'https://(ptb.|canary.)?discord(app)?.com/channels/'
-    '(?P<guild>[0-9]{18})/(?P<channel>[0-9]{18})/(?P<message>[0-9]{18})'
+    '(?P<guild>[0-9]{18,21})/(?P<channel>[0-9]{18,21})/(?P<message>[0-9]{18,21})'
 )
 
 
