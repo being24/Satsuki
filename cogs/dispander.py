@@ -79,6 +79,8 @@ class ExpandDiscordMessageUrl(commands.Cog):
     @staticmethod
     async def fetch_message_from_id(guild, channel_id, message_id):
         channel = guild.get_channel_or_thread(channel_id)
+        if channel is None:
+            channel = await guild.fetch_channel(channel_id)
         try:
             message = await channel.fetch_message(message_id)
             return message
