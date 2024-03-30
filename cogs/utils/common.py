@@ -4,6 +4,8 @@ import discord
 from discord.ext.commands import bot
 from zoneinfo import ZoneInfo
 
+from .ayame_client import AyameSearchResult
+
 logger = logging.getLogger("discord")
 
 
@@ -34,55 +36,62 @@ class CommonUtil:
             except discord.Forbidden:
                 logger.error("メッセージの削除に失敗しました。Forbidden")
 
-    # def create_detail_embed(self, data: SCPArticleDatacls) -> discord.Embed:
-    #     """詳細をembedにする関数、tzとか文字数制限とかはよしなにしてくれる
+    def create_detail_embed(self, data: AyameSearchResult) -> discord.Embed:
+        """詳細をembedにする関数、tzとか文字数制限とかはよしなにしてくれる
 
-    #     Args:
-    #         data (SCPArticleDatacls): 記事データ
+        Args:
+            data (AyameSearchResult): 記事データ
 
-    #     Returns:
-    #         discord.Embed: 色々調整したデータ
-    #     """
-    #     tags = (" ").join(data.tags)
+        Returns:
+            discord.Embed: 色々調整したデータ
+        """
+        tags = (" ").join(data.tags)
 
-    #     created_at_jst = self.convert_utc_into_jst(data.created_at)
+        title = self.select_title(data)
+        title = self.reap_metatitle_to_limit(title)
 
-    #     title = self.select_title(data)
-    #     title = self.reap_metatitle_to_limit(title)
+        embed = discord.Embed(
+            title=f"{title}", url=f"{self.root_url}{data.fullname}", color=0x8F1919
+        )
+        embed.add_field(
+            name="created_by", value=f"{data.created_by_unix}", inline=False
+        )
+        embed.add_field(
+            name="投稿日",
+            value=f"created at <t:{int(data.created_at.timestamp())}:D>",
+            inline=False,
+        )
+        embed.add_field(name="rate", value=f"{data.rating}", inline=True)
+        embed.add_field(name="tags", value=f"{tags}", inline=True)
+        embed.add_field(
+            name="rate trends",
+            value=f"[link](https://ayame.scp-jp.net/chart.html?id={data.page_id})",
+            inline=False,
+        )
 
-    #     embed = discord.Embed(
-    #         title=f"{title}", url=f"{self.root_url}{data.fullname}", color=0x8F1919
-    #     )
-    #     embed.add_field(name="created_by", value=f"{data.created_by}", inline=False)
-    #     embed.add_field(
-    #         name="created_at",
-    #         value=f"{created_at_jst.strftime('%Y/%m/%d %H:%M')}",
-    #         inline=False,
-    #     )
-    #     embed.add_field(name="rate", value=f"{data.rating}", inline=True)
-    #     embed.add_field(name="tags", value=f"{tags}", inline=True)
+        embed.set_footer(text=f"page_id: {data.page_id}")
 
-    #     return embed
+        return embed
 
-    # def select_title(self, data: SCPArticleDatacls) -> str:
-    #     """メタタイトルをがあればそちらを、そうでなければtitleを返す関数
+    def select_title(self, data: AyameSearchResult) -> str:
+        """メタタイトルをがあればそちらを、そうでなければtitleを返す関数
 
-    #     Args:
-    #         data (SCPArticleDatacls)
+        Args:
+            data (AyameSearchResult)
 
-    #     Returns:
-    #         str
-    #     """
-    #     if data.metatitle is not None:
-    #         title = data.metatitle
-    #     elif data.title != "":
-    #         title = data.title
-    #     else:
-    #         title = "None"
+        Returns:
+            str
+        """
+        if data.metatitle is not None:
+            title = data.metatitle
+        elif data.title != "":
+            title = data.title
+        else:
+            title = "None"
 
-    #     title = self.reap_metatitle_to_limit(title)
+        title = self.reap_metatitle_to_limit(title)
 
-    #     return title
+        return title
 
     def reap_metatitle_to_limit(self, metatitle: str) -> str:
         """embedのタイトルの文字数制限に合わせるために短くする関数

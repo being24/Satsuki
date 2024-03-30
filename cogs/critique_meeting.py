@@ -7,16 +7,11 @@ import discord
 import feedparser
 import html2text
 from discord import app_commands
-
-# from bs4 import BeautifulSoup
 from discord.ext import commands
 from discord.ui import Modal, TextInput
-
-# from more_itertools import divide
 from pydantic.dataclasses import dataclass
 from zoneinfo import ZoneInfo
 
-# from cogs.utils.common import CommonUtil
 from cogs.utils.criticism_manager import CriticismManager, ReserveData
 
 logger = logging.getLogger("discord")
