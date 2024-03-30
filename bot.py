@@ -12,6 +12,7 @@ from sentry_sdk.integrations.aiohttp import AioHttpIntegration
 from sentry_sdk.integrations.logging import LoggingIntegration
 
 
+
 class MyBot(commands.Bot):
     def __init__(self, command_prefix):
         super().__init__(command_prefix, help_command=None, intents=intents)
