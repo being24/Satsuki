@@ -6,6 +6,7 @@ discord-sentry-reporting==2.0.4
 discord.py==2.3.2
 feedparser==6.0.11
 html2text==2024.2.26
+mojimoji==0.0.13
 pydantic==2.6.4
 python-dateutil==2.8.2
 python-dotenv==1.0.1
