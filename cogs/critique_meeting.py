@@ -1,14 +1,9 @@
-import asyncio
-import html
 import logging
-import random
-import re
 from datetime import datetime, timedelta
 from typing import List, Optional
 
 import aiohttp
 import discord
-from discord.utils import MISSING
 import feedparser
 import html2text
 from discord import app_commands

@@ -1,5 +1,4 @@
 import logging
-import typing
 
 import discord
 from discord.ext.commands import bot
