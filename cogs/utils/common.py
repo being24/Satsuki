@@ -82,12 +82,12 @@ class CommonUtil:
         Returns:
             str
         """
-        if data.metatitle is not None:
+        if data.metatitle != "" and data.metatitle is not None:
             title = data.metatitle
-        elif data.title != "":
+        elif data.title != "" and data.title is not None:
             title = data.title
         else:
-            title = "None"
+            title = data.fullname
 
         title = self.reap_metatitle_to_limit(title)
 
