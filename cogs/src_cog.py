@@ -1,0 +1,208 @@
+import logging
+
+import discord
+from discord import app_commands
+from discord.ext import commands
+from discord.ext.menus import ListPageSource, MenuPages
+
+from .utils.ayame_client import (
+    AyameClient,
+    AyameSearchCountQuery,
+    AyameSearchQuery,
+    AyameSearchResult,
+)
+from .utils.common import CommonUtil
+
+logger = logging.getLogger("discord")
+
+
+class Pager(ListPageSource):
+    def __init__(self, ctx, data):
+        self.ctx: commands.Context = ctx
+        super().__init__(data, per_page=10)
+        self.c = CommonUtil()
+
+    async def write_page(
+        self, menu: MenuPages, fields: list[AyameSearchResult]
+    ) -> discord.Embed:
+        offset = (menu.current_page * self.per_page) + 1
+        len_data = len(self.entries)
+
+        embed = discord.Embed(
+            title="該当する記事は以下の通りです",
+            description=f"{len_data}件ヒット",
+            color=discord.Color.darker_grey(),
+        )
+
+        embed.set_footer(
+            text=f"{offset:,} - {min(len_data, offset+self.per_page-1):,} of {len_data:,} records."
+        )
+
+        for data in fields:
+            embed.add_field(
+                name=self.c.select_title(data),
+                value=f"http://scp-jp.wikidot.com/{data.fullname}\nAuthor : {data.created_by_unix}",
+                inline=False,
+            )
+
+        return embed
+
+    async def format_page(
+        self, menu: MenuPages, fields: list[AyameSearchResult]
+    ) -> discord.Embed:
+        return await self.write_page(menu, fields)
+
+
+class SearchArticleCog(commands.Cog, name="SRCコマンド"):
+    def __init__(self, bot):
+        self.bot: commands.Bot = bot
+
+        self.ayame = AyameClient()
+        self.c = CommonUtil()
+
+    async def start_paginating(self, ctx, data_list: list[AyameSearchResult]):
+        menu = MenuPages(
+            source=Pager(ctx, data_list),
+            delete_message_after=False,
+            clear_reactions_after=True,
+            timeout=60.0,
+        )
+        await menu.start(ctx)
+
+    @app_commands.command(name="search", description="記事を検索するコマンド")
+    async def search(
+        self,
+        interaction: discord.Interaction,
+        word: str | None = None,
+        tag1: str | None = None,
+        tag2: str | None = None,
+        tag3: str | None = None,
+        author: str | None = None,
+        tale: bool = False,
+        proposal: bool = False,
+        joke: bool = False,
+        guide: bool = False,
+        goi: bool = False,
+        explained: bool = False,
+        essay: bool = False,
+        author_page: bool = False,
+        detail: bool = True,
+    ):
+        """記事を検索するコマンド
+
+        Args:
+            word (str, optional): 検索する単語.
+            tag1 (str, optional): タグ1.
+            tag2 (str, optional): タグ2.
+            tag3 (str, optional): タグ3.
+            author (str, optional): 著者.
+            tale (bool, optional): Taleのみを検索するか.
+            proposal (bool, optional): 提言のみを検索するか.
+            joke (bool, optional): ジョークのみを検索するか.
+            guide (bool, optional): ガイドのみを検索するか.
+            goi (bool, optional): GoIFのみを検索するか.
+            explained (bool, optional): explainedのみを検索するか.
+            essay (bool, optional): エッセイのみを検索するか.
+            author_page (bool, optional): 著者ページのみを検索するか.s
+            detail (bool, optional): 詳細を表示するか.
+        """
+
+        await interaction.response.defer()
+
+        # tag1, tag2, tag3をリストにまとめる
+        tags = [tag1, tag2, tag3]
+
+        # Noneを削除
+        tags = [tag for tag in tags if tag is not None]
+
+        if tale:
+            tags.append("tale")
+
+        if proposal:
+            tags.append("001提言")
+
+        if joke:
+            tags.append("ジョーク")
+
+        if guide:
+            tags.append("ガイド")
+
+        if goi:
+            tags.append("goi-format")
+
+        if explained:
+            tags.append("explained")
+
+        if essay:
+            tags.append("エッセイ")
+
+        if author_page:
+            tags.append("著者ページ")
+
+        # get search count
+        query = AyameSearchCountQuery(
+            title=word,
+            tags=tags,
+            author=author,
+            rate_min=None,
+            rate_max=None,
+            date_from=None,
+            date_to=None,
+        )
+
+        result_count = await self.ayame.search_complex_count(query)
+
+        if result_count == 0:
+            await interaction.followup.send("該当する記事が見つかりません")
+            return
+
+        query = AyameSearchQuery(
+            title=word,
+            tags=tags,
+            author=None,
+            rate_min=None,
+            rate_max=None,
+            date_from=None,
+            date_to=None,
+            page=None,
+            show=None,
+        )
+
+        # 一個だけならそのまま取得、表示
+        if result_count == 1:
+            results = await self.ayame.search_complex(query)
+
+            if detail:
+                embed = self.c.create_detail_embed(results[0])
+                await interaction.followup.send(embed=embed)
+            else:
+                title = self.c.select_title(results[0])
+                url = f"http://scp-jp.wikidot.com/{results[0].fullname}"
+                await interaction.followup.send(f"{title}\n{url}")
+            return
+
+        elif result_count > 200:
+            await interaction.followup.send(
+                f"{result_count}件見つかりました, 200件以下に絞ってください."
+            )
+            return
+
+        await interaction.followup.send(f"{result_count}件見つかりました")
+
+        # 全部取得する
+        # query.showの最大は100なので、100ずつ取得していく
+        results = []
+
+        for i in range(1, result_count, 100):
+            query.show = 100
+            query.page = i
+
+            res = await self.ayame.search_complex(query)
+            results.extend(res)
+
+        ctx = await self.bot.get_context(interaction)
+        await self.start_paginating(ctx, results)
+
+
+async def setup(bot):
+    await bot.add_cog(SearchArticleCog(bot))
