@@ -1,12 +1,10 @@
-# !/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
-import pathlib
-import discord
-import json
 import logging
-import os
+import logging.handlers
+import pathlib
 import traceback
+from os import getenv
+
+import discord
 from discord.ext import commands
 from discord_sentry_reporting import use_sentry
 from dotenv import load_dotenv
@@ -14,69 +12,75 @@ from sentry_sdk.integrations.aiohttp import AioHttpIntegration
 from sentry_sdk.integrations.logging import LoggingIntegration
 
 
+
 class MyBot(commands.Bot):
     def __init__(self, command_prefix):
         super().__init__(command_prefix, help_command=None, intents=intents)
 
-        for cog in os.listdir(root_path / "cogs"):
-            if cog.endswith(".py"):
-                try:
-                    self.load_extension(f'cogs.{cog[:-3]}')
-                except Exception:
-                    traceback.print_exc()
-
-        with open(root_path / "data/setting.json", encoding='utf-8') as f:
-            self.json_data = json.load(f)
-
-        self.status_message = self.json_data['status']
-        self.meeting_addr = self.json_data['regular_meeting_addr']
-
-        self.root_url = 'http://scp-jp.wikidot.com/'
+    async def setup_hook(self) -> None:
+        for cog in current_path.glob("cogs/*.py"):
+            try:
+                await self.load_extension(f"cogs.{cog.stem}")
+                logging.info(f"Loaded {cog.stem}")
+            except Exception:
+                traceback.print_exc()
 
     async def on_ready(self):
-        print('-----')
-        print('Logged in as')
+        print("-----")
+        print("Logged in as")
         print(self.user.name)
         print(self.user.id)
-        print('------')
-        logging.warning('rebooted')
-        await bot.change_presence(activity=discord.Game(name=self.status_message))
+        print("------")
+        logging.warning("rebooted")
+        await bot.change_presence(activity=discord.Game(name="info bot Satsuki"))
 
 
-if __name__ == '__main__':
-    root_path = pathlib.Path(__file__).parents[0]
-
-    dotenv_path = root_path / '.env'
-
+if __name__ == "__main__":
+    dotenv_path = pathlib.Path(__file__).parents[0] / ".env"
     load_dotenv(dotenv_path)
 
-    token = os.getenv('DISCORD_BOT_TOKEN')
-    dsn = os.getenv('SENTRY_DSN')
+    token = getenv("DISCORD_BOT_TOKEN")
+    dsn = getenv("SENTRY_DSN")
+
+    logfile_path = pathlib.Path(__file__).parents[0] / "log" / "discord.log"
 
     if token is None:
         raise FileNotFoundError("Token not found error!")
-    if dsn is None:
-        raise FileNotFoundError("dsn not found error!")
 
-    logging.basicConfig(
-        level=logging.INFO,
-        format='%(levelname)s: %(message)s')
-    logging.disable(logging.INFO)
+    logger = logging.getLogger("discord")
+    logger.setLevel(logging.INFO)  # Change log level to INFO
+    logging.getLogger("discord.http").setLevel(logging.INFO)  # Change log level to INFO
 
-    sentry_logging = LoggingIntegration(
-        level=logging.INFO,        # Capture info and above as breadcrumbs
-        event_level=logging.WARNING  # Send errors as events
+    handler = logging.handlers.RotatingFileHandler(
+        filename=logfile_path,
+        encoding="utf-8",
+        maxBytes=32 * 1024,  # 32 KiB
+        backupCount=5,  # Rotate through 5 files
     )
+    dt_fmt = "%Y-%m-%d %H:%M:%S"
+    formatter = logging.Formatter(
+        "[{asctime}] [{levelname:<8}] {name}: {message}", dt_fmt, style="{"
+    )
+    logger.addHandler(handler)
+
+    current_path = pathlib.Path(__file__).parents[0]
 
     intents = discord.Intents.default()
     intents.members = True
     intents.typing = False
+    intents.integrations = True
+    intents.message_content = True
 
-    bot = MyBot(command_prefix=commands.when_mentioned_or('/'))
+    bot = MyBot(command_prefix=commands.when_mentioned_or("/"))
 
-    use_sentry(
-        bot,
-        dsn=dsn,
-        integrations=[AioHttpIntegration(), sentry_logging]
+    if dsn is not None:
+        sentry_logging = LoggingIntegration(
+            level=logging.WARNING,  # Capture info and above as breadcrumbs
+            event_level=logging.WARNING,  # Send errors as events
+        )
+
+        use_sentry(bot, dsn=dsn, integrations=[AioHttpIntegration(), sentry_logging])
+
+    bot.run(
+        token, log_handler=handler, log_formatter=formatter, log_level=logging.WARNING
     )
-    bot.run(token)

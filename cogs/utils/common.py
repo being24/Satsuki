@@ -1,102 +1,93 @@
-# !/usr/bin/env python3
-# -*- coding: utf-8 -*-
+import logging
 
-from datetime import datetime
-from discord.ext.commands import bot
-import pytz
-import tzlocal
-from cogs.utils.article_manager import SCPArticleDatacls
-import typing
 import discord
+from discord.ext.commands import bot
+from zoneinfo import ZoneInfo
+
+from .ayame_client import AyameSearchResult
+
+logger = logging.getLogger("discord")
 
 
-class CommonUtil():
+class CommonUtil:
     def __init__(self):
         self.bot = bot
-        self.local_timezone = tzlocal.get_localzone()
-        self.root_url = 'http://scp-jp.wikidot.com/'
+        self.jst_timezone = ZoneInfo("Asia/Tokyo")
+        self.root_url = "http://scp-jp.wikidot.com/"
 
     @staticmethod
-    async def autodel_msg(msg: discord.Message, second: int = 5):
+    async def delete_after(
+        msg: discord.Message | discord.InteractionMessage, second: int = 5
+    ):
         """渡されたメッセージを指定秒数後に削除する関数
 
         Args:
             msg (discord.Message): 削除するメッセージオブジェクト
             second (int, optional): 秒数. Defaults to 5.
         """
-        try:
-            await msg.delete(delay=second)
-        except discord.Forbidden:
-            pass
+        if isinstance(msg, discord.InteractionMessage):
+            try:
+                await msg.delete(delay=second)
+            except discord.Forbidden:
+                logger.error("メッセージの削除に失敗しました。Forbidden")
+        else:
+            try:
+                await msg.delete(delay=second)
+            except discord.Forbidden:
+                logger.error("メッセージの削除に失敗しました。Forbidden")
 
-    @staticmethod
-    def return_member_or_role(guild: discord.Guild,
-                              id: int) -> typing.Union[discord.Member,
-                                                       discord.Role,
-                                                       None]:
-        """メンバーか役職オブジェクトを返す関数
-
-        Args:
-            guild (discord.guild): discordのguildオブジェクト
-            id (int): 役職かメンバーのID
-
-        Returns:
-            typing.Union[discord.Member, discord.Role]: discord.Memberかdiscord.Role
-        """
-        user_or_role = guild.get_role(id)
-        if user_or_role is None:
-            user_or_role = guild.get_member(id)
-
-        return user_or_role
-
-    def create_detail_embed(self, data: SCPArticleDatacls) -> discord.Embed:
+    def create_detail_embed(self, data: AyameSearchResult) -> discord.Embed:
         """詳細をembedにする関数、tzとか文字数制限とかはよしなにしてくれる
 
         Args:
-            data (SCPArticleDatacls): 記事データ
+            data (AyameSearchResult): 記事データ
 
         Returns:
             discord.Embed: 色々調整したデータ
         """
-        tags = (' ').join(data.tags)
-
-        created_at_jst = self.convert_utc_into_jst(data.created_at)
+        tags = (" ").join(data.tags)
 
         title = self.select_title(data)
         title = self.reap_metatitle_to_limit(title)
 
         embed = discord.Embed(
-            title=f"{title}",
-            url=f"{self.root_url}{data.fullname}",
-            color=0x8f1919)
+            title=f"{title}", url=f"{self.root_url}{data.fullname}", color=0x8F1919
+        )
         embed.add_field(
-            name="created_by",
-            value=f"{data.created_by}",
-            inline=False)
+            name="created_by", value=f"{data.created_by_unix}", inline=False
+        )
         embed.add_field(
-            name="created_at",
-            value=f"{created_at_jst.strftime('%Y/%m/%d %H:%M')}",
-            inline=False)
+            name="投稿日",
+            value=f"created at <t:{int(data.created_at.timestamp())}:D>",
+            inline=False,
+        )
         embed.add_field(name="rate", value=f"{data.rating}", inline=True)
         embed.add_field(name="tags", value=f"{tags}", inline=True)
+        embed.add_field(
+            name="rate trends",
+            value=f"[link](https://ayame.scp-jp.net/chart.html?id={data.page_id})",
+            inline=False,
+        )
+
+        embed.set_footer(text=f"page_id: {data.page_id}")
 
         return embed
 
-    def select_title(self, data: SCPArticleDatacls) -> str:
+    def select_title(self, data: AyameSearchResult) -> str:
         """メタタイトルをがあればそちらを、そうでなければtitleを返す関数
 
         Args:
-            data (SCPArticleDatacls)
+            data (AyameSearchResult)
 
         Returns:
             str
         """
-        if data.metatitle is not None:
+        if data.metatitle != "" and data.metatitle is not None:
             title = data.metatitle
-        elif data.title != '':
+        elif data.title != "" and data.title is not None:
             title = data.title
         else:
-            title = 'None'
+            title = data.fullname
 
         title = self.reap_metatitle_to_limit(title)
 
@@ -116,31 +107,3 @@ class CommonUtil():
         else:
             metatitle = metatitle
         return metatitle
-
-    def convert_utc_into_jst(self, time: datetime) -> datetime:
-        """naive/awareなUTCをawareなJSTにする関数
-
-        Args:
-            created_at (datetime): naiveなUTC
-
-        Returns:
-            datetime: awareなJST
-        """
-        if time.tzinfo is None:
-            time = pytz.utc.localize(time)
-
-        time_jst = time.astimezone(self.local_timezone)
-        return time_jst
-
-    def convert_native_jst_into_aware_jst(self, time: datetime) -> datetime:
-        """naiveなJSTをawareなJSTにする関数
-
-        Args:
-            created_at (datetime): naiveなUTC
-
-        Returns:
-            datetime: awareなJST
-        """
-
-        time_jst = time.astimezone(self.local_timezone)
-        return time_jst

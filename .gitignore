@@ -129,8 +129,9 @@ dmypy.json
 .pyre/
 
 
-.vscode
-*.log
+.vscode/*
+!.vscode/settings.json
+*.log*
 *.csv
 *.ini
 token

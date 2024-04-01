@@ -1,0 +1,11 @@
+version: "3.7"
+
+services:
+  satsuki:
+    image: "ghcr.io/being24/satsuki:latest"
+    volumes:
+      - ./data:/opt/satsuki/data
+      - ./log:/opt/satsuki/log
+    env_file:
+      - ./.env
+    restart: always
