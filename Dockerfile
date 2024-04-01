@@ -22,4 +22,4 @@ RUN set -x && \
     rm -rf /var/cache/apk/*  && \
     echo "Hello, ${BOT_NAME} ready!"
 
-CMD ["/opt/Satsuki/bot.py"]
+CMD ["/opt/${BOT_NAME}/bot.py"]
