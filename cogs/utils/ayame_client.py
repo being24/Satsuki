@@ -160,30 +160,98 @@ class AyameClient:
 if __name__ == "__main__":
     ayame = AyameClient()
 
-    count_query = AyameSearchCountQuery(
-        title=None,
-        tags=None,
-        author="burnin-a-gogo",
-        rate_min=None,
-        rate_max=None,
-        date_from=None,
-        date_to=None,
-    )
+    # count_query = AyameSearchCountQuery(
+    #     title=None,
+    #     tags=None,
+    #     author="burnin-a-gogo",
+    #     rate_min=None,
+    #     rate_max=None,
+    #     date_from=None,
+    #     date_to=None,
+    # )
 
-    results_num = asyncio.run(ayame.search_complex_count(count_query))
-    print(results_num)
+    # results_num = asyncio.run(ayame.search_complex_count(count_query))
+    # print(results_num)
 
-    query = AyameSearchQuery(
-        title=None,
-        tags=None,
-        author="burnin-a-gogo",
-        rate_min=None,
-        rate_max=None,
-        date_from=None,
-        date_to=None,
-        page=None,
-        show=None,
-    )
+    # query = AyameSearchQuery(
+    #     title=None,
+    #     tags=None,
+    #     author="burnin-a-gogo",
+    #     rate_min=None,
+    #     rate_max=None,
+    #     date_from=None,
+    #     date_to=None,
+    #     page=None,
+    #     show=None,
+    # )
 
-    results = asyncio.run(ayame.search_complex(query))
-    print(len(results))
+    # results = asyncio.run(ayame.search_complex(query))
+
+    import random
+
+    branches = [
+        "en",
+        "jp",
+        "ru",
+        "ko",
+        "cn",
+        "fr",
+        "pl",
+        "es",
+        "th",
+        "de",
+        "it",
+        "ua",
+        "pt",
+        "sc",
+        "zh",
+        "vn",
+    ]
+
+    object_classes = [
+        "safe",
+        "euclid",
+        "keter",
+        "thaumiel",
+        "neutralized",
+        "explained",
+        "apollyon",
+        "archon",
+        "decommissioned",
+        "pending",
+        "esoteric-class",
+    ]
+
+    results = []
+
+    while results == []:
+        # 0から9999までのランダムな数字を生成
+        # random_page = random.randint(0, 9999)
+
+        # en,jp,ru,ko,cn,fr,pl,es,th,de,it,ua,pt,sc,zh,vnからランダムに選択
+        lang = random.choice(branches)
+
+        # オブジェクトクラスからランダムに選択
+        object_class = random.choice(object_classes)
+
+        print(object_class, lang)
+
+        # ランダムなページを取得
+        query = AyameSearchQuery(
+            title=None,
+            tags=[lang, object_class, "scp"],
+            author=None,
+            rate_min=None,
+            rate_max=None,
+            date_from=None,
+            date_to=None,
+            page=None,
+            show=None,
+        )
+
+        results = asyncio.run(ayame.search_complex(query))
+
+    # resultsからランダムに選択
+    result = random.choice(results)
+
+    print(result)

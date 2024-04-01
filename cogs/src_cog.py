@@ -1,4 +1,5 @@
 import logging
+import random
 
 import discord
 from discord import app_commands
@@ -59,6 +60,39 @@ class SearchArticleCog(commands.Cog, name="SRCコマンド"):
 
         self.ayame = AyameClient()
         self.c = CommonUtil()
+
+        self.branches = [
+            "en",
+            "jp",
+            "ru",
+            "ko",
+            "cn",
+            "fr",
+            "pl",
+            "es",
+            "th",
+            "de",
+            "it",
+            "ua",
+            "pt",
+            "sc",
+            "zh",
+            "vn",
+        ]
+
+        self.object_classes = [
+            "safe",
+            "euclid",
+            "keter",
+            "thaumiel",
+            "neutralized",
+            "explained",
+            "apollyon",
+            "archon",
+            "decommissioned",
+            "pending",
+            "esoteric-class",
+        ]
 
     async def start_paginating(self, ctx, data_list: list[AyameSearchResult]):
         menu = MenuPages(
@@ -207,6 +241,37 @@ class SearchArticleCog(commands.Cog, name="SRCコマンド"):
 
         ctx = await self.bot.get_context(interaction)
         await self.start_paginating(ctx, results)
+
+    @app_commands.command(name="random", description="ランダムな記事を表示するコマンド")
+    async def random(self, interaction: discord.Interaction):
+        """ランダムな記事を表示するコマンド"""
+
+        await interaction.response.defer()
+
+        results = []
+
+        while results == []:
+            branch = random.choice(self.branches)
+            object_class = random.choice(self.object_classes)
+
+            query = AyameSearchQuery(
+                title=None,
+                tags=[object_class, branch, "scp"],
+                author=None,
+                rate_min=None,
+                rate_max=None,
+                date_from=None,
+                date_to=None,
+                show=None,
+                page=None,
+            )
+
+            results = await self.ayame.search_complex(query)
+
+        result = random.choice(results)
+
+        embed = self.c.create_detail_embed(result)
+        await interaction.followup.send(embed=embed)
 
 
 async def setup(bot):
