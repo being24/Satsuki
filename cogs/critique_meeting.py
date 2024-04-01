@@ -18,6 +18,10 @@ logger = logging.getLogger("discord")
 jst_timezone = ZoneInfo("Asia/Tokyo")
 utc_timezone = ZoneInfo("UTC")
 
+PLAYGROUND_GUILD = discord.Object(id=609058923353341973)
+CHAT_OPEATOR_GUID = discord.Object(id=643110576561848352)
+JP_OFFICIAL_GUID = discord.Object(id=286871252784775179)
+
 
 @dataclass
 class RssData:
@@ -180,6 +184,7 @@ class CritiqueCog(commands.Cog, name="批評定例会用コマンド"):
         await self.bot.tree.sync()
 
     @app_commands.command(name="agenda", description="定例会告知用コマンド")
+    @app_commands.guilds(PLAYGROUND_GUILD, CHAT_OPEATOR_GUID, JP_OFFICIAL_GUID)
     @app_commands.default_permissions(kick_members=True)
     async def agenda(
         self,
@@ -281,6 +286,7 @@ class CritiqueCog(commands.Cog, name="批評定例会用コマンド"):
     @app_commands.command(
         name="reserve_button", description="予約用ボタンの設置コマンド"
     )
+    @app_commands.guilds(PLAYGROUND_GUILD, CHAT_OPEATOR_GUID, JP_OFFICIAL_GUID)
     @app_commands.default_permissions(kick_members=True)
     async def reserve_button(self, interaction: discord.Interaction):
         """予約用ボタンの設置コマンド"""
@@ -290,6 +296,7 @@ class CritiqueCog(commands.Cog, name="批評定例会用コマンド"):
         )
 
     @app_commands.command(name="draft", description="本日の下書き予約を表示します")
+    @app_commands.guilds(PLAYGROUND_GUILD, CHAT_OPEATOR_GUID, JP_OFFICIAL_GUID)
     @app_commands.default_permissions(kick_members=True)
     async def draft(self, interaction: discord.Interaction, index: int = 0):
         """本日の下書き予約を表示します.引数に数字を与えるとその下書き予約を表示します."""
