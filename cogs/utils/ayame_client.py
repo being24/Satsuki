@@ -160,29 +160,29 @@ class AyameClient:
 if __name__ == "__main__":
     ayame = AyameClient()
 
-    query = AyameSearchCountQuery(
-        title="173",
+    count_query = AyameSearchCountQuery(
+        title=None,
         tags=None,
-        author=None,
+        author="burnin-a-gogo",
         rate_min=None,
         rate_max=None,
         date_from=None,
         date_to=None,
     )
 
-    results = asyncio.run(ayame.search_complex_count(query))
-    print(results)
+    results_num = asyncio.run(ayame.search_complex_count(count_query))
+    print(results_num)
 
     query = AyameSearchQuery(
-        title="173",
+        title=None,
         tags=None,
-        author=None,
+        author="burnin-a-gogo",
         rate_min=None,
         rate_max=None,
         date_from=None,
         date_to=None,
-        page=2,
-        show=100,
+        page=None,
+        show=None,
     )
 
     results = asyncio.run(ayame.search_complex(query))
