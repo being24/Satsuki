@@ -16,7 +16,15 @@
 				"oderwat.indent-rainbow",
 				"shardulm94.trailing-spaces",
 				"ms-python.python",
-				"charliermarsh.ruff"
+				"charliermarsh.ruff",
+				"ms-python.mypy-type-checker",
+				"GitHub.copilot",
+				"GitHub.copilot-chat",
+				"christian-kohler.path-intellisense",
+				"Gruntfuggly.todo-tree",
+				"mosapride.zenkaku",
+				"ms-python.vscode-pylance",
+				"ms-python.debugpy"
 			]
 		}
 	},
