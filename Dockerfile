@@ -14,7 +14,7 @@ COPY ./ ${BOT_NAME}
 
 RUN set -x && \
     apk add --no-cache build-base nano git tzdata ncdu libstdc++ && \
-    cp /usr/share/zoneinfo/Asia/Tokyo /etc/localtime && \ls
+    cp /usr/share/zoneinfo/Asia/Tokyo /etc/localtime &&
     python3 -m pip install -U setuptools && \
     python3 -m pip install -r ./${BOT_NAME}/requirements.txt && \
     chmod 0700 ./${BOT_NAME}/bot.py && \
