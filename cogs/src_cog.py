@@ -78,6 +78,7 @@ class SearchArticleCog(commands.Cog, name="SRCコマンド"):
         tag2: str | None = None,
         tag3: str | None = None,
         author: str | None = None,
+        scp: bool = False,
         tale: bool = False,
         proposal: bool = False,
         joke: bool = False,
@@ -96,6 +97,7 @@ class SearchArticleCog(commands.Cog, name="SRCコマンド"):
             tag2 (str, optional): タグ2.
             tag3 (str, optional): タグ3.
             author (str, optional): 著者.
+            scp (bool, optional): SCPのみを検索するか.
             tale (bool, optional): Taleのみを検索するか.
             proposal (bool, optional): 提言のみを検索するか.
             joke (bool, optional): ジョークのみを検索するか.
@@ -114,6 +116,9 @@ class SearchArticleCog(commands.Cog, name="SRCコマンド"):
 
         # Noneを削除
         tags = [tag for tag in tags if tag is not None]
+
+        if scp:
+            tags.append("scp")
 
         if tale:
             tags.append("tale")
