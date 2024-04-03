@@ -467,4 +467,7 @@ class CritiqueCog(commands.Cog, name="批評定例会用コマンド"):
 
 async def setup(bot):
     await bot.add_cog(CritiqueCog(bot))
+    await bot.tree.sync(guild=PLAYGROUND_GUILD)
+    await bot.tree.sync(guild=CHAT_OPEATOR_GUID)
+    await bot.tree.sync(guild=JP_OFFICIAL_GUID)
     bot.add_view(ReserveView())
