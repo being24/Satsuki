@@ -19,7 +19,7 @@ jst_timezone = ZoneInfo("Asia/Tokyo")
 utc_timezone = ZoneInfo("UTC")
 
 PLAYGROUND_GUILD = discord.Object(id=609058923353341973)
-CHAT_OPEATOR_GUID = discord.Object(id=643110576561848352)
+CHAT_OPERATOR_GUID = discord.Object(id=643110576561848352)
 JP_OFFICIAL_GUID = discord.Object(id=286871252784775179)
 
 
@@ -184,7 +184,7 @@ class CritiqueCog(commands.Cog, name="批評定例会用コマンド"):
         await self.bot.tree.sync()
 
     @app_commands.command(name="agenda", description="定例会告知用コマンド")
-    @app_commands.guilds(PLAYGROUND_GUILD, CHAT_OPEATOR_GUID, JP_OFFICIAL_GUID)
+    @app_commands.guilds(PLAYGROUND_GUILD, CHAT_OPERATOR_GUID, JP_OFFICIAL_GUID)
     @app_commands.default_permissions(kick_members=True)
     async def agenda(
         self,
@@ -286,7 +286,7 @@ class CritiqueCog(commands.Cog, name="批評定例会用コマンド"):
     @app_commands.command(
         name="reserve_button", description="予約用ボタンの設置コマンド"
     )
-    @app_commands.guilds(PLAYGROUND_GUILD, CHAT_OPEATOR_GUID, JP_OFFICIAL_GUID)
+    @app_commands.guilds(PLAYGROUND_GUILD, CHAT_OPERATOR_GUID, JP_OFFICIAL_GUID)
     @app_commands.default_permissions(kick_members=True)
     async def reserve_button(self, interaction: discord.Interaction):
         """予約用ボタンの設置コマンド"""
@@ -296,7 +296,7 @@ class CritiqueCog(commands.Cog, name="批評定例会用コマンド"):
         )
 
     @app_commands.command(name="draft", description="本日の下書き予約を表示します")
-    @app_commands.guilds(PLAYGROUND_GUILD, CHAT_OPEATOR_GUID, JP_OFFICIAL_GUID)
+    @app_commands.guilds(PLAYGROUND_GUILD, CHAT_OPERATOR_GUID, JP_OFFICIAL_GUID)
     @app_commands.default_permissions(kick_members=True)
     async def draft(self, interaction: discord.Interaction, index: int = 0):
         """本日の下書き予約を表示します.引数に数字を与えるとその下書き予約を表示します."""
@@ -324,12 +324,12 @@ class CritiqueCog(commands.Cog, name="批評定例会用コマンド"):
             start=start, end=end
         )
 
-        # reserve_listをreserve_timeでソート
-        reserve_list.sort(key=lambda x: x.reserve_time)
-
-        if len(reserve_list) == 0:
+        if reserve_list is None or len(reserve_list) == 0:
             await interaction.followup.send("本日の予約はありません")
             return
+
+        # reserve_listをreserve_timeでソート
+        reserve_list.sort(key=lambda x: x.reserve_time)
 
         if index == 0:
             embed = discord.Embed(
@@ -468,6 +468,6 @@ class CritiqueCog(commands.Cog, name="批評定例会用コマンド"):
 async def setup(bot):
     await bot.add_cog(CritiqueCog(bot))
     await bot.tree.sync(guild=PLAYGROUND_GUILD)
-    await bot.tree.sync(guild=CHAT_OPEATOR_GUID)
+    await bot.tree.sync(guild=CHAT_OPERATOR_GUID)
     await bot.tree.sync(guild=JP_OFFICIAL_GUID)
     bot.add_view(ReserveView())
