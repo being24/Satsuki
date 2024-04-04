@@ -1,10 +1,9 @@
 import asyncio
 import datetime
-from typing import List, Optional, Union
 
 from pydantic.dataclasses import dataclass
-from sqlalchemy import and_, select, update
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+from sqlalchemy import and_, select
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.schema import Column
 from sqlalchemy.types import BIGINT, DATETIME, INTEGER, VARCHAR
@@ -106,7 +105,7 @@ class CriticismManager:
 
     async def get_reserve_data_from_date(
         self, start: datetime.datetime, end: datetime.datetime
-    ) -> List[ReserveData]:
+    ) -> list[ReserveData] | None:
         """指定された日の予約データを取得する関数
 
         Args:
@@ -114,7 +113,7 @@ class CriticismManager:
             end (datetime.datetime): 取得終了日時
 
         Returns:
-            List[ReserveData]: 予約データのリスト
+            list[ReserveData]: 予約データのリスト
         """
 
         async with AsyncSession(engine) as session:
@@ -147,7 +146,7 @@ class CriticismManager:
 
     async def get_reserve_data_from_date_and_id(
         self, user_id: int, start: datetime.datetime, end: datetime.datetime
-    ) -> List[ReserveData]:
+    ) -> list[ReserveData] | None:
         """IDと日付から予約データを取得する関数
 
         Args:
@@ -156,7 +155,7 @@ class CriticismManager:
             end (datetime.datetime): 取得終了日時
 
         Returns:
-            List[ReserveData]: 予約データのリスト
+            list[ReserveData]: 予約データのリスト
         """
 
         async with AsyncSession(engine) as session:
@@ -215,16 +214,16 @@ class CriticismManager:
                     await session.commit()
 
     # async def upsert_and_return_reserve_data(
-    #     self, jst_time: datetime.datetime, ReserveData_list: List[ReserveData]
-    # ) -> Optional[List[ReserveData]]:
+    #     self, jst_time: datetime.datetime, ReserveData_list: list[ReserveData]
+    # ) -> Optional[list[ReserveData]]:
     #     """nijiruのデータとDBのデータを比較して、存在しないものを追加後、今日の分のデータを返す関数
 
     #     Args:
     #         jst_time (datetime): ３時間ずれたdatetime
-    #         ReserveData_list (List[ReserveData]): RSSから取得したデータ
+    #         ReserveData_list (list[ReserveData]): RSSから取得したデータ
 
     #     Returns:
-    #         Optional[List[ReserveData]]: 今日の予約リスト
+    #         Optional[list[ReserveData]]: 今日の予約リスト
     #     """
 
     #     data_from_db = await self.get_reserve_data_from_date(jst_time)
