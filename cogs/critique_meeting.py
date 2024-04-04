@@ -119,14 +119,14 @@ class ReserveView(discord.ui.View):
             user_id=interaction.user.id, start=start, end=end
         )
 
-        # reserve_listをreserve_timeでソート
-        reserve_list.sort(key=lambda x: x.reserve_time)
-
-        if len(reserve_list) == 0:
+        if reserve_list is None or len(reserve_list) == 0:
             await interaction.response.send_message(
                 "本日の予約はありません", ephemeral=True
             )
             return
+
+        # reserve_listをreserve_timeでソート
+        reserve_list.sort(key=lambda x: x.reserve_time)
 
         embed = discord.Embed(
             title="予約一覧",
