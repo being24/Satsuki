@@ -16,13 +16,13 @@ import discord
 
 class Paginator(discord.ui.View):
     def __init__(
-            self,
-            ctx: commands.Context,
-            embed: discord.Embed,
-            initial_page: int = 0,
-            field_threshold: int = 25,
-            allow_non_author_interaction: bool = False,
-            ephemeral: bool = False,
+        self,
+        ctx: commands.Context,
+        embed: discord.Embed,
+        initial_page: int = 0,
+        field_threshold: int = 25,
+        allow_non_author_interaction: bool = False,
+        ephemeral: bool = False,
     ):
         super().__init__(timeout=None)
         self.threshold = field_threshold
@@ -95,7 +95,9 @@ class Paginator(discord.ui.View):
         embeds = []
 
         def _create_embed():
-            _embed = discord.Embed(title=embed.title, description=embed.description, color=embed.colour)
+            _embed = discord.Embed(
+                title=embed.title, description=embed.description, color=embed.colour
+            )
             _embed.set_footer(text=embed.footer.text)
             _embed.set_thumbnail(url=embed.thumbnail.url)
             _embed.set_image(url=embed.image.url)
@@ -107,11 +109,15 @@ class Paginator(discord.ui.View):
         for field in embed.fields:
             # compare to the smaller one
             if len(current_embed.fields) < min(self.threshold, 25):
-                current_embed.add_field(name=field.name, value=field.value, inline=field.inline)
+                current_embed.add_field(
+                    name=field.name, value=field.value, inline=field.inline
+                )
             else:
                 embeds.append(current_embed)
                 current_embed = _create_embed()
-                current_embed.add_field(name=field.name, value=field.value, inline=field.inline)
+                current_embed.add_field(
+                    name=field.name, value=field.value, inline=field.inline
+                )
             continue
         embeds.append(current_embed)
         return embeds

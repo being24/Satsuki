@@ -70,6 +70,8 @@ class SCPArticleCog(commands.Cog, name="SCPコマンド"):
 
         result = await self.ayame.search_complex(query)
 
+        data = None
+
         # resultのtitleから数字だけを正規表現だけで取り出し、numberと一致するものを返す
         if len(result) >= 2:
             for i in reversed(result):

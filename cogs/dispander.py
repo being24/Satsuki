@@ -36,6 +36,7 @@ class ExpandDiscordMessageUrl(commands.Cog):
     async def on_message(self, message: discord.Message):
         if message.author.bot:
             return
+
         await self.dispand(message)
 
     async def dispand(self, message: discord.Message):

@@ -1,7 +1,7 @@
 import asyncio
 import datetime
 import logging
-import urllib
+from urllib.parse import urlencode
 
 import aiohttp
 from pydantic.dataclasses import dataclass
@@ -64,7 +64,7 @@ class AyameSearchQuery:
         if self.show is not None:
             query.append(("show", str(self.show)))
 
-        return urllib.parse.urlencode(query)
+        return urlencode(query)
 
 
 @dataclass
@@ -102,7 +102,7 @@ class AyameSearchCountQuery:
         if self.date_to is not None:
             query.append(("date_to", self.date_to.isoformat()))
 
-        return urllib.parse.urlencode(query)
+        return urlencode(query)
 
 
 class AyameClient:

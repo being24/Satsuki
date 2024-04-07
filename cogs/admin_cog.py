@@ -28,6 +28,10 @@ class Admin(commands.Cog, name="管理用コマンド群"):
     @commands.Cog.listener()
     async def on_guild_join(self, guild):
         """on_guild_join時に発火する関数"""
+        if self.bot.user is None or self.bot.user.avatar is None:
+            logger.error("bot.user is None")
+            return
+
         embed = discord.Embed(
             title="サーバーに参加しました",
             description=f"SCP公式チャット用utility-bot {self.bot.user.display_name}",
@@ -132,6 +136,9 @@ class Admin(commands.Cog, name="管理用コマンド群"):
 
         if now_hm == "04:00":
             channel = self.bot.get_channel(745128369170939965)
+
+            if not isinstance(channel, discord.TextChannel):
+                return
 
             data_files = list(self.master_path.glob("data/*.sqlite3"))
 

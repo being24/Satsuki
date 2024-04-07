@@ -134,6 +134,9 @@ class ReserveView(discord.ui.View):
             color=0x0000A0,
         )
 
+        if interaction.guild is None:
+            return
+
         for reserve in reserve_list:
             reserve_time_stamp = f"<t:{int(reserve.reserve_time.timestamp())}:f>"
             author = interaction.guild.get_member(reserve.author_id)
@@ -318,6 +321,9 @@ class CritiqueCog(commands.Cog, name="批評定例会用コマンド"):
         start = start.astimezone(utc_timezone)
         end = end.astimezone(utc_timezone)
         limen = limen.astimezone(utc_timezone)
+
+        if interaction.guild is None:
+            return
 
         # 今日の予約分を取得
         reserve_list = await self.criticism_mng.get_reserve_data_from_date(
