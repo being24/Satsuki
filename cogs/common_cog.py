@@ -110,11 +110,16 @@ class SatsukiCom(commands.Cog, name="皐月分類外コマンド"):
         just_now = (dt_now + timedelta(minutes=minutes)).strftime("%Y-%m-%d %H:%M:%S")
         dt_now = dt_now.strftime("%Y-%m-%d %H:%M:%S")
 
+        if interaction.channel is None:
+            channel_id = 0
+        else:
+            channel_id = interaction.channel.id
+
         self.timer_dict[dt_now] = {
             "-5": f"{before_five}",
             "just": f"{just_now}",
             "author": interaction.user.mention,
-            "channel": interaction.channel.id,
+            "channel": channel_id,
             "flag": flag,
         }
 
@@ -129,6 +134,10 @@ class SatsukiCom(commands.Cog, name="皐月分類外コマンド"):
         if before.pending is True and after.pending is False:
             if any([after.guild.id == i for i in self.welcome_list]):
                 channel = after.guild.system_channel
+
+                if not isinstance(channel, discord.abc.Messageable):
+                    return
+
                 await asyncio.sleep(3)
                 embed = discord.Embed(
                     title=f"{after.guild.name}へようこそ", colour=0x0080FF
@@ -170,6 +179,11 @@ class SatsukiCom(commands.Cog, name="皐月分類外コマンド"):
                 self.timer_dict[key]["-5"], "%Y-%m-%d %H:%M:%S"
             ).replace(tzinfo=self.jst_timezone)
 
+            channel = self.bot.get_channel(self.timer_dict[key]["channel"])
+
+            if not isinstance(channel, discord.abc.Messageable):
+                return
+
             if (days := (now - alarm_time).days) > 1:
                 del_list.append(key)
 
@@ -178,16 +192,13 @@ class SatsukiCom(commands.Cog, name="皐月分類外コマンド"):
 
             elif alarm_time < now:
                 mention = self.timer_dict[key]["author"]
-                channel = self.bot.get_channel(self.timer_dict[key]["channel"])
                 await channel.send(f"時間です : {mention}")
 
                 del_list.append(key)
-
                 await self.aio_dump_json(self.timer_dict)
 
             elif pre_alarm_time < now and self.timer_dict[key]["flag"] == 0:
                 mention = self.timer_dict[key]["author"]
-                channel = self.bot.get_channel(self.timer_dict[key]["channel"])
                 self.timer_dict[key]["flag"] = 1
                 await channel.send(f"残り5分です : {mention}")
 

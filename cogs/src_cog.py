@@ -4,54 +4,16 @@ import random
 import discord
 from discord import app_commands
 from discord.ext import commands
-from discord.ext.menus import ListPageSource, MenuPages
 
 from .utils.ayame_client import (
     AyameClient,
     AyameSearchCountQuery,
     AyameSearchQuery,
-    AyameSearchResult,
 )
 from .utils.common import CommonUtil
+from .utils.paginator import Paginator
 
 logger = logging.getLogger("discord")
-
-
-class Pager(ListPageSource):
-    def __init__(self, ctx, data):
-        self.ctx: commands.Context = ctx
-        super().__init__(data, per_page=10)
-        self.c = CommonUtil()
-
-    async def write_page(
-        self, menu: MenuPages, fields: list[AyameSearchResult]
-    ) -> discord.Embed:
-        offset = (menu.current_page * self.per_page) + 1
-        len_data = len(self.entries)
-
-        embed = discord.Embed(
-            title="該当する記事は以下の通りです",
-            description=f"{len_data}件ヒット",
-            color=discord.Color.darker_grey(),
-        )
-
-        embed.set_footer(
-            text=f"{offset:,} - {min(len_data, offset+self.per_page-1):,} of {len_data:,} records."
-        )
-
-        for data in fields:
-            embed.add_field(
-                name=self.c.select_title(data),
-                value=f"http://scp-jp.wikidot.com/{data.fullname}\nAuthor : {data.created_by_unix}",
-                inline=False,
-            )
-
-        return embed
-
-    async def format_page(
-        self, menu: MenuPages, fields: list[AyameSearchResult]
-    ) -> discord.Embed:
-        return await self.write_page(menu, fields)
 
 
 class SearchArticleCog(commands.Cog, name="SRCコマンド"):
@@ -93,15 +55,6 @@ class SearchArticleCog(commands.Cog, name="SRCコマンド"):
             "pending",
             "esoteric-class",
         ]
-
-    async def start_paginating(self, ctx, data_list: list[AyameSearchResult]):
-        menu = MenuPages(
-            source=Pager(ctx, data_list),
-            delete_message_after=False,
-            clear_reactions_after=True,
-            timeout=60.0,
-        )
-        await menu.start(ctx)
 
     @app_commands.command(name="search", description="記事を検索するコマンド")
     async def search(
@@ -212,8 +165,8 @@ class SearchArticleCog(commands.Cog, name="SRCコマンド"):
             results = await self.ayame.search_complex(query)
 
             if detail:
-                embed = self.c.create_detail_embed(results[0])
-                await interaction.followup.send(embed=embed)
+                embeds = self.c.create_detail_embed(results[0])
+                await interaction.followup.send(embed=embeds)
             else:
                 title = self.c.select_title(results[0])
                 url = f"http://scp-jp.wikidot.com/{results[0].fullname}"
@@ -240,7 +193,27 @@ class SearchArticleCog(commands.Cog, name="SRCコマンド"):
             results.extend(res)
 
         ctx = await self.bot.get_context(interaction)
-        await self.start_paginating(ctx, results)
+
+        results_len = len(results)
+
+        embeds = discord.Embed(
+            title="該当する記事は以下の通りです",
+            description=f"{results_len}件ヒット",
+            color=discord.Color.darker_grey(),
+        )
+
+        for data in results:
+            embeds.add_field(
+                name=self.c.select_title(data),
+                value=f"http://scp-jp.wikidot.com/{data.fullname}\nAuthor : {data.created_by_unix}",
+                inline=False,
+            )
+
+        pager = Paginator(ctx=ctx, embed=embeds, field_threshold=10)
+
+        await pager.start()
+
+        # await self.start_paginating(ctx, results)
 
     @app_commands.command(name="random", description="ランダムな記事を表示するコマンド")
     async def random(self, interaction: discord.Interaction):
