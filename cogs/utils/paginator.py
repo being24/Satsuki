@@ -24,7 +24,7 @@ class Paginator(discord.ui.View):
         allow_non_author_interaction: bool = False,
         ephemeral: bool = False,
     ):
-        super().__init__(timeout=None)
+        super().__init__(timeout=120)
         self.threshold = field_threshold
         self.embed_pages = self._split_embed(embed)
         self.ctx = ctx
@@ -121,6 +121,10 @@ class Paginator(discord.ui.View):
             continue
         embeds.append(current_embed)
         return embeds
+
+    async def on_timeout(self):
+        self.clear_items()
+        await self.message.edit(embed=self.embed_pages[self.current_page], view=self)
 
 
 class PageCounter(discord.ui.Button):

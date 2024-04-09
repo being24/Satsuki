@@ -69,19 +69,25 @@ class SCPArticleCog(commands.Cog, name="SCPコマンド"):
         )
 
         result = await self.ayame.search_complex(query)
-
+        
         data = None
-
+        
+        if len(result) == 0:
+            await interaction.followup.send(
+                "該当する記事が見つかりません", ephemeral=True
+            )
+            return
         # resultのtitleから数字だけを正規表現だけで取り出し、numberと一致するものを返す
-        if len(result) >= 2:
+        
+        elif len(result) >= 2:
             for i in reversed(result):
                 if number == re.sub(r"\D", "", i.title):
                     data = i
         else:
             data = result[0]
-
-        if len(result) == 0 or not data:
-            await interaction.response.send_message(
+            
+        if data is None:
+            await interaction.followup.send(
                 "該当する記事が見つかりません", ephemeral=True
             )
             return
