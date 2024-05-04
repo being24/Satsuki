@@ -308,8 +308,8 @@ class CritiqueCog(commands.Cog, name="批評定例会用コマンド"):
         # 今の時間を取得
         jst_now = datetime.now(jst_timezone)
 
-        # 3時間前に変換
-        start = jst_now - timedelta(hours=3)
+        # 5時間前に変換
+        start = jst_now - timedelta(hours=5)
 
         # 3時間後に変換
         end = jst_now + timedelta(hours=3)
