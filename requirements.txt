@@ -10,4 +10,4 @@ mojimoji==0.0.13
 pydantic==2.7.1
 python-dotenv==1.0.1
 sentry-sdk==2.0.1
-SQLAlchemy==2.0.29
+SQLAlchemy==2.0.30
