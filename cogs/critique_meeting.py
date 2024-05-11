@@ -100,8 +100,8 @@ class ReserveView(discord.ui.View):
         # 今の時間を取得
         jst_now = datetime.now(jst_timezone)
 
-        # 3時間前に変換
-        start = jst_now - timedelta(hours=3)
+        # 6時間前に変換
+        start = jst_now - timedelta(hours=6)
 
         # 3時間後に変換
         end = jst_now + timedelta(hours=3)
@@ -337,6 +337,8 @@ class CritiqueCog(commands.Cog, name="批評定例会用コマンド"):
         # reserve_listをreserve_timeでソート
         reserve_list.sort(key=lambda x: x.reserve_time)
 
+        first_reserve_index = reserve_list[0].reserve_id - 1
+
         if index == 0:
             embed = discord.Embed(
                 title="本日の予約一覧",
@@ -351,13 +353,16 @@ class CritiqueCog(commands.Cog, name="批評定例会用コマンド"):
                 if author is None:
                     author = "Unknown"
 
+                elif author.display_name is not None:
+                    author = author.display_name
+
                 # 8時45分以前の予約は、authorのあとに(受付時間外)をつける
                 if reserve.reserve_time < limen:
                     author = f"{author} (受付時間外)"
 
                 embed.add_field(
                     name=author,
-                    value=f"{reserve.reserve_id} : [{reserve.title}]({reserve.link})\tat: {reserve_time_stamp}",
+                    value=f"{reserve.reserve_id - first_reserve_index} : [{reserve.title}]({reserve.link})\tat: {reserve_time_stamp}",
                     inline=False,
                 )
 
@@ -367,7 +372,14 @@ class CritiqueCog(commands.Cog, name="批評定例会用コマンド"):
 
         else:
             # indexがreserve_idと一致するものを取得
-            reserve = next((x for x in reserve_list if x.reserve_id == index), None)
+            reserve = next(
+                (
+                    x
+                    for x in reserve_list
+                    if x.reserve_id - first_reserve_index == index
+                ),
+                None,
+            )
 
             if reserve is None:
                 await interaction.followup.send("予約が見つかりませんでした")
@@ -387,7 +399,7 @@ class CritiqueCog(commands.Cog, name="批評定例会用コマンド"):
 
             embed.add_field(
                 name=author,
-                value=f"{reserve.reserve_id} : [{reserve.title}]({reserve.link})\tat: {reserve_time_stamp}",
+                value=f"{reserve.reserve_id - first_reserve_index} : [{reserve.title}]({reserve.link})\tat: {reserve_time_stamp}",
                 inline=False,
             )
 
@@ -474,6 +486,9 @@ class CritiqueCog(commands.Cog, name="批評定例会用コマンド"):
 async def setup(bot):
     await bot.add_cog(CritiqueCog(bot))
     await bot.tree.sync(guild=PLAYGROUND_GUILD)
-    await bot.tree.sync(guild=CHAT_OPERATOR_GUID)
-    await bot.tree.sync(guild=JP_OFFICIAL_GUID)
+    try:
+        await bot.tree.sync(guild=CHAT_OPERATOR_GUID)
+        await bot.tree.sync(guild=JP_OFFICIAL_GUID)
+    except discord.Forbidden:
+        print("bot has no permission to sync")
     bot.add_view(ReserveView())
