@@ -1,4 +1,4 @@
-aiofiles==23.2.1
+aiofiles==24.1.0
 aiosqlite==0.20.0
 demoji==1.1.0
 discord-ext-menus==1.1
