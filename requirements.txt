@@ -1,13 +1,13 @@
-aiofiles==23.2.1
+aiofiles==24.1.0
 aiosqlite==0.20.0
 demoji==1.1.0
 discord-ext-menus==1.1
 discord-sentry-reporting==2.0.4
-discord.py==2.3.2
+discord.py==2.4.0
 feedparser==6.0.11
 html2text==2024.2.26
 mojimoji==0.0.13
-pydantic==2.7.1
+pydantic==2.8.2
 python-dotenv==1.0.1
 sentry-sdk==2.1.1
-SQLAlchemy==2.0.30
+SQLAlchemy==2.0.31

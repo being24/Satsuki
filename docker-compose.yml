@@ -1,5 +1,3 @@
-version: "3.7"
-
 services:
   satsuki:
     image: "ghcr.io/being24/satsuki:latest"
