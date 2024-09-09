@@ -7,7 +7,7 @@ discord.py==2.4.0
 feedparser==6.0.11
 html2text==2024.2.26
 mojimoji==0.0.13
-pydantic==2.8.2
+pydantic==2.9.1
 python-dotenv==1.0.1
 sentry-sdk==2.1.1
 SQLAlchemy==2.0.31
