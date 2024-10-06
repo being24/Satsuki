@@ -188,7 +188,7 @@ class CritiqueCog(commands.Cog, name="批評定例会用コマンド"):
 
     @app_commands.command(name="agenda", description="定例会告知用コマンド")
     @app_commands.guilds(PLAYGROUND_GUILD, CHAT_OPERATOR_GUID, JP_OFFICIAL_GUID)
-    @app_commands.default_permissions(kick_members=True)
+    @app_commands.default_permissions(moderate_members=True)
     async def agenda(
         self,
         interaction: discord.Interaction,
@@ -290,7 +290,7 @@ class CritiqueCog(commands.Cog, name="批評定例会用コマンド"):
         name="reserve_button", description="予約用ボタンの設置コマンド"
     )
     @app_commands.guilds(PLAYGROUND_GUILD, CHAT_OPERATOR_GUID, JP_OFFICIAL_GUID)
-    @app_commands.default_permissions(kick_members=True)
+    @app_commands.default_permissions(moderate_members=True)
     async def reserve_button(self, interaction: discord.Interaction):
         """予約用ボタンの設置コマンド"""
         view = ReserveView()
@@ -300,7 +300,7 @@ class CritiqueCog(commands.Cog, name="批評定例会用コマンド"):
 
     @app_commands.command(name="draft", description="本日の下書き予約を表示します")
     @app_commands.guilds(PLAYGROUND_GUILD, CHAT_OPERATOR_GUID, JP_OFFICIAL_GUID)
-    @app_commands.default_permissions(kick_members=True)
+    @app_commands.default_permissions(moderate_members=True)
     async def draft(self, interaction: discord.Interaction, index: int = 0):
         """本日の下書き予約を表示します.引数に数字を与えるとその下書き予約を表示します."""
         await interaction.response.defer()
