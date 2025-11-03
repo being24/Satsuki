@@ -19,3 +19,8 @@ dependencies = [
     "sentry-sdk==2.14.0",
     "sqlalchemy==2.0.35",
 ]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.14.3",
+]
