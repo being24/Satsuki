@@ -10,6 +10,8 @@ from discord.ext import commands, tasks
 
 from .utils.common import CommonUtil
 
+logger = logging.getLogger("discord")
+
 
 class Admin(commands.Cog, name="管理用コマンド群"):
     """
@@ -60,7 +62,7 @@ class Admin(commands.Cog, name="管理用コマンド群"):
                 discord_log = discord.File(log_file_path)
                 await destination.send(files=[discord_log])
         except Exception as e:
-            logging.error(f"Failed to send backup files: {e}")
+            logger.error(f"Failed to send backup files: {e}")
 
     @commands.Cog.listener()
     async def on_guild_join(self, guild):
@@ -111,7 +113,7 @@ class Admin(commands.Cog, name="管理用コマンド群"):
             await self.bot.change_presence(activity=discord.Game(name=word))
             await ctx.reply(f"ステータスを{word}に変更しました", mention_author=False)
         except (discord.Forbidden, discord.HTTPException) as e:
-            logging.warning(f"ステータス変更に失敗しました: {e}")
+            logger.warning(f"ステータス変更に失敗しました: {e}")
             await ctx.reply("ステータス変更に失敗しました", mention_author=False)
 
     @commands.command(aliases=["p"], hidden=False, description="疎通確認")
@@ -159,7 +161,7 @@ class Admin(commands.Cog, name="管理用コマンド群"):
     async def on_message(self, _):
         """メッセージ受信時に発火する関数"""
         if not self.auto_backup.is_running():
-            logging.warning("Auto backup task is not running, restarting...")
+            logger.warning("Auto backup task is not running, restarting...")
             self.auto_backup.start()
 
     @tasks.loop(minutes=1.0)
@@ -173,11 +175,11 @@ class Admin(commands.Cog, name="管理用コマンド群"):
                 if channel and hasattr(channel, "send"):
                     await self.send_backup_files(channel)
                 else:
-                    logging.error(
+                    logger.error(
                         f"Backup channel {self.backup_channel_id} not found or invalid"
                     )
             except Exception as e:
-                logging.error(f"Auto backup failed: {e}")
+                logger.error(f"Auto backup failed: {e}")
 
     @auto_backup.before_loop
     async def before_printer(self):
