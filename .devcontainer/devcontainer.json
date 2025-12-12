@@ -1,34 +1,28 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 // README at: https://github.com/devcontainers/templates/tree/main/src/python
 {
-	"name": "Python 3",
+	"name": "satsuki",
 	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-	"image": "mcr.microsoft.com/devcontainers/python:0-3.10",
-	"features": {
-		"ghcr.io/devcontainers/features/git:1": {}
-	},
+	"dockerFile": "../Dockerfile",
 	"customizations": {
 		"vscode": {
 			"extensions": [
 				"njpwerner.autodocstring",
-				"streetsidesoftware.code-spell-checker",
-				"mhutchie.git-graph",
-				"oderwat.indent-rainbow",
-				"shardulm94.trailing-spaces",
-				"ms-python.python",
-				"charliermarsh.ruff",
-				"ms-python.mypy-type-checker",
+				"ms-azuretools.vscode-docker",
+				"docker.docker",
+				"tamasfe.even-better-toml",
 				"GitHub.copilot",
 				"GitHub.copilot-chat",
-				"christian-kohler.path-intellisense",
-				"Gruntfuggly.todo-tree",
-				"mosapride.zenkaku",
 				"ms-python.vscode-pylance",
-				"ms-python.debugpy"
+				"ms-python.python",
+				"ms-python.debugpy",
+				"ms-python.vscode-python-envs",
+				"charliermarsh.ruff",
+				"redhat.vscode-yaml",
+				"mhutchie.git-graph"
 			]
 		}
 	},
-	"postCreateCommand": "pip3 install -r requirements.txt",
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
@@ -38,6 +32,6 @@
 	// Configure tool-specific properties.
 	// "customizations": {},
 	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
-	// "remoteUser": "root"
+	"remoteUser": "root",
 	"postStartCommand": "git config --global --add safe.directory ${containerWorkspaceFolder}"
 }

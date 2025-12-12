@@ -12,26 +12,31 @@ from sentry_sdk.integrations.aiohttp import AioHttpIntegration
 from sentry_sdk.integrations.logging import LoggingIntegration
 
 
-
 class MyBot(commands.Bot):
     def __init__(self, command_prefix):
-        super().__init__(command_prefix, help_command=None, intents=intents)
+        super().__init__(
+            command_prefix=command_prefix,
+            help_command=None,
+            intents=intents,
+        )
 
     async def setup_hook(self) -> None:
-        for cog in current_path.glob("cogs/*.py"):
+        for cog_path in current_path.glob("cogs/*.py"):
             try:
-                await self.load_extension(f"cogs.{cog.stem}")
-                logging.info(f"Loaded {cog.stem}")
+                await self.load_extension(f"cogs.{cog_path.stem}")
+                print(f"Loaded: {cog_path.stem}")
             except Exception:
+                print(f"Failed to load: {cog_path.stem}")
                 traceback.print_exc()
 
     async def on_ready(self):
         print("-----")
         print("Logged in as")
-        print(self.user.name)
-        print(self.user.id)
+        if self.user:
+            print(self.user.name)
+            print(self.user.id)
         print("------")
-        logging.warning("rebooted")
+        logger.warning("rebooted")
         await bot.change_presence(activity=discord.Game(name="info bot Satsuki"))
 
 
@@ -48,8 +53,8 @@ if __name__ == "__main__":
         raise FileNotFoundError("Token not found error!")
 
     logger = logging.getLogger("discord")
-    logger.setLevel(logging.INFO)  # Change log level to INFO
-    logging.getLogger("discord.http").setLevel(logging.INFO)  # Change log level to INFO
+    logger.setLevel(logging.WARNING)
+    logging.getLogger("discord.http").setLevel(logging.WARNING)
 
     handler = logging.handlers.RotatingFileHandler(
         filename=logfile_path,

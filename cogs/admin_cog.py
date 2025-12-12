@@ -2,10 +2,13 @@ import logging
 import pathlib
 import time
 from datetime import datetime
+from typing import List
+from zoneinfo import ZoneInfo
 
 import discord
 from discord.ext import commands, tasks
-from zoneinfo import ZoneInfo
+
+from .utils.common import CommonUtil
 
 logger = logging.getLogger("discord")
 
@@ -15,21 +18,56 @@ class Admin(commands.Cog, name="管理用コマンド群"):
     管理用のコマンドです
     """
 
-    def __init__(self, bot: commands.Bot):
+    def __init__(self, bot):
         self.bot: commands.Bot = bot
+        self.c = CommonUtil()
 
         self.master_path = pathlib.Path(__file__).parents[1]
+        self.local_timezone = ZoneInfo("Asia/Tokyo")
 
-        self.jst_timezone = ZoneInfo("Asia/Tokyo")
+        # 自動バックアップ用チャンネルID
+        self.backup_channel_id = 745128369170939965
 
-    async def cog_check(self, ctx):
-        return ctx.guild and await self.bot.is_owner(ctx.author)
+        self.auto_backup.stop()
+        self.auto_backup.start()
+
+    async def cog_check(self, ctx) -> bool:
+        """管理者のみがコマンドを実行できるようにするチェック"""
+        return ctx.guild is not None and await self.bot.is_owner(ctx.author)
+
+    def get_data_files(self) -> List[pathlib.Path]:
+        """データベースファイルのリストを取得する"""
+        return list(self.master_path.glob("data/*.sqlite3"))
+
+    def get_log_file_path(self) -> pathlib.Path:
+        """ログファイルのパスを取得する"""
+        return self.master_path / "log" / "discord.log"
+
+    async def send_backup_files(self, destination) -> None:
+        """バックアップファイルを指定された宛先に送信する
+
+        Args:
+            destination: 送信先（ctx または channel）
+        """
+        try:
+            # データベースファイルを送信
+            data_files = self.get_data_files()
+            if data_files:
+                discord_files = [discord.File(file) for file in data_files]
+                await destination.send(files=discord_files)
+
+            # ログファイルを送信
+            log_file_path = self.get_log_file_path()
+            if log_file_path.exists():
+                discord_log = discord.File(log_file_path)
+                await destination.send(files=[discord_log])
+        except Exception as e:
+            logger.error(f"Failed to send backup files: {e}")
 
     @commands.Cog.listener()
     async def on_guild_join(self, guild):
         """on_guild_join時に発火する関数"""
-        if self.bot.user is None or self.bot.user.avatar is None:
-            logger.error("bot.user is None")
+        if self.bot.user is None:
             return
 
         embed = discord.Embed(
@@ -37,22 +75,22 @@ class Admin(commands.Cog, name="管理用コマンド群"):
             description=f"SCP公式チャット用utility-bot {self.bot.user.display_name}",
             color=0x2FE48D,
         )
-        embed.set_author(
-            name=f"{self.bot.user.name}", icon_url=f"{self.bot.user.avatar.url}"
-        )
+
+        icon_url = None
+        if self.bot.user.avatar:
+            icon_url = self.bot.user.avatar.replace(format="png").url
+
+        embed.set_author(name=self.bot.user.name, icon_url=icon_url)
+
         try:
-            await guild.system_channel.send(embed=embed)
+            if guild.system_channel:
+                await guild.system_channel.send(embed=embed)
         except discord.Forbidden:
             pass
 
-    @commands.Cog.listener()
-    async def on_ready(self):
-        """on_ready時に発火する関数"""
-        self.auto_backup.stop()
-        self.auto_backup.start()
-
     @commands.command(aliases=["re"], hidden=True)
-    async def reload(self, ctx):
+    async def reload(self, ctx: commands.Context):
+        """全てのコグをリロードするコマンド"""
         reloaded_list = []
         for cog in self.master_path.glob("cogs/*.py"):
             try:
@@ -61,95 +99,87 @@ class Admin(commands.Cog, name="管理用コマンド群"):
                 reloaded_list.append(cog.stem)
             except Exception as e:
                 print(e)
-                await ctx.reply(e, mention_author=False)
+                await ctx.reply(str(e), mention_author=False)
+                return
 
         await ctx.reply(
             f"{' '.join(reloaded_list)}をreloadしました", mention_author=False
         )
 
     @commands.command(aliases=["st"], hidden=True)
-    async def status(self, ctx, word: str = "info bot Satsuki"):
+    async def status(self, ctx: commands.Context, *, word: str = "Thread管理中"):
+        """ボットのステータスを変更するコマンド"""
         try:
             await self.bot.change_presence(activity=discord.Game(name=word))
             await ctx.reply(f"ステータスを{word}に変更しました", mention_author=False)
-
-        except discord.Forbidden or discord.HTTPException:
-            logger.error("status change error")
+        except (discord.Forbidden, discord.HTTPException) as e:
+            logger.warning(f"ステータス変更に失敗しました: {e}")
+            await ctx.reply("ステータス変更に失敗しました", mention_author=False)
 
     @commands.command(aliases=["p"], hidden=False, description="疎通確認")
-    async def ping(self, ctx):
+    async def ping(self, ctx: commands.Context):
         """Pingによる疎通確認を行うコマンド"""
         start_time = time.time()
         mes = await ctx.reply("Pinging....")
-        await mes.edit(
-            content="pong!\n" + str(round(time.time() - start_time, 3) * 1000) + "ms"
-        )
+        elapsed_time = round((time.time() - start_time) * 1000, 3)
+        await mes.edit(content=f"pong!\n{elapsed_time}ms")
 
-    # TODO : fix this command
     @commands.command(aliases=["wh"], hidden=True)
-    async def where(self, ctx):
-        server_list = [i.name.replace("\u3000", " ") for i in ctx.bot.guilds]
-
-        # 10こずつに分割
-        server_list = [server_list[i : i + 10] for i in range(0, len(server_list), 10)]
-
+    async def where(self, ctx: commands.Context):
+        """現在参加しているサーバー一覧を表示するコマンド"""
+        server_list = [guild.name.replace("\u3000", " ") for guild in self.bot.guilds]
+        server_names = (
+            "\n".join(server_list)
+            if server_list
+            else "参加しているサーバーがありません"
+        )
         await ctx.reply(
-            "現在入っているサーバーは以下の通りです",
+            f"現在入っているサーバーは以下の通りです\n{server_names}",
             mention_author=False,
         )
-        for server in server_list:
-            await ctx.send("\n".join(server))
 
     @commands.command(hidden=True)
-    async def back_up(self, ctx):
-        # sql_files = [filename for filename in os.listdir(self.master_path  "/data") if filename.endswith(".sqlite3")]
-        data_files = list(self.master_path.glob("data/*.sqlite3"))
-
-        discord_files = [discord.File(file) for file in data_files]
-
-        await ctx.send(files=discord_files)
-
-        log_file = self.master_path / "log" / "discord.log"
-        discord_log = discord.File(log_file)
-
-        await ctx.send(files=[discord_log])
+    async def back_up(self, ctx: commands.Context):
+        """手動バックアップコマンド"""
+        await self.send_backup_files(ctx)
 
     @commands.command(hidden=True)
     async def restore_one(self, ctx: commands.Context):
-        if ctx.message.attachments is None:
+        """ファイルを復元するコマンド"""
+        if not ctx.message.attachments:
             await ctx.send("ファイルが添付されていません")
+            return
 
         for attachment in ctx.message.attachments:
-            await attachment.save(self.master_path / "data" / attachment.filename)
-            await ctx.send(f"{attachment.filename}を追加しました")
+            try:
+                await attachment.save(self.master_path / "data" / attachment.filename)
+                await ctx.send(f"{attachment.filename}を追加しました")
+            except Exception as e:
+                await ctx.send(f"{attachment.filename}の保存に失敗しました: {e}")
 
     @commands.Cog.listener()
-    async def on_message(self, _: discord.Message):
+    async def on_message(self, _):
+        """メッセージ受信時に発火する関数"""
         if not self.auto_backup.is_running():
-            logger.warning("auto_backup is not running, restarting...")
+            logger.warning("Auto backup task is not running, restarting...")
             self.auto_backup.start()
 
     @tasks.loop(minutes=1.0)
     async def auto_backup(self):
-        now = datetime.now(self.jst_timezone)
-        now_hm = now.strftime("%H:%M")
+        """自動バックアップタスク"""
+        now = datetime.now(self.local_timezone)
 
-        if now_hm == "04:00":
-            channel = self.bot.get_channel(745128369170939965)
-
-            if not isinstance(channel, discord.TextChannel):
-                return
-
-            data_files = list(self.master_path.glob("data/*.sqlite3"))
-
-            discord_files = [discord.File(file) for file in data_files]
-
-            await channel.send(files=discord_files)
-
-            log_file = self.master_path / "log" / "discord.log"
-            discord_log = discord.File(log_file)
-
-            await channel.send(files=[discord_log])
+        if now.strftime("%H:%M") == "04:00":
+            try:
+                channel = self.bot.get_channel(self.backup_channel_id)
+                if channel and hasattr(channel, "send"):
+                    await self.send_backup_files(channel)
+                else:
+                    logger.error(
+                        f"Backup channel {self.backup_channel_id} not found or invalid"
+                    )
+            except Exception as e:
+                logger.error(f"Auto backup failed: {e}")
 
     @auto_backup.before_loop
     async def before_printer(self):
