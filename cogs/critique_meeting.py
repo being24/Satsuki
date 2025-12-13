@@ -309,7 +309,7 @@ class CritiqueCog(commands.Cog, name="批評定例会用コマンド"):
         jst_now = datetime.now(jst_timezone)
 
         # 5時間前に変換
-        start = jst_now - timedelta(hours=24)
+        start = jst_now - timedelta(hours=12)
 
         # 3時間後に変換
         end = jst_now + timedelta(hours=3)
