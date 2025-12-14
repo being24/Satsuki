@@ -1,6 +1,8 @@
+import asyncio
 import logging
 from datetime import datetime, timedelta
 from typing import List, Optional
+from zoneinfo import ZoneInfo
 
 import aiohttp
 import discord
@@ -10,7 +12,6 @@ from discord import app_commands
 from discord.ext import commands
 from discord.ui import Modal, TextInput
 from pydantic.dataclasses import dataclass
-from zoneinfo import ZoneInfo
 
 from cogs.utils.criticism_manager import CriticismManager, ReserveData
 
@@ -196,7 +197,23 @@ class CritiqueCog(commands.Cog, name="批評定例会用コマンド"):
         """定例会告知スレッドRSSから書き込みを取得、送信するコマンド"""
         await interaction.response.defer()
 
-        content_list = await self.get_content_from_rss(self.rss_addr)
+        try:
+            content_list = await self.get_content_from_rss(self.rss_addr)
+        except aiohttp.ClientError as e:
+            await interaction.followup.send(
+                f"RSSフィードの取得に失敗しました: {type(e).__name__}"
+            )
+            logger.error(f"RSS fetch error: {e}")
+            return
+        except Exception as e:
+            await interaction.followup.send("予期しないエラーが発生しました")
+            logger.error(f"Unexpected error in agenda command: {e}")
+            return
+
+        if not content_list:
+            await interaction.followup.send("RSSフィードにデータがありませんでした")
+            return
+
         data = content_list[0]
 
         embed = discord.Embed(
@@ -226,21 +243,72 @@ class CritiqueCog(commands.Cog, name="批評定例会用コマンド"):
 
         await interaction.followup.send(embed=embed)
 
-    async def get_content_from_rss(self, target: str) -> List[RssData]:
+    async def get_content_from_rss(
+        self, target: str, max_retries: int = 3
+    ) -> List[RssData]:
         """RSSのデータをパース、RssDataに変換して返す関数
 
         Args:
-            target (str): RSSのデータ
+            target (str): RSSのURL
+            max_retries (int): 最大リトライ回数
 
         Returns:
             List[RssData]: RSSのデータクラス
-        """
 
-        async with aiohttp.ClientSession() as session:
-            async with session.get(target) as r:
-                if r.status == 200:
-                    response = await r.text()
+        Raises:
+            aiohttp.ClientError: ネットワークエラー
+        """
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+        }
+
+        timeout = aiohttp.ClientTimeout(total=30, connect=10, sock_read=10)
+
+        for attempt in range(max_retries):
+            try:
+                logger.info(f"RSSフィード取得中... (試行 {attempt + 1}/{max_retries})")
+
+                async with aiohttp.ClientSession(
+                    headers=headers, timeout=timeout
+                ) as session:
+                    async with session.get(target) as r:
+                        if r.status == 200:
+                            response = await r.text()
+                        else:
+                            raise aiohttp.ClientError(f"HTTP {r.status}")
+
+                break
+
+            except aiohttp.ServerDisconnectedError as e:
+                logger.error(
+                    f"サーバー切断エラー (試行 {attempt + 1}/{max_retries}): {e}"
+                )
+                if attempt < max_retries - 1:
+                    wait_time = 2**attempt  # 指数バックオフ
+                    logger.info(f"{wait_time}秒待機してリトライします...")
+                    await asyncio.sleep(wait_time)
                 else:
+                    logger.error("最大リトライ回数に達しました")
+                    raise
+
+            except asyncio.TimeoutError as e:
+                logger.error(f"タイムアウト (試行 {attempt + 1}/{max_retries}): {e}")
+                if attempt < max_retries - 1:
+                    wait_time = 2**attempt
+                    logger.info(f"{wait_time}秒待機してリトライします...")
+                    await asyncio.sleep(wait_time)
+                else:
+                    logger.error("最大リトライ回数に達しました")
+                    raise
+
+            except aiohttp.ClientError as e:
+                logger.error(f"クライアントエラー: {e}")
+                if attempt < max_retries - 1:
+                    wait_time = 2**attempt
+                    logger.info(f"{wait_time}秒待機してリトライします...")
+                    await asyncio.sleep(wait_time)
+                else:
+                    logger.error("最大リトライ回数に達しました")
                     raise
 
         feed_data = feedparser.parse(response)
