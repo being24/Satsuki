@@ -2,8 +2,8 @@ services:
   satsuki:
     image: "ghcr.io/being24/satsuki:latest"
     volumes:
-      - ./data:/usr/src/satsuki/data
-      - ./log:/usr/src/satsuki/log
+      - ./data:/workspaces/Satsuki/data
+      - ./log:/workspaces/Satsuki/log
     env_file:
       - ./.env
     restart: always
