@@ -1,6 +1,6 @@
 import asyncio
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, time, timedelta
 from typing import List, Optional
 from zoneinfo import ZoneInfo
 
@@ -31,6 +31,33 @@ class RssData:
     published_time: datetime
     author: str
     content: str
+
+
+def calculate_critique_window(now: datetime) -> tuple[datetime, datetime, datetime]:
+    """Return UTC start/end and limen for the 3:00 JST window.
+
+    The window is [start, end) where start is 3:00 JST of the logical day and
+    end is the next day's 3:00 JST. If ``now`` is before 3:00 JST, the logical
+    day is the previous calendar day. ``limen`` is 20:45 JST on the logical
+    day, used to mark out-of-hours reservations.
+    """
+
+    jst_now = now.astimezone(jst_timezone)
+
+    if jst_now.hour < 3:
+        logical_day = jst_now.date() - timedelta(days=1)
+    else:
+        logical_day = jst_now.date()
+
+    window_start_jst = datetime.combine(logical_day, time(hour=3), tzinfo=jst_timezone)
+    window_end_jst = window_start_jst + timedelta(days=1)
+    limen_jst = window_start_jst.replace(hour=20, minute=45, second=0, microsecond=0)
+
+    return (
+        window_start_jst.astimezone(utc_timezone),
+        window_end_jst.astimezone(utc_timezone),
+        limen_jst.astimezone(utc_timezone),
+    )
 
 
 class ReserveView(discord.ui.View):
@@ -98,22 +125,8 @@ class ReserveView(discord.ui.View):
     async def reserve_list(
         self, interaction: discord.Interaction, button: discord.ui.Button
     ):
-        # 今の時間を取得
-        jst_now = datetime.now(jst_timezone)
-
-        # 6時間前に変換
-        start = jst_now - timedelta(hours=6)
-
-        # 3時間後に変換
-        end = jst_now + timedelta(hours=3)
-
-        # startとendの間の20時45分を取得
-        limen = start.replace(hour=20, minute=45, second=0)
-
-        # utcに変換
-        start = start.astimezone(utc_timezone)
-        end = end.astimezone(utc_timezone)
-        limen = limen.astimezone(utc_timezone)
+        # 3:00 JST 起点の当該ウィンドウを取得
+        start, end, limen = calculate_critique_window(datetime.now(jst_timezone))
 
         # 今日の予約分を取得
         reserve_list = await self.criticism_manager.get_reserve_data_from_date_and_id(
@@ -373,22 +386,8 @@ class CritiqueCog(commands.Cog, name="批評定例会用コマンド"):
         """本日の下書き予約を表示します.引数に数字を与えるとその下書き予約を表示します."""
         await interaction.response.defer()
 
-        # 今の時間を取得
-        jst_now = datetime.now(jst_timezone)
-
-        # 5時間前に変換
-        start = jst_now - timedelta(hours=12)
-
-        # 3時間後に変換
-        end = jst_now + timedelta(hours=3)
-
-        # startとendの間の20時45分を取得
-        limen = start.replace(hour=20, minute=45, second=0)
-
-        # utcに変換
-        start = start.astimezone(utc_timezone)
-        end = end.astimezone(utc_timezone)
-        limen = limen.astimezone(utc_timezone)
+        # 3:00 JST 起点の当該ウィンドウを取得
+        start, end, limen = calculate_critique_window(datetime.now(jst_timezone))
 
         if interaction.guild is None:
             return
