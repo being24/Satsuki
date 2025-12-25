@@ -1,5 +1,5 @@
 aiofiles==24.1.0
-aiosqlite==0.20.0
+aiosqlite==0.22.1
 demoji==1.1.0
 discord-ext-menus==1.1
 discord-sentry-reporting==2.0.4
