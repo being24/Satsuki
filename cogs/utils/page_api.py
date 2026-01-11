@@ -1,14 +1,12 @@
 """ページAPI クライアント"""
 
+import asyncio
 import logging
 import random
-import time
-import traceback
 from enum import Enum
 from os import getenv
 from pathlib import Path
-from pprint import pprint
-from typing import Callable
+from typing import Awaitable, Callable
 
 import httpx
 from dotenv import load_dotenv
@@ -51,8 +49,8 @@ class SortOrder(str, Enum):
     DESC = "desc"
 
 
-def with_retry(
-    func: Callable[[], httpx.Response],
+async def with_retry(
+    func: Callable[[], Awaitable[httpx.Response]],
     max_retries: int = 3,
     base_delay: float = 1.0,
 ) -> httpx.Response:
@@ -74,7 +72,7 @@ def with_retry(
 
     for attempt in range(max_retries + 1):
         try:
-            response = func()
+            response = await func()
 
             if response.status_code in RETRY_STATUS_CODES and attempt < max_retries:
                 delay = _calc_delay(response, attempt)
@@ -85,7 +83,7 @@ def with_retry(
                     response.status_code,
                     delay,
                 )
-                time.sleep(delay)
+                await asyncio.sleep(delay)
                 continue
 
             return response
@@ -101,7 +99,7 @@ def with_retry(
                     type(exc).__name__,
                     delay,
                 )
-                time.sleep(delay)
+                await asyncio.sleep(delay)
             else:
                 raise
 
@@ -240,19 +238,19 @@ class PageAPIClient:
 
         self.api_url = panopticon_api_url.rstrip("/")
         self.site = site
-        self.client = httpx.Client(
+        self.client = httpx.AsyncClient(
             headers={"Authorization": f"Bearer {panopticon_api_key}"}
             if panopticon_api_key
             else {}
         )
 
-    def __enter__(self):
+    async def __aenter__(self):
         return self
 
-    def __exit__(self, *args):
-        self.client.close()
+    async def __aexit__(self, *args):
+        await self.client.aclose()
 
-    def search(self, query: PageSearchQuery | None = None) -> PageListResponse:
+    async def search(self, query: PageSearchQuery | None = None) -> PageListResponse:
         """記事一覧検索
 
         Args:
@@ -271,20 +269,18 @@ class PageAPIClient:
 
         logger.debug(f"Search params: {params}")
 
-        def request():
-            return self.client.get(
+        async def request():
+            return await self.client.get(
                 f"{self.api_url}/api/pages",
                 params=params,
             )
 
-        response = with_retry(request)
+        response = await with_retry(request)
 
         if response.status_code != 200:
             logger.error(f"Failed to fetch pages: {response.status_code}")
             logger.error(f"Response: {response.text}")
             raise RuntimeError(f"API error: {response.status_code}")
-
-        pprint(response.json())
 
         try:
             data = PageListResponse(**response.json())
@@ -293,7 +289,7 @@ class PageAPIClient:
             logger.error(f"Response validation failed: {e}")
             raise
 
-    def search_all(self, query: PageSearchQuery) -> list[PageListItem]:
+    async def search_all(self, query: PageSearchQuery) -> list[PageListItem]:
         """全ページ取得（ページネーション自動処理）
 
         Args:
@@ -310,8 +306,8 @@ class PageAPIClient:
             query_copy.params = query.params.copy()
             query_copy.paginate(page=page, per_page=100)
 
-            pages = self.search(query_copy)
-            if not pages:
+            pages = await self.search(query_copy)
+            if not pages.data:
                 break
 
             all_pages.extend(pages.data)
@@ -322,7 +318,7 @@ class PageAPIClient:
 
         return all_pages
 
-    def get_detail(self, page_id: int) -> PageDetailResponse | None:
+    async def get_detail(self, page_id: int) -> PageDetailResponse | None:
         """記事詳細取得
 
         Args:
@@ -332,10 +328,10 @@ class PageAPIClient:
             詳細レスポンス（page, votes, files, latestSource）
         """
 
-        def request():
-            return self.client.get(f"{self.api_url}/api/pages/{page_id}")
+        async def request():
+            return await self.client.get(f"{self.api_url}/api/pages/{page_id}")
 
-        response = with_retry(request)
+        response = await with_retry(request)
 
         if response.status_code == 404:
             return None
@@ -353,37 +349,42 @@ class PageAPIClient:
 
 
 if __name__ == "__main__":
-    try:
-        with PageAPIClient(site="scp-jp") as client:
-            # 部分一致検索のテスト
-            print("=== 検索（'オリジナル'を含む） + rating順 ===")
-            query = (
-                PageSearchQuery()
-                .by_query("オリジナル")
-                .sort_by(SortField.RATING, SortOrder.DESC)
-            )
-            print(f"Query params: {query.build()}")
-            pages = client.search(query)
-            print(f"Found {len(pages.data)} pages:")
-            for item in pages.data[:5]:
-                print(
-                    f"- {item.title} (fullname={item.fullname}, rating={item.rating})"
+
+    async def main():
+        try:
+            async with PageAPIClient(site="scp-jp") as client:
+                print("=== 検索（'オリジナル'を含む） + rating順 ===")
+                query = (
+                    PageSearchQuery()
+                    .by_query("オリジナル")
+                    .sort_by(SortField.RATING, SortOrder.DESC)
                 )
+                print(f"Query params: {query.build()}")
+                pages = await client.search(query)
+                print(f"Found {len(pages.data)} pages:")
+                for item in pages.data[:5]:
+                    print(
+                        f"- {item.title} (fullname={item.fullname}, rating={item.rating})"
+                    )
 
-            print("\n=== 検索（'173'を含む） + _defaultのみ + rating順 ===")
-            query2 = (
-                PageSearchQuery()
-                .by_query("173")
-                .sort_by(SortField.RATING, SortOrder.DESC)
-            )
-            print(f"Query params: {query2.build()}")
-            pages2 = client.search(query2)
-            print(f"Found {len(pages2.data)} pages:")
-            for item in pages2.data[:5]:
-                print(f"- {item.title} (fullname={item.fullname}, rating={item.rating}")
+                print("\n=== 検索（'173'を含む） + _defaultのみ + rating順 ===")
+                query2 = (
+                    PageSearchQuery()
+                    .by_query("173")
+                    .sort_by(SortField.RATING, SortOrder.DESC)
+                )
+                print(f"Query params: {query2.build()}")
+                pages2 = await client.search(query2)
+                print(f"Found {len(pages2.data)} pages:")
+                for item in pages2.data[:5]:
+                    print(
+                        f"- {item.title} (fullname={item.fullname}, rating={item.rating})"
+                    )
 
-            if not pages and not pages2:
-                print("No pages found for any query.")
-    except Exception:
-        print("Search failed.")
-        traceback.print_exc()
+                if not pages and not pages2:
+                    print("No pages found for any query.")
+        except Exception:
+            print("Search failed.")
+            raise
+
+    asyncio.run(main())

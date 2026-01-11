@@ -10,8 +10,8 @@
 
 from __future__ import annotations
 
-from discord.ext import commands
 import discord
+from discord.ext import commands
 
 
 class Paginator(discord.ui.View):
