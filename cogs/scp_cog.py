@@ -6,8 +6,8 @@ import mojimoji
 from discord import app_commands
 from discord.ext import commands
 
-from .utils.ayame_client import AyameClient, AyameSearchQuery
 from .utils.common import CommonUtil
+from .utils.page_api import PageAPIClient, PageSearchQuery, SortField, SortOrder
 
 number_match = re.compile(r"(?<![0-9])\d{3,4}(?![0-9])")  # 3か4桁のものだけマッチ
 
@@ -17,8 +17,7 @@ logger = logging.getLogger("discord")
 class SCPArticleCog(commands.Cog, name="SCPコマンド"):
     def __init__(self, bot):
         self.bot: commands.Bot = bot
-
-        self.ayame = AyameClient()
+        self.page_api = PageAPIClient()
         self.c = CommonUtil()
 
     def process_arg(self, num_brt: str) -> tuple:
@@ -56,36 +55,32 @@ class SCPArticleCog(commands.Cog, name="SCPコマンド"):
 
         await interaction.response.defer()
 
-        query = AyameSearchQuery(
-            title=number,
-            tags=[brt, "scp"],
-            author=None,
-            rate_min=None,
-            rate_max=None,
-            date_from=None,
-            date_to=None,
-            page=None,
-            show=None,
+        query = (
+            PageSearchQuery()
+            .by_query(number)
+            .by_tags(and_tags=[brt, "scp"])
+            .sort_by(SortField.RATING, SortOrder.DESC)
         )
 
-        result = await self.ayame.search_complex(query)
-        
+        response = await self.page_api.search(query)
+        results = [self.c.from_page_item(item) for item in response.data]
+
         data = None
-        
-        if len(result) == 0:
+
+        if len(results) == 0:
             await interaction.followup.send(
                 "該当する記事が見つかりません", ephemeral=True
             )
             return
+
         # resultのtitleから数字だけを正規表現だけで取り出し、numberと一致するものを返す
-        
-        elif len(result) >= 2:
-            for i in reversed(result):
+        elif len(results) >= 2:
+            for i in reversed(results):
                 if number == re.sub(r"\D", "", i.title):
                     data = i
         else:
-            data = result[0]
-            
+            data = results[0]
+
         if data is None:
             await interaction.followup.send(
                 "該当する記事が見つかりません", ephemeral=True

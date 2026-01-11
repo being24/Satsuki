@@ -1,12 +1,27 @@
+import datetime
 import logging
+from zoneinfo import ZoneInfo
 
 import discord
 from discord.ext.commands import bot
-from zoneinfo import ZoneInfo
+from pydantic import BaseModel
 
-from .ayame_client import AyameSearchResult
+from .page_models import PageListItem
 
 logger = logging.getLogger("discord")
+
+
+class SearchResult(BaseModel):
+    """表示用に正規化した検索結果データ."""
+
+    fullname: str
+    title: str
+    created_at: datetime.datetime
+    created_by_unix: str
+    rating: int
+    tags: list[str]
+    metatitle: str | None
+    page_id: int
 
 
 class CommonUtil:
@@ -36,11 +51,11 @@ class CommonUtil:
             except discord.Forbidden:
                 logger.error("メッセージの削除に失敗しました。Forbidden")
 
-    def create_detail_embed(self, data: AyameSearchResult) -> discord.Embed:
+    def create_detail_embed(self, data: SearchResult) -> discord.Embed:
         """詳細をembedにする関数、tzとか文字数制限とかはよしなにしてくれる
 
         Args:
-            data (AyameSearchResult): 記事データ
+            data (SearchResult): 記事データ
 
         Returns:
             discord.Embed: 色々調整したデータ
@@ -66,25 +81,30 @@ class CommonUtil:
         embed.add_field(
             name="rate trends",
             value=f"[link](https://ayame.scp-jp.net/chart.html?id={data.page_id})",
-            inline=False,
+            inline=True,
+        )
+        embed.add_field(
+            name="data link",
+            value=f"[link](https://data.scp-jp.com/pages/{data.page_id})",
+            inline=True,
         )
 
         embed.set_footer(text=f"page_id: {data.page_id}")
 
         return embed
 
-    def select_title(self, data: AyameSearchResult) -> str:
+    def select_title(self, data: SearchResult) -> str:
         """メタタイトルをがあればそちらを、そうでなければtitleを返す関数
 
         Args:
-            data (AyameSearchResult)
+            data (SearchResult)
 
         Returns:
             str
         """
-        if data.metatitle != "" and data.metatitle is not None:
+        if data.metatitle not in ("", None):
             title = data.metatitle
-        elif data.title != "" and data.title is not None:
+        elif data.title not in ("", None):
             title = data.title
         else:
             title = data.fullname
@@ -107,3 +127,18 @@ class CommonUtil:
         else:
             metatitle = metatitle
         return metatitle
+
+    @staticmethod
+    def from_page_item(item: PageListItem) -> SearchResult:
+        """PageListItemを表示用SearchResultへ正規化する"""
+
+        return SearchResult(
+            fullname=item.fullname,
+            title=item.title,
+            created_at=datetime.datetime.fromtimestamp(item.createdAt),
+            created_by_unix=item.createdByName or "unknown",
+            rating=item.rating,
+            tags=item.tags or [],
+            metatitle=item.fullname,
+            page_id=item.wikidotId,
+        )

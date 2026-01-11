@@ -5,12 +5,8 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from .utils.ayame_client import (
-    AyameClient,
-    AyameSearchCountQuery,
-    AyameSearchQuery,
-)
 from .utils.common import CommonUtil
+from .utils.page_api import PageAPIClient, PageSearchQuery
 from .utils.paginator import Paginator
 
 logger = logging.getLogger("discord")
@@ -19,8 +15,7 @@ logger = logging.getLogger("discord")
 class SearchArticleCog(commands.Cog, name="SRCコマンド"):
     def __init__(self, bot):
         self.bot: commands.Bot = bot
-
-        self.ayame = AyameClient()
+        self.page_api = PageAPIClient()
         self.c = CommonUtil()
 
         self.branches = [
@@ -37,9 +32,16 @@ class SearchArticleCog(commands.Cog, name="SRCコマンド"):
             "it",
             "ua",
             "pt",
-            "sc",
+            "cs",
+            "sk",
             "zh",
             "vn",
+            "tr",
+            "nd",
+            "el",
+            "id",
+            "kz",
+            "int",
         ]
 
         self.object_classes = [
@@ -131,38 +133,27 @@ class SearchArticleCog(commands.Cog, name="SRCコマンド"):
         if author_page:
             tags.append("著者ページ")
 
-        # get search count
-        query = AyameSearchCountQuery(
-            title=word,
-            tags=tags,
-            author=author,
-            rate_min=None,
-            rate_max=None,
-            date_from=None,
-            date_to=None,
-        )
+        base_query = PageSearchQuery()
 
-        result_count = await self.ayame.search_complex_count(query)
+        if word:
+            base_query.by_query(word)
+        if author:
+            base_query.by_author(author)
+        if tags:
+            base_query.by_tags(and_tags=tags)
+
+        base_query.paginate(page=1, per_page=100).include_all_categories()
+
+        first_response = await self.page_api.search(base_query)
+        result_count = first_response.pagination.total
 
         if result_count == 0:
             await interaction.followup.send("該当する記事が見つかりません")
             return
 
-        query = AyameSearchQuery(
-            title=word,
-            tags=tags,
-            author=author,
-            rate_min=None,
-            rate_max=None,
-            date_from=None,
-            date_to=None,
-            page=None,
-            show=None,
-        )
-
         # 一個だけならそのまま取得、表示
         if result_count == 1:
-            results = await self.ayame.search_complex(query)
+            results = [self.c.from_page_item(item) for item in first_response.data]
 
             if detail:
                 embeds = self.c.create_detail_embed(results[0])
@@ -181,16 +172,18 @@ class SearchArticleCog(commands.Cog, name="SRCコマンド"):
 
         await interaction.followup.send(f"{result_count}件見つかりました")
 
-        # 全部取得する
-        # query.showの最大は100なので、100ずつ取得していく
-        results = []
+        # 全件取得（ページネーション対応）
+        results = [self.c.from_page_item(item) for item in first_response.data]
 
-        for i in range(1, result_count, 100):
-            query.show = 100
-            query.page = i
-
-            res = await self.ayame.search_complex(query)
-            results.extend(res)
+        page = 2
+        per_page = 100
+        while len(results) < result_count:
+            page_query = PageSearchQuery()
+            page_query.params = base_query.params.copy()
+            page_query.paginate(page=page, per_page=per_page)
+            response = await self.page_api.search(page_query)
+            results.extend(self.c.from_page_item(item) for item in response.data)
+            page += 1
 
         ctx = await self.bot.get_context(interaction)
 
@@ -221,25 +214,16 @@ class SearchArticleCog(commands.Cog, name="SRCコマンド"):
 
         await interaction.response.defer()
 
-        results = []
+        results: list = []
 
         while results == []:
             branch = random.choice(self.branches)
             object_class = random.choice(self.object_classes)
 
-            query = AyameSearchQuery(
-                title=None,
-                tags=[object_class, branch, "scp"],
-                author=None,
-                rate_min=None,
-                rate_max=None,
-                date_from=None,
-                date_to=None,
-                show=None,
-                page=None,
-            )
+            query = PageSearchQuery().by_tags(and_tags=[object_class, branch, "scp"])
 
-            results = await self.ayame.search_complex(query)
+            response = await self.page_api.search(query)
+            results = [self.c.from_page_item(item) for item in response.data]
 
         result = random.choice(results)
 
