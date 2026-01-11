@@ -140,3 +140,4 @@ satsuki
 *.bak
 *.sqlite3
 *.ipynb
+extern/*.ts
