@@ -1,2 +1,2 @@
-project-includes = ["src", "main.py"]
+project-includes = ["cogs", "main.py"]
 search-path = ["."]
