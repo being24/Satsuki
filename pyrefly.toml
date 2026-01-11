@@ -1,0 +1,2 @@
+project-includes = ["src", "main.py"]
+search-path = ["."]

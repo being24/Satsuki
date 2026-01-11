@@ -19,7 +19,8 @@
 				"ms-python.vscode-python-envs",
 				"charliermarsh.ruff",
 				"redhat.vscode-yaml",
-				"mhutchie.git-graph"
+				"mhutchie.git-graph",
+				"meta.pyrefly"
 			]
 		}
 	},
