@@ -371,12 +371,13 @@ if __name__ == "__main__":
                 query2 = (
                     PageSearchQuery()
                     .by_query("173")
+                    .by_tags(and_tags=["scp", "en"])
                     .sort_by(SortField.RATING, SortOrder.DESC)
                 )
                 print(f"Query params: {query2.build()}")
                 pages2 = await client.search(query2)
                 print(f"Found {len(pages2.data)} pages:")
-                for item in pages2.data[:5]:
+                for item in pages2.data:
                     print(
                         f"- {item.title} (fullname={item.fullname}, rating={item.rating})"
                     )
