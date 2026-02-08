@@ -1,40 +1,40 @@
 # Copilot Instructions
 
 ## Communication
-- 日本語で応答すること
-- 必要に応じて、ユーザに質問を行い、要求を明確にすること
-- 作業後、作業内容とユーザが次に取れる行動を説明すること
-- ユーザに対して、作業内容を説明し、必要に応じて次の行動を提案すること
-- 実装を行う前に、作業内容についてユーザに確認を取り、了承を得ること
+- Think in English and respond in Japanese.  
+- Ask the user for clarification when necessary to ensure the request is well-defined.  
+- After completing a task, explain what was done and describe possible next steps for the user.  
+- Always explain your work to the user and, if appropriate, propose subsequent actions.  
+- Before implementing anything, confirm the planned work with the user and obtain their approval.  
 
 ## Workflow
-- 作業項目が多い場合は、段階に区切り、git commit を行いながら進めること
-  - semantic commit を使用する
+- When a task involves multiple steps, divide it into stages and proceed with `git commit` after each.  
+  - Use **semantic commit messages**.  
 
 ## Development Environment & Tools
-- コマンドの出力が確認できない場合、get last command / check background terminal を使用して確認すること
-- コマンドの実行には必ずuvを使用すること
-  - 基本的に、uv runコマンドで実行すること。uv run pythonコマンドは使用しないこと
-- ライブラリを追加する際は、uvコマンドを使用してインストールすること
-- コードの出力が終わった際、フォーマッタのruffを使用してコードを整形すること
-- 同時に対象ファイルに`check --fix --select I`を実行し、import文の整理を行うこと
-- 開発時しか使わないライブラリはdev dependenciesとしてインストールすること
+- If command output is not visible, use `get last command` or `check background terminal` to verify it.  
+- Always use **uv** to run commands.  
+  - Prefer `uv run <command>` over `uv run python <command>`.  
+- Use **uv** to install any additional libraries.  
+- After code generation, format it with **ruff**.  
+- Also run `check --fix --select I` to organize import statements.  
+- Libraries used only for development should be installed as **dev dependencies**.  
 
 ## Coding Guidelines
-- コードに絵文字を使用しないこと
-- importは必ずファイル冒頭にまとめること
-- 可能な限り型ヒントを追加すること
-- スクリプトに実行時引数を使用する形には極力しないこと
-- pythonは3.12以上を使用しているので、型ヒントに3.12以降の構文を使用すること
-  - 特にTypingモジュールからListやDictをインポートせず、組み込みのlistやdictを使用すること
-- 多数のデータを連続して処理するときは、データごとにdirectoryを分けて管理すること
-- 可能であればpydanticのBaseModelを使用してデータ構造を定義すること
-- ループ処理を行う場合は、進捗を表示すること
-- テスト用の使い捨てスクリプトは適当なtmpディレクトリに保存し、gitignoreに追加すること
-- ファイルを指定するときは、必ず相対パスを使用すること
-- ファイル操作を行う場合は、pathlibを使用すること
+- Do not use emojis in code.  
+- Place all import statements at the top of the file.  
+- Add type hints wherever possible.  
+- Avoid using runtime arguments in scripts whenever feasible.  
+- Since Python 3.12+ is used, apply type hint syntax introduced in 3.12 or later.  
+  - Specifically, use built-in `list` and `dict` instead of importing from `typing`.  
+- When processing large datasets, organize them by creating separate directories per dataset.  
+- Use **pydantic’s BaseModel** to define data structures when appropriate.  
+- Display progress when performing loop-based processing.  
+- Temporary test scripts should be stored in a `tmp` directory and listed in `.gitignore`.  
+- Always use **relative paths** for file references.  
+- Use **pathlib** for file operations.  
 
 ## Documentation
-- ドキュメントは必ずMarkdown形式で作成すること
-- ドキュメントには必ず目次を追加すること
-- documentはdocsディレクトリに保存すること
+- All documentation must be written in **Markdown** format.  
+- Include a **table of contents** in each document.  
+- Store all documents in the **docs** directory.  

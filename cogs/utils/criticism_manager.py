@@ -1,5 +1,6 @@
 import asyncio
 import datetime
+from zoneinfo import ZoneInfo
 
 from pydantic.dataclasses import dataclass
 from sqlalchemy import and_, select
@@ -7,7 +8,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.schema import Column
 from sqlalchemy.types import BIGINT, DATETIME, INTEGER, VARCHAR
-from zoneinfo import ZoneInfo
 
 from .create_SQLIte_engine import engine
 
