@@ -219,11 +219,6 @@ class PageAPIClient:
             PANOPTICON_API_URL: APIベースURL（例: https://manage.scp-jp.com）
             PANOPTICON_API_KEY: APIキー（manage API用）
         """
-        dotenv_path = Path(__file__).parents[2] / ".env"
-        if not dotenv_path.exists():
-            raise FileNotFoundError(".env file not found")
-
-        load_dotenv(dotenv_path)
 
         # APIキー（PANOPTICON_API_KEY
         panopticon_api_key = getenv("PANOPTICON_API_KEY")
@@ -349,6 +344,11 @@ class PageAPIClient:
 
 
 if __name__ == "__main__":
+    dotenv_path = Path(__file__).parents[2] / ".env"
+    if not dotenv_path.exists():
+        raise FileNotFoundError(".env file not found")
+
+    load_dotenv(dotenv_path)
 
     async def main():
         try:
