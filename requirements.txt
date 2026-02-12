@@ -3,7 +3,7 @@ aiosqlite==0.20.0
 demoji==1.1.0
 discord-ext-menus==1.1
 discord-sentry-reporting==2.0.4
-discord.py==2.4.0
+discord.py==2.6.4
 feedparser==6.0.11
 html2text==2024.2.26
 mojimoji==0.0.13
